@@ -28,6 +28,19 @@ export class UserService {
     this.userRepository.save(user);
   }
 
+  async findByEmailOrSave(email, username, providerId) {
+    const foundUser = await this.getUser(email);
+    if (foundUser) {
+      return foundUser;
+    }
+    const newUser = await this.userRepository.save({
+      email,
+      username,
+      providerId,
+    });
+    return newUser;
+  }
+
   //delete userInfo
   deleteUser(email: any) {
     return this.userRepository.delete({ email });
