@@ -28,7 +28,13 @@ export class UserService {
     this.userRepository.save(user);
   }
 
-  async findByEmailOrSave(email, username, providerId) {
+  async findByEmailOrSave(
+    email,
+    username,
+    providerId,
+    accessToken,
+    refreshToken,
+  ) {
     const foundUser = await this.getUser(email);
     if (foundUser) {
       return foundUser;
@@ -37,6 +43,8 @@ export class UserService {
       email,
       username,
       providerId,
+      accessToken,
+      refreshToken,
     });
     return newUser;
   }

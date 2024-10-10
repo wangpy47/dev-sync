@@ -23,7 +23,7 @@ content-type: application/json
 }
 
 ### Delete User  ❹ 유저 삭제 
-DELETE http://localhost:3000/user/delete/andy@podo.com
+DELETE http://localhost:3000/user/delete/cool102476@naver.com
 
 DELETE http://localhost:3000/user/delete/andy2@podo.com
 
