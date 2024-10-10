@@ -17,6 +17,12 @@ export class User {
   @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
   createdDt: Date;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, unique: true })
   providerId: string;
+
+  @Column({ nullable: true })
+  refreshToken: string;
+
+  @Column({ nullable: true })
+  accessToken: string;
 }
