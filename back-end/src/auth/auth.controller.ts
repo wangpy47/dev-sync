@@ -80,6 +80,13 @@ export class AuthController {
   @UseGuards(GoogleAuthGuard)
   async googleAuthRedirect(@Request() req, @Response() res) {
     const { user } = req;
-    return res.send(user);
+    if (user) {
+      // 로그인 성공 시 세션에 유저 정보 저장
+      console.log('Google Auth successful:', user);
+      return res.redirect('/user/updateProfile'); // 원하는 경로로 리디렉션
+    } else {
+      console.log('Google Auth failed');
+      return res.status(403).send('Authentication failed');
+    }
   }
 }

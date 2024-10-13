@@ -19,6 +19,10 @@ async function bootstrap() {
   );
   app.use(passport.initialize());
   app.use(passport.session());
+  app.enableCors({
+    origin: 'http://localhost:3000', // 클라이언트 URL
+    credentials: true, // 쿠키를 포함한 요청 허용
+  });
   await app.listen(3000);
 }
 bootstrap();

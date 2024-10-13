@@ -25,4 +25,10 @@ export class User {
 
   @Column({ nullable: true })
   accessToken: string;
+
+  @Column({ nullable: true })
+  githubUrl: string;
+
+  @Column({ nullable: true })
+  blogUrl: string;
 }
