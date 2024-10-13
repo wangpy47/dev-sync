@@ -1,7 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './user.entity';
 import { Repository } from 'typeorm';
+import { UpdateUserDto, UpdateUserProfileDto } from './user.dto';
+
 @Injectable()
 export class UserService {
   constructor(
@@ -19,13 +21,21 @@ export class UserService {
     return result;
   }
 
-  async updateUser(email, _user) {
-    const user: User = await this.getUser(email);
-    console.log('param', _user);
-    user.username = _user.username;
-    user.password = _user.password;
-    console.log('result', user);
-    this.userRepository.save(user);
+  async updateUser(
+    email: string,
+    updateUserDto: Partial<UpdateUserDto | UpdateUserProfileDto>,
+  ) {
+    const user = await this.userRepository.findOne({ where: { email } });
+
+    if (!user) {
+      throw new HttpException(
+        '사용자를 찾을 수 없습니다.',
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    Object.assign(user, updateUserDto); // 받은 정보를 유저 엔터티에 업데이트
+    return this.userRepository.save(user);
   }
 
   async findByEmailOrSave(

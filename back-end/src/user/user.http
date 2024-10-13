@@ -9,7 +9,7 @@ content-type: application/json
 }
 
 ### GetUser ❷ 유저 정보 찾기 
-GET http://localhost:3000/user/getUser/andy@podo.com
+GET http://localhost:3000/user/getUser/cool102476@naver.com
 
 
 ### Update User ❸ 유저 정보 업데이트 
@@ -36,3 +36,13 @@ content-type: application/json
   "password": "test1234",
   "email": "andy-podo2"
 }
+
+###유저 스펙주소 추가
+PATCH http://localhost:3000/user/updateProfile/cool102476@naver.com
+content-type: application/json
+
+{
+  "githubUrl": "https://github.com/andy",
+  "blogUrl": "https://andyblog.com"
+}
+

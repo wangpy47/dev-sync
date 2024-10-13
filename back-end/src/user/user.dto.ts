@@ -18,3 +18,8 @@ export class UpdateUserDto {
   @IsString()
   password: string;
 }
+
+export class UpdateUserProfileDto {
+  githubUrl?: string;
+  blogUrl?: string;
+}
