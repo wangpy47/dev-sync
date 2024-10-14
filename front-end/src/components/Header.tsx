@@ -8,6 +8,7 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import LoginForm from "./LoginForm";
+import TestButton from "./TestButton";
 // import AccountCircle from "@mui/icons-material/AccountCircle";
 
 const Header = () => {
@@ -59,6 +60,9 @@ const Header = () => {
               커뮤니티
             </Button>
           </Box>
+          {/* 테스트버튼 */}
+          <TestButton />
+
           <Box>
             <Button variant="contained" size="small" onClick={handleOpenLogin}>
               login

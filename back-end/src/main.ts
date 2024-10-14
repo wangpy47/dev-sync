@@ -20,9 +20,12 @@ async function bootstrap() {
   app.use(passport.initialize());
   app.use(passport.session());
   app.enableCors({
-    origin: 'http://localhost:3000', // 클라이언트 URL
+    origin: 'http://localhost:4000', // 클라이언트 도메인을 React의 포트인 4000번으로 설정
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS', // 허용할 HTTP 메서드 명시
     credentials: true, // 쿠키를 포함한 요청 허용
+    allowedHeaders: 'Content-Type, Authorization', // 허용할 헤더 명시
   });
-  await app.listen(3000);
+
+  await app.listen(3000); // 서버를 3000번 포트로 변경
 }
 bootstrap();
