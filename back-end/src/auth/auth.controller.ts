@@ -30,4 +30,21 @@ export class AuthController {
       return res.status(403).send('Authentication failed');
     }
   }
+
+  @Get('logout')
+  logout(@Request() req, @Response() res) {
+    console.log('logout');
+    req.logout((err) => {
+      if (err) {
+        return res.status(500).send('Logout failed');
+      }
+      req.session.destroy((err) => {
+        if (err) {
+          return res.status(500).send('Failed to destroy session');
+        }
+        res.clearCookie('connect.sid', { path: '/' }); // 세션 쿠키 명시적으로 삭제
+        return res.status(200).send('Logged out');
+      });
+    });
+  }
 }
