@@ -1,57 +1,17 @@
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
-import { AuthService } from './auth.service';
 import { AuthGuard } from '@nestjs/passport';
+import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
 import { Observable } from 'rxjs';
 
 @Injectable()
-export class LoginGuard implements CanActivate {
-  constructor(private authService: AuthService) {}
-
-  async canActivate(context: ExecutionContext): Promise<boolean> {
-    const request = context.switchToHttp().getRequest();
-
-    if (request.cookies['login']) {
-      return true;
-    }
-
-    if (!request.body.email || !request.body.password) {
-      return false;
-    }
-
-    const user = await this.authService.validateUser(
-      request.body.email,
-      request.body.password,
-    );
-
-    if (!user) {
-      return false;
-    }
-
-    request.user = user;
-
-    return true;
-  }
-}
-
-@Injectable()
-export class LocalAuthGuard extends AuthGuard('local') {
-  async canActivate(context: ExecutionContext): Promise<boolean> {
-    const result = (await super.canActivate(context)) as boolean;
-    const request = context.switchToHttp().getRequest();
-    await super.logIn(request);
-    return result;
-  }
-}
-
-@Injectable()
 export class AuthenticatedGuard implements CanActivate {
-  canActivate(
-    context: ExecutionContext,
-  ): boolean | Promise<boolean> | Observable<boolean> {
+  canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
     const request = context.switchToHttp().getRequest();
+    // 세션에 유저 정보가 있는지 확인 (로그인 상태인지)
     return request.isAuthenticated();
   }
 }
+
+
 
 @Injectable()
 export class GoogleAuthGuard extends AuthGuard('google') {
