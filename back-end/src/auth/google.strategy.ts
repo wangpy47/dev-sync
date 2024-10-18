@@ -11,9 +11,9 @@ export class GoogleStrategy extends PassportStrategy(Strategy) {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
       callbackURL: 'http://localhost:3000/auth/google',
-      scope: ['email', 'profile', 'openid'], // 기본적인 사용자 정보 스코프
-      accessType: 'offline', // 리프레시 토큰 발급을 위한 설정
-      // prompt: 'consent',  // 항상 승인을 요청하지 않음
+      scope: ['email', 'profile', 'openid'],
+      accessType: 'offline',
+      prompt: 'consent',  // 항상 사용자에게 동의를 요청하고 로그인 창 표시
     });
   }
   async validate(accessToken: string, refreshToken: string, profile: Profile) {
