@@ -3,18 +3,11 @@ import {
   Body,
   Get,
   Post,
-  Param,
-  Put,
-  Delete,
-  Patch,
-  UseGuards,
-  HttpException,
-  HttpStatus,
   Request,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { CreateUserDto, UpdateUserDto, UpdateUserProfileDto } from './user.dto';
-import { GoogleAuthGuard } from 'src/auth/auth.guard';
+import { CreateUserDto, UpdateUserDto } from './user.dto';
+
 
 @Controller('user')
 export class UserController {
@@ -35,30 +28,12 @@ export class UserController {
     }
   }
 
-  @Put('/update/:email')
-  updateUser(@Param('email') email: string, @Body() user: UpdateUserDto) {
-    console.log(user);
-    return this.userService.updateUser(email, user);
-  }
-
-  @Delete('/delete/:email')
-  deleteUser(@Param('email') email: string) {
-    return this.userService.deleteUser(email);
-  }
-
-  @UseGuards(GoogleAuthGuard) // 로그인된 상태에서만 허용
-  @Patch('/updateProfile/:email')
-  async updateUserProfile(
-    @Param('email') email: string,
-    @Body() userProfile: UpdateUserProfileDto,
-    @Request() req,
-  ) {
-    console.log('req.user.email !== email', req.user.email, email);
-    if (req.user.email !== email) {
-      // 로그인된 유저가 업데이트하려는 유저와 다를 경우 권한 없음 처리
-      throw new HttpException('권한이 없습니다.', HttpStatus.FORBIDDEN);
+  @Post('/update/')
+  updateUser(@Request() req, @Body() user: UpdateUserDto) {
+    if (req.isAuthenticated() && req.user.email === user.email) {
+      return this.userService.updateUser(user);
+    } else {
+      return { error: '인증된 회원이 아닙니다.' };
     }
-
-    return this.userService.updateUser(email, userProfile);
   }
 }
