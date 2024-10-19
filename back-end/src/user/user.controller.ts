@@ -25,11 +25,14 @@ export class UserController {
     return this.userService.createUser(user);
   }
 
-  @Get('/getUser/:email')
-  async getUser(@Param('email') email: string) {
-    const user = await this.userService.getUser(email);
-    console.log(user);
-    return user;
+  @Get('/getUser')
+  async getUser(@Request() req) {
+    if (req.isAuthenticated()) {
+      const user = await this.userService.getUser(req.user.email);
+      return user;
+    } else {
+      return null;
+    }
   }
 
   @Put('/update/:email')

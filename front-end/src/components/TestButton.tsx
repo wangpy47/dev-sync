@@ -22,7 +22,7 @@ const TestButton = () => {
 
   return (
     <>
-      <button onClick={fetchUserData}>로그 아웃</button>
+      <button onClick={fetchUserData}>회원정보 추가</button>
     </>
   );
 };
