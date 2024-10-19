@@ -1,28 +1,38 @@
 import { useState } from "react";
 
 const TestButton = () => {
-  const [githubUrl] = useState('https://github.com/jihwankim97');
-  const [blogUrl] = useState('https://goto-dev.tistory.com');
-
-  const fetchUserData = async () => {
-    fetch('http://localhost:3000/auth/logout', {
-      method: 'GET',
-      credentials: 'include', // 쿠키를 포함하여 요청
-    })
-      .then((response) => {
-        if (response.ok) {
-          console.log('Logged out');
-          window.location.href = '/login'; // 로그아웃 후 리디렉션
-        }
-      })
-      .catch((error) => {
-        console.error('Logout failed', error);
+    const [githubUrl, ] = useState('https://github.com/jihwankim97');
+    const [blogUrl, ] = useState('https://goto-dev.tistory.com');
+    const [email, ] = useState('cool102476@naver.com'); // 사용자의 이메일
+    const [name, ] = useState('김지환'); // 사용자의 이메일
+    const updateUserData = async () => {
+      const response = await fetch('http://localhost:3000/user/update', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        credentials: 'include',  // 세션 쿠키 포함
+        body: JSON.stringify({
+          email,
+          name,
+          githubUrl,
+          blogUrl,
+        }),
       });
-  };
+  
+      if (response.ok) {
+        const result = await response.json();
+        console.log('Update success:', result);
+      } else {
+        const error = await response.json();
+        console.error('Update failed:', error);
+      }
+    };
 
   return (
     <>
-      <button onClick={fetchUserData}>회원정보 추가</button>
+      <button onClick={updateUserData}>회원정보 추가</button>
     </>
   );
 };

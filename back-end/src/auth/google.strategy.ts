@@ -26,14 +26,8 @@ export class GoogleStrategy extends PassportStrategy(Strategy) {
         email,
         name.familyName + name.givenName,
         providerId,
-        accessToken, // 액세스 토큰 저장
-        refreshToken, // 리프레시 토큰 저장
       );
-    } else if (!user.refreshToken) {
-      user.refreshToken = refreshToken; // 처음 리프레시 토큰이 없으면 업데이트
-      await this.userService.updateUser(email, user);
-    }
-
+    } 
     return user;
   }
 }

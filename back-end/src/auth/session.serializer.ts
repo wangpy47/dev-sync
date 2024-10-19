@@ -22,7 +22,7 @@ export class SessionSerializer extends PassportSerializer {
       done(new Error('No User'), null);
       return;
     }
-    const { password, ...userInfo } = user;
+    const { ...userInfo } = user;
     done(null, userInfo);
   }
 }

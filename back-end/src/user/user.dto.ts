@@ -12,14 +12,12 @@ export class CreateUserDto {
 }
 
 export class UpdateUserDto {
+  @IsEmail()
+  email?: string;
   @IsString()
-  username: string;
-
+  name?: string;
   @IsString()
-  password: string;
-}
-
-export class UpdateUserProfileDto {
   githubUrl?: string;
+  @IsString()
   blogUrl?: string;
 }

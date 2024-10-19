@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './user.entity';
 import { Repository } from 'typeorm';
-import { UpdateUserDto, UpdateUserProfileDto } from './user.dto';
+import { UpdateUserDto } from './user.dto';
 
 @Injectable()
 export class UserService {
@@ -21,20 +21,20 @@ export class UserService {
     return result;
   }
 
-  async updateUser(
-    email: string,
-    updateUserDto: Partial<UpdateUserDto | UpdateUserProfileDto>,
-  ) {
-    const user = await this.userRepository.findOne({ where: { email } });
-
-    if (!user) {
-      throw new HttpException(
-        '사용자를 찾을 수 없습니다.',
-        HttpStatus.NOT_FOUND,
-      );
+  async updateUser(updateUserDto: Partial<UpdateUserDto>) {
+    const email = updateUserDto.email;
+  
+    if (!email) {
+      throw new HttpException('이메일이 필요합니다.', HttpStatus.BAD_REQUEST);
     }
-
-    Object.assign(user, updateUserDto); // 받은 정보를 유저 엔터티에 업데이트
+  
+    const user = await this.userRepository.findOne({ where: { email } });
+  
+    if (!user) {
+      throw new HttpException('사용자를 찾을 수 없습니다.', HttpStatus.NOT_FOUND);
+    }
+  
+    Object.assign(user, updateUserDto);
     return this.userRepository.save(user);
   }
 
@@ -42,8 +42,6 @@ export class UserService {
     email,
     username,
     providerId,
-    accessToken,
-    refreshToken,
   ) {
     const foundUser = await this.getUser(email);
     if (foundUser) {
@@ -53,8 +51,7 @@ export class UserService {
       email,
       username,
       providerId,
-      accessToken,
-      refreshToken,
+
     });
     return newUser;
   }
