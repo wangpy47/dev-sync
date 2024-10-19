@@ -9,11 +9,11 @@ export class AuthController {
   @Get('status')
   getAuthStatus(@Request() req) {
     if (req.isAuthenticated()) {
-      // 세션이 유효하면 유저 정보 반환
-      return req.user;
+      // 세션이 유효하면 유저의 이메일만 반환
+      return req.user.email;
     } else {
-      // 세션이 유효하지 않으면 null 또는 에러 반환
-      return { message: 'Not authenticated' };
+      // 세션이 유효하지 않으면 에러 메시지 반환
+      return 'Not authenticated';
     }
   }
 

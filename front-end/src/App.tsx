@@ -11,13 +11,20 @@ function App() {
     fetch('http://localhost:3000/auth/status', {
       credentials: 'include',
     })
-      .then((response) => response.json())
+      .then((response) => response.text())
       .then((data) => {
-        if (data.message === 'Not authenticated') {
-          console.log(data.message)
+        if (data === 'Not authenticated') {
+          console.log(data)
         } else {
           // 유저가 여전히 로그인된 상태
-          console.log('Already logged in');
+          fetch(`http://localhost:3000/user/getUser`, {
+            credentials: 'include',  // 세션 쿠키를 포함
+          })
+            .then((response) => response.json())
+            .then((userInfo) => {
+              console.log(userInfo);  // 유저 정보 출력
+            })
+            .catch((error) => console.error('Error:', error));
         }
       });
   }, []);
