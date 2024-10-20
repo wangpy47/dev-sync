@@ -1,6 +1,7 @@
-import { Controller, Get, Request, Response, UseGuards } from '@nestjs/common';
+import { Controller, Get, Request, Response, UseFilters, UseGuards } from '@nestjs/common';
 
 import { GoogleAuthGuard } from './auth.guard';
+import { AuthExceptionFilter } from './auth-exception.filter';
 
 @Controller('auth')
 export class AuthController {
@@ -19,6 +20,7 @@ export class AuthController {
 
   @Get('google')
   @UseGuards(GoogleAuthGuard)
+  @UseFilters(AuthExceptionFilter) // 예외 처리기 적용
   async googleAuthRedirect(@Request() req, @Response() res) {
     const { user } = req;
     if (user) {
