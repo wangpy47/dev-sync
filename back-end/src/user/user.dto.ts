@@ -19,5 +19,7 @@ export class UpdateUserDto {
   @IsString()
   githubUrl?: string;
   @IsString()
+  githubName?: string;
+  @IsString()
   blogUrl?: string;
 }
