@@ -10,10 +10,13 @@ import { useState } from "react";
 import LoginForm from "./LoginForm";
 import LogoutButton from "./logoutButton";
 import TestButton from "./TestButton";
+import { useSelector } from "react-redux";
+import ProfileButton from "./ProfileButton";
 // import AccountCircle from "@mui/icons-material/AccountCircle";
 
 const Header = () => {
   const [clickLoginForm, setClickLoginForm] = useState(false);
+  const isLogin = useSelector((state: any) => state.login.loggedIn);
 
   const handleOpenLogin = () => {
     setClickLoginForm(true);
@@ -62,22 +65,21 @@ const Header = () => {
             </Button>
           </Box>
           {/* 테스트버튼 */}
-          <TestButton />
-          <LogoutButton />
+          {/* <TestButton /> */}
+          {/* <LogoutButton /> */}
 
           <Box>
-            <Button variant="contained" size="small" onClick={handleOpenLogin}>
-              login
-            </Button>
-            {/* <IconButton
-            size="large"
-            aria-label="account of current user"
-            aria-controls="menu-appbar"
-            aria-haspopup="true"
-            edge="end"
-          >
-            <AccountCircle />
-          </IconButton> */}
+            {!isLogin ? (
+              <Button
+                variant="contained"
+                size="small"
+                onClick={handleOpenLogin}
+              >
+                login
+              </Button>
+            ) : (
+              <ProfileButton />
+            )}
           </Box>
         </Toolbar>
       </AppBar>
