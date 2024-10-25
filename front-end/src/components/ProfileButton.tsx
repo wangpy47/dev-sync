@@ -1,10 +1,16 @@
 import { Avatar, Menu, MenuItem } from "@mui/material";
 import { useState } from "react";
 import { logoutUser } from "../api/auth";
+import { useNavigate } from "react-router-dom";
 
 const ProfileButton = () => {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate("/Users"); // 새로운 경로로 이동
+  };
 
   const handleAvatarClick = (e) => {
     setAnchorEl(e.currentTarget);
@@ -18,7 +24,7 @@ const ProfileButton = () => {
   const handleLogout = async () => {
     const isLogout = await logoutUser();
     if (isLogout) {
-      window.location.href = "/login"; // 로그아웃 후 리디렉션
+      window.location.href = "/"; // 로그아웃 후 리디렉션
     }
   };
 
@@ -42,7 +48,7 @@ const ProfileButton = () => {
           },
         }}
       >
-        <MenuItem>내 정보</MenuItem>
+        <MenuItem onClick={handleClick}>내 정보</MenuItem>
         <MenuItem onClick={handleLogout}>로그아웃</MenuItem>
       </Menu>
     </>

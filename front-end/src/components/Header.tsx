@@ -12,6 +12,7 @@ import LogoutButton from "./logoutButton";
 import TestButton from "./TestButton";
 import { useSelector } from "react-redux";
 import ProfileButton from "./ProfileButton";
+import { Link } from "react-router-dom";
 // import AccountCircle from "@mui/icons-material/AccountCircle";
 
 const Header = () => {
@@ -39,20 +40,18 @@ const Header = () => {
         }}
       >
         <Toolbar>
-          <Typography
-            variant="h6"
-            noWrap
-            component="a"
-            sx={{
-              mr: 3,
-              display: { xs: "none", md: "flex" },
-              fontWeight: "bold",
-              color: "#2361cb",
-              textDecoration: "none",
-            }}
-          >
-            DevSync
-          </Typography>
+          <h3 style={{ padding: "0 0.8rem 0.3rem 0" }}>
+            <Link
+              to="/"
+              style={{
+                textDecoration: "none",
+                color: "#2361cb",
+                fontWeight: "bold",
+              }}
+            >
+              DevSync
+            </Link>
+          </h3>
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
             <Button sx={{ my: 0, color: "#3369c7", display: "block" }}>
               이력서

@@ -3,6 +3,7 @@
 /node_modules
 /build
 /uploads
+/dev-sync.sqlite
 # Logs
 logs
 *.log
