@@ -31,23 +31,31 @@ export class UserController {
     }
   }
 
-  @Post('/update')
-  @UseInterceptors(FileInterceptor('file', { storage: memoryStorage() })) 
-  async updateUser(@Request() req, @UploadedFile() file: Express.Multer.File) {
-    const updateUserDto = req.body;
-
-    if (req.isAuthenticated() && req.user.email === updateUserDto.email) {
-      // 파일이 전송되지 않았을 경우 처리
+  @Post('/updateProfile')
+  @UseInterceptors(FileInterceptor('file', { storage: memoryStorage() }))
+  async updateProfile(@Request() req, @UploadedFile() file: Express.Multer.File) {
+    const email = req.user?.email; // 세션에서 이메일 가져오기
+  
+    if (req.isAuthenticated() && email) {
       if (!file) {
-        console.error('파일이 전송되지 않았습니다.');
         throw new Error('파일이 전송되지 않았습니다.');
       }
-
-      // 사용자 정보 업데이트 서비스 호출
-      return this.userService.updateUser(updateUserDto, file);
+      return this.userService.updateProfile(email, file);
     } else {
-      // 인증되지 않거나 이메일이 일치하지 않을 경우 예외 처리
       return { error: '인증된 회원이 아니거나 이메일이 일치하지 않습니다.' };
     }
   }
+
+
+  @Post('/update')
+  updateUser(@Request() req, @Body() user: UpdateUserDto) {
+    if (req.isAuthenticated() && req.user.email === user.email) {
+      return this.userService.updateUser(user);
+    } else {
+      return { error: '인증된 회원이 아닙니다.' };
+    }
+  }
+
+
+
 }
