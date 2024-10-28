@@ -14,15 +14,20 @@ export class CreateUserDto {
 export class UpdateUserDto {
   @IsEmail()
   email?: string;
+
   @IsString()
   name?: string;
+
   @IsString()
   githubUrl?: string;
-  @IsString()
-  githubName?: string;
+
+
   @IsString()
   blogUrl?: string;
+
   @IsString()
   @IsOptional()
-  profileImageUrl?: string;
+  profileImageUrl?: string; 
 }
+
+

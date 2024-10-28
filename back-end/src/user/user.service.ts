@@ -23,53 +23,61 @@ export class UserService {
   }
 
   // 사용자 업데이트 (프로필 이미지 포함)
-  async updateUser(updateUserDto: Partial<User>, file?: Express.Multer.File) {
+  async updateUser(updateUserDto: Partial<UpdateUserDto>) {
     const email = updateUserDto.email;
+  
+    if (!email) {
+      throw new HttpException('이메일이 필요합니다.', HttpStatus.BAD_REQUEST);
+    }
+  
+    const user = await this.userRepository.findOne({ where: { email } });
+  
+    if (!user) {
+      throw new HttpException('사용자를 찾을 수 없습니다.', HttpStatus.NOT_FOUND);
+    }
+  
+    const { profileImageUrl, ...restDto } = updateUserDto;
+    Object.assign(user, restDto);
 
-    // 이메일이 없을 경우 예외 발생
+    return this.userRepository.save(user);
+  }
+
+
+  async updateProfile(email: string, file?: Express.Multer.File) {
     if (!email) {
       throw new HttpException('이메일이 필요합니다.', HttpStatus.BAD_REQUEST);
     }
 
-    // 사용자 조회
     const user = await this.userRepository.findOne({ where: { email } });
     if (!user) {
       throw new HttpException('사용자를 찾을 수 없습니다.', HttpStatus.NOT_FOUND);
     }
 
-    // 파일 처리 로직
+    // 파일이 있는 경우에만 프로필 이미지 URL 업데이트
     if (file) {
-      console.log('파일 정보:', file); // 파일 정보 로그 출력
-
-      // 한글 파일명 처리를 위한 인코딩
       const encodedFileName = encodeURIComponent(file.originalname);
       const uniqueFilename = `${uuidv4()}-${encodedFileName}`;
       const newPath = `./uploads/${uniqueFilename}`;
 
-      // 파일이 이미 존재하는지 확인
-      if (!fs.existsSync(newPath)) {
-        if (!fs.existsSync('./uploads')) {
-          fs.mkdirSync('./uploads');
-        }
-
-        if (file.buffer) {
-          // 파일을 버퍼로 저장
-          fs.writeFileSync(newPath, file.buffer);
-          user.profileImageUrl = `http://localhost:3000/uploads/${uniqueFilename}`;
-        } else {
-          console.error('파일 버퍼가 존재하지 않습니다.');
-          throw new HttpException('파일 전송 실패', HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-      } else {
-        // 파일이 이미 존재하는 경우 처리
-        user.profileImageUrl = `http://localhost:3000/uploads/${uniqueFilename}`;
+      if (!fs.existsSync('./uploads')) {
+        fs.mkdirSync('./uploads');
       }
+
+      if (file.buffer) {
+        // 버퍼로 파일을 저장하고 새로운 이미지 URL 설정
+        fs.writeFileSync(newPath, file.buffer);
+        user.profileImageUrl = `http://localhost:3000/uploads/${uniqueFilename}`;
+      } else {
+        console.error('파일 버퍼가 존재하지 않습니다.');
+        throw new HttpException('파일 전송 실패', HttpStatus.INTERNAL_SERVER_ERROR);
+      }
+    } else {
+      throw new HttpException('파일이 제공되지 않았습니다.', HttpStatus.BAD_REQUEST);
     }
 
-    // 나머지 사용자 정보 업데이트
-    Object.assign(user, updateUserDto);
     return this.userRepository.save(user);
   }
+
 
   // 이메일로 사용자 조회 후 없으면 저장
   async findByEmailOrSave(email, username, providerId) {
