@@ -2,7 +2,7 @@
 
 ## 프로젝트 소개
 
-현재 이 프로젝트는 구글 로그인을 구현한 상태입니다. **NestJS**와 **React**로 구성된 풀스택 애플리케이션으로, **back-end**에서는 **NestJS**를 사용하고, **front-end**에서는 **React**와 **Vite**를 사용하고 있습니다.
+현재 이 프로젝트는 구글 로그인과 사용자 깃 정보를 기반한 자소서 작성 기능을 구현한 상태입니다(백엔드). 최근 개발 내역은 dev브랜치를 확인해 주세요. **NestJS**와 **React**로 구성된 풀스택 애플리케이션으로, **back-end**에서는 **NestJS**를 사용하고, **front-end**에서는 **React**와 **Vite**를 사용하고 있습니다.
 
 ### 기능
 - **구글 로그인**: 구글 OAuth 2.0을 이용해 사용자가 로그인할 수 있습니다.
@@ -54,5 +54,5 @@
 
   ####기술 스택
 
-  백엔드: NestJS, TypeORM, Passport (Google OAuth)
+  백엔드: NestJS, TypeORM, Passport (Google OAuth), GitHub API, Open AI API
   프론트엔드: React, Vite
