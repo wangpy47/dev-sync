@@ -55,9 +55,9 @@ export class UserService {
 
     // 파일이 있는 경우에만 프로필 이미지 URL 업데이트
     if (file) {
-      const encodedFileName = encodeURIComponent(file.originalname);
-      const uniqueFilename = `${uuidv4()}-${encodedFileName}`;
+      const uniqueFilename = `${uuidv4()}.png`;
       const newPath = `./uploads/${uniqueFilename}`;
+     
 
       if (!fs.existsSync('./uploads')) {
         fs.mkdirSync('./uploads');
