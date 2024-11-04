@@ -1,6 +1,7 @@
 import { Box, Container } from "@mui/material";
 import { Outlet } from "react-router-dom";
 
+
 const Content = () => {
   return (
     <>

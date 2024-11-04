@@ -27,8 +27,8 @@ function App() {
           })
             .then((response) => response.json())
             .then((userInfo) => {
-              console.log(userInfo); // 유저 정보 출력
-              dispatch(login());
+              console.log(userInfo, "app 초기"); // 유저 정보 출력
+              dispatch(login(userInfo));
             })
             .catch((error) => console.error("Error:", error));
         }
