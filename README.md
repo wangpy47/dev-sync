@@ -22,12 +22,15 @@
      npm install
    
   2. .env 파일 설정:
-  백엔드 디렉토리(back-end)에 .env 파일을 생성하고, 구글 OAuth 클라이언트 ID와 시크릿을 입력합니다:
-   ``  `bash
-     GOOGLE_CLIENT_ID=your_google_client_id
-     GOOGLE_CLIENT_SECRET=your_google_client_secret
+  백엔드 디렉토리(back-end)에 .env.example 파일을 참고하여 필요로 하는 api 키를 입력합니다  
+  (키가 없을 경우 아무런 값이나 입력해도 됩니다. 하지만 api동작은 하    지 않습니다.):
+     ```bash
+     OPENAI_API_KEY=your_openai_api_key_here
+     GOOGLE_CLIENT_ID=your_google_client_id_here
+     GOOGLE_CLIENT_SECRET=your_google_client_secret_here
+     GITHUB_TOKEN=your_github_api_key_here
 
-  3. 개발 모드로 서버를 시작합니다:
+  4. 개발 모드로 서버를 시작합니다:
      ```bash
      npm run start:dev
 
