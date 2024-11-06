@@ -8,7 +8,7 @@ export class CreateUserDto {
   password: string;
 
   @IsString()
-  name: string;
+  userame: string;
 }
 
 export class UpdateUserDto {
@@ -16,7 +16,7 @@ export class UpdateUserDto {
   email?: string;
 
   @IsString()
-  name?: string;
+  userame?: string;
 
   @IsString()
   githubUrl?: string;
