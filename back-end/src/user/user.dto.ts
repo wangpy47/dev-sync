@@ -8,7 +8,7 @@ export class CreateUserDto {
   password: string;
 
   @IsString()
-  username: string;
+  name: string;
 }
 
 export class UpdateUserDto {
