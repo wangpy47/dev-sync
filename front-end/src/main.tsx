@@ -1,4 +1,3 @@
-import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
 import "./index.css";
@@ -6,6 +5,8 @@ import { Provider } from "react-redux";
 import store from "./redux/store.ts";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { UserPage } from "./components/UserPage.tsx";
+import { EditResume } from "./components/EditResume.tsx";
+import { GitResume } from "./components/GitResume.tsx";
 
 const router = createBrowserRouter([
   {
@@ -18,12 +19,20 @@ const router = createBrowserRouter([
       },
     ],
   },
+  {
+    path: "/resume",
+    element: <EditResume />,
+    children: [
+      {
+        path: "edit",
+        element: <GitResume />,
+      },
+    ],
+  },
 ]);
 
 createRoot(document.getElementById("root")!).render(
-
-    <Provider store={store}>
-      <RouterProvider router={router} />
-    </Provider>
- 
+  <Provider store={store}>
+    <RouterProvider router={router} />
+  </Provider>
 );

@@ -1,16 +1,38 @@
+/** @jsxImportSource @emotion/react */
+import { css } from "@emotion/react";
 import Header from "./components/Header";
-import "./App.css";
-import Content from "./components/Content";
 import Footer from "./components/Footer";
-import { Box } from "@mui/material";
 import { useEffect } from "react";
-import { useDispatch, UseDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { login, logout } from "./redux/redux";
+import { Outlet } from "react-router-dom";
+
+const layoutStyle = css`
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 100vw;
+  overflow-x: hidden; /* 가로 스크롤 숨기기 */
+`;
+
+const contentWrapperStyle = css`
+  flex-grow: 1;
+  margin: 0;
+  box-sizing: border-box; /* 패딩 포함 */
+  overflow-x: hidden; /* 가로 스크롤 숨기기 */
+`;
+
+const innerContentStyle = css`
+  min-height: 800px;
+  background-color: #f7f7f8;
+  box-sizing: border-box; /* 패딩 포함 */
+  @media (max-width: 768px) {
+    padding: 1rem; /* 모바일 화면에서 padding 조정 */
+  }
+`;
 
 function App() {
   const dispatch = useDispatch();
-  const isLogin = useSelector((state: any) => state.login.loggedIn);
-
   useEffect(() => {
     fetch("http://localhost:3000/auth/status", {
       credentials: "include",
@@ -18,7 +40,6 @@ function App() {
       .then((response) => response.text())
       .then((data) => {
         if (data === "Not authenticated") {
-          console.log(data);
           dispatch(logout());
         } else {
           // 유저가 여전히 로그인된 상태
@@ -36,13 +57,15 @@ function App() {
   }, []);
 
   return (
-    <>
-      <Box display="flex" flexDirection="column" minHeight="100vh">
-        <Header />
-        <Content />
-        <Footer />
-      </Box>
-    </>
+    <div css={layoutStyle}>
+      <Header />
+      <main css={contentWrapperStyle}>
+        <div css={innerContentStyle}>
+          <Outlet />
+        </div>
+      </main>
+      <Footer />
+    </div>
   );
 }
 

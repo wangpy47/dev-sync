@@ -5,8 +5,8 @@ import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Alert, AlertTitle, Collapse, Divider } from "@mui/material";
-import Snackbar from "@mui/material/Snackbar";
+import { Alert, Collapse, Divider, InputAdornment } from "@mui/material";
+import { login } from "../redux/redux";
 
 // 공통 스타일 정의
 const containerStyle = css`
@@ -41,7 +41,7 @@ const labelStyle = css`
   font-size: 0.9rem;
   font-weight: bold;
   margin: 1rem;
-  width: 40%;
+  width: 35%;
 `;
 
 const customTextFieldStyle = css`
@@ -63,14 +63,24 @@ const CustomTextField = ({ label, value, onChange }: CustomTextProps) => (
     onChange={(e) => onChange(e.target.value)} // 입력값 변경 처리
     size="small"
     css={customTextFieldStyle}
+    slotProps={
+      label === "Github"
+        ? {
+            input: {
+              startAdornment: (
+                <InputAdornment position="start">github.com/</InputAdornment>
+              ),
+            },
+          }
+        : undefined
+    }
   />
 );
 
 // UserPage 컴포넌트
 export const UserPage = () => {
-  const dispatch = useDispatch();
   const userData = useSelector((state: any) => state.login.loginInfo);
-
+  const dispatch = useDispatch();
   // 로컬 상태로 사용자 데이터 관리
   const [username, setUsername] = useState(userData.username || "");
   const [email, setEmail] = useState(userData.email || "");
@@ -121,6 +131,7 @@ export const UserPage = () => {
         const result = await response.json();
         console.log("Profile image update success:", result);
         setAlertProfile(true);
+        dispatch(login(result));
       } else {
         const error = await response.json();
         console.error("Profile image update failed:", error.message || error);
@@ -141,14 +152,15 @@ export const UserPage = () => {
 
       body: JSON.stringify({
         email,
-        name: username,
+        username,
         githubUrl,
         blogUrl,
       }),
     });
     if (response.ok) {
       const result = await response.json();
-      console.log("Update success:", result);
+      console.log("Update success:", result.githubUrl);
+      dispatch(login(result));
       setAlertInfor(true);
     } else {
       const error = await response.json();
@@ -183,25 +195,23 @@ export const UserPage = () => {
               sx={{ width: 75, height: 75 }}
             />
             <input
+              id="fileInput"
               css={css`
-                margin: 1.5rem;
-                &::file-selector-button {
-                  background-color: #2171c7;
-                  color: white;
-                  border: none;
-                  padding: 0.4rem 1rem;
-                  border-radius: 4px;
-                  font-size: 0.9rem;
-                  cursor: pointer;
-                  transition: background-color 0.3s ease;
-                }
-                &:hover::file-selector-button {
-                  background-color: #025ec1; /* 호버 시 색상 어둡게 */
-                }
+                display: none;
               `}
               type="file"
               onChange={handlePreviewChange}
             />
+            <Button
+              css={css`
+                margin: 1.5rem;
+              `}
+              size="small"
+              variant="contained"
+              onClick={() => document.getElementById("fileInput")!.click()}
+            >
+              파일 선택
+            </Button>
           </div>
           <div css={buttonGroupStyle}>
             <Button
