@@ -22,4 +22,7 @@ export class User {
 
   @Column({ nullable: true })
   blogUrl: string;
+
+  @Column({ nullable: true })
+  profileImageUrl: string;
 }

@@ -10,13 +10,22 @@ import { useState } from "react";
 import LoginForm from "./LoginForm";
 import LogoutButton from "./logoutButton";
 import TestButton from "./TestButton";
+import { useSelector } from "react-redux";
+import ProfileButton from "./ProfileButton";
+import { Link, useNavigate } from "react-router-dom";
 // import AccountCircle from "@mui/icons-material/AccountCircle";
 
 const Header = () => {
   const [clickLoginForm, setClickLoginForm] = useState(false);
+  const isLogin = useSelector((state: any) => state.login.loggedIn);
+  const navigate = useNavigate();
 
   const handleOpenLogin = () => {
     setClickLoginForm(true);
+  };
+
+  const handleNavigate = () => {
+    navigate("/resume");
   };
 
   return (
@@ -36,22 +45,23 @@ const Header = () => {
         }}
       >
         <Toolbar>
-          <Typography
-            variant="h6"
-            noWrap
-            component="a"
-            sx={{
-              mr: 3,
-              display: { xs: "none", md: "flex" },
-              fontWeight: "bold",
-              color: "#2361cb",
-              textDecoration: "none",
-            }}
-          >
-            DevSync
-          </Typography>
+          <h3 style={{ padding: "0 0.8rem 0.3rem 0" }}>
+            <Link
+              to="/"
+              style={{
+                textDecoration: "none",
+                color: "#2361cb",
+                fontWeight: "bold",
+              }}
+            >
+              DevSync
+            </Link>
+          </h3>
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
-            <Button sx={{ my: 0, color: "#3369c7", display: "block" }}>
+            <Button
+              onClick={handleNavigate}
+              sx={{ my: 0, color: "#3369c7", display: "block" }}
+            >
               이력서
             </Button>
             <Button sx={{ my: 0, color: "#3369c7", display: "block" }}>
@@ -62,22 +72,21 @@ const Header = () => {
             </Button>
           </Box>
           {/* 테스트버튼 */}
-          <TestButton />
-          <LogoutButton />
+          {/* <TestButton /> */}
+          {/* <LogoutButton /> */}
 
           <Box>
-            <Button variant="contained" size="small" onClick={handleOpenLogin}>
-              login
-            </Button>
-            {/* <IconButton
-            size="large"
-            aria-label="account of current user"
-            aria-controls="menu-appbar"
-            aria-haspopup="true"
-            edge="end"
-          >
-            <AccountCircle />
-          </IconButton> */}
+            {!isLogin ? (
+              <Button
+                variant="contained"
+                size="small"
+                onClick={handleOpenLogin}
+              >
+                login
+              </Button>
+            ) : (
+              <ProfileButton />
+            )}
           </Box>
         </Toolbar>
       </AppBar>

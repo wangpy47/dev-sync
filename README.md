@@ -2,7 +2,9 @@
 
 ## 프로젝트 소개
 
-현재 이 프로젝트는 구글 로그인과 사용자 깃 정보를 기반한 자소서 작성 기능을 구현한 상태입니다(백엔드). 최근 개발 내역은 dev브랜치를 확인해 주세요. **NestJS**와 **React**로 구성된 풀스택 애플리케이션으로, **back-end**에서는 **NestJS**를 사용하고, **front-end**에서는 **React**와 **Vite**를 사용하고 있습니다.
+
+현재 이 프로젝트는 구글 로그인, 사용자 정보 변경, gitHub API를 이용한 사용자 경력 불러오기, GPT3.5 Turbo API를 이용한 텍스트 생성을 구현한 상태입니다. **NestJS**와 **React**로 구성된 풀스택 애플리케이션으로, **back-end**에서는 **NestJS**를 사용하고, **front-end**에서는 **React**와 **Vite**를 사용하고 있습니다.
+
 
 ### 기능
 - **구글 로그인**: 구글 OAuth 2.0을 이용해 사용자가 로그인할 수 있습니다.
@@ -22,12 +24,15 @@
      npm install
    
   2. .env 파일 설정:
-  백엔드 디렉토리(back-end)에 .env 파일을 생성하고, 구글 OAuth 클라이언트 ID와 시크릿을 입력합니다:
-   ``  `bash
-     GOOGLE_CLIENT_ID=your_google_client_id
-     GOOGLE_CLIENT_SECRET=your_google_client_secret
+  백엔드 디렉토리(back-end)에 .env.example 파일을 참고하여 필요로 하는 api 키를 입력합니다  
+  (키가 없을 경우 아무런 값이나 입력해도 됩니다. 하지만 api동작은 하    지 않습니다.):
+     ```bash
+     OPENAI_API_KEY=your_openai_api_key_here
+     GOOGLE_CLIENT_ID=your_google_client_id_here
+     GOOGLE_CLIENT_SECRET=your_google_client_secret_here
+     GITHUB_TOKEN=your_github_api_key_here
 
-  3. 개발 모드로 서버를 시작합니다:
+  4. 개발 모드로 서버를 시작합니다:
      ```bash
      npm run start:dev
 
