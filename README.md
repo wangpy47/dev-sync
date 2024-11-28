@@ -2,7 +2,9 @@
 
 ## 프로젝트 소개
 
+
 현재 이 프로젝트는 구글 로그인, 사용자 정보 변경, gitHub API를 이용한 사용자 경력 불러오기, GPT3.5 Turbo API를 이용한 텍스트 생성을 구현한 상태입니다. **NestJS**와 **React**로 구성된 풀스택 애플리케이션으로, **back-end**에서는 **NestJS**를 사용하고, **front-end**에서는 **React**와 **Vite**를 사용하고 있습니다.
+
 
 ### 기능
 - **구글 로그인**: 구글 OAuth 2.0을 이용해 사용자가 로그인할 수 있습니다.
@@ -57,5 +59,5 @@
 
   ####기술 스택
 
-  백엔드: NestJS, TypeORM, Passport (Google OAuth)
+  백엔드: NestJS, TypeORM, Passport (Google OAuth), GitHub API, Open AI API
   프론트엔드: React, Vite
