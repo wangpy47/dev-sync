@@ -6,6 +6,7 @@ import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { login, logout } from "./redux/redux";
 import { Outlet } from "react-router-dom";
+import MainBody from "./components/body/Main.body";
 
 const layoutStyle = css`
   display: flex;
@@ -64,6 +65,7 @@ function App() {
           <Outlet />
         </div>
       </main>
+      <MainBody />
       <Footer />
     </div>
   );
