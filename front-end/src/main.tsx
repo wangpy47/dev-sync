@@ -7,6 +7,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { UserPage } from "./components/UserPage.tsx";
 import { EditResume } from "./components/EditResume.tsx";
 import { GitResume } from "./components/GitResume.tsx";
+import MainBody from "./components/body/Main.body.tsx";
 
 const router = createBrowserRouter([
   {
@@ -16,6 +17,10 @@ const router = createBrowserRouter([
       {
         path: "users",
         element: <UserPage />,
+      },
+      {
+        index: true,
+        element: <MainBody />,
       },
     ],
   },

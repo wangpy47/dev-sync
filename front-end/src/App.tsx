@@ -65,7 +65,6 @@ function App() {
           <Outlet />
         </div>
       </main>
-      <MainBody />
       <Footer />
     </div>
   );
