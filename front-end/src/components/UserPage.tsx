@@ -64,7 +64,7 @@ const CustomTextField = ({ label, value, onChange }: CustomTextProps) => (
     size="small"
     css={customTextFieldStyle}
     slotProps={
-      label === "Github"
+      label === "Github-Name"
         ? {
             input: {
               startAdornment: (
@@ -267,7 +267,7 @@ export const UserPage = () => {
             <div css={labelStyle}>
               GitHub
               <CustomTextField
-                label="Github"
+                label="Github-Name"
                 value={githubUrl}
                 onChange={setGithubUrl}
               />
