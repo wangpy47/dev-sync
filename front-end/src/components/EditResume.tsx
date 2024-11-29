@@ -14,6 +14,7 @@ import {
 import { Navigate, Outlet, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { GitResume } from "./GitResume";
+import GitRepoList from "./GitRepoList";
 
 const containerStyle = css`
   display: flex;
@@ -83,8 +84,15 @@ export const EditResume = () => {
   const navigate = useNavigate();
   const [gitBtnClick, setGitBtnClick] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [repoData, setRepoData] = useState<{ name: string }[]>([]);
+  const [selectedRepos, setSelectedRepos] = useState<{ name: string; selected: boolean }[]>([]);
 
+  const handleSelectionChange = (updatedSelection: { name: string; selected: boolean }[]) => {
+    setSelectedRepos(updatedSelection);
+  };
+  
   const updateUserData = async () => {
+    setRepoData([]); // 레포지토리 배열 초기화
     setIsLoading(true);
     const response = await fetch("http://localhost:3000/resume/get-user-repo", {
       method: "GET",
@@ -92,10 +100,21 @@ export const EditResume = () => {
     });
 
     if (response.ok) {
-      const result = await response.json();
+      const data = await response.json();
+      setRepoData(data); // 받아온 배열 저
+      setIsLoading(false);
+      // await generateResume(profileData);
+    } else {
+      const error = await response.json();
+      console.error("Update failed:", error);
+    }
+  };
 
-      // result 객체 배열을 텍스트로 변환하여 자소서 생성을 위한 요약 데이터로 사용
-      const profileData = result
+  const generateResume = async (repoData: any[]) => {
+    const filteredRepos = repoData.filter((repo) => repo.selected);
+
+    setIsLoading(true);
+    const profileData = filteredRepos
         .map(
           (repo) =>
             `Repository: ${repo.name}\nDescription: ${
@@ -110,15 +129,6 @@ export const EditResume = () => {
         )
         .join("\n");
 
-      // console.log(profileData)
-      await generateResume(profileData);
-    } else {
-      const error = await response.json();
-      console.error("Update failed:", error);
-    }
-  };
-
-  const generateResume = async (profileData: object[]) => {
     try {
       const response = await fetch("http://localhost:3000/resume/generate", {
         method: "POST",
@@ -130,11 +140,14 @@ export const EditResume = () => {
 
       const result = await response.json();
       console.log(result.resume);
-      setGitBtnClick(true);
-      setIsLoading(false);
+      // setGitBtnClick(true);
+      // setIsLoading(false);
+      
     } catch (error) {
       console.error("Error generating resume:", error);
+      
     }
+    setIsLoading(false);
   };
 
   const changeNavigate = () => {
@@ -186,6 +199,23 @@ export const EditResume = () => {
                 <CircularProgress size={60} />
               </div>
             )}
+
+            {/* GitResultList 컴포넌트 호출 */}
+           
+            
+            {repoData.length > 0 && <div><GitRepoList result={repoData} onSelectionChange={handleSelectionChange}/>
+            <Button
+            variant="contained"
+            size="large"
+            color="primary"
+            onClick={()=>{generateResume(selectedRepos)}}
+          >
+            이력서 만들기
+          </Button>
+          </div>
+            }
+            
+            
           </>
         ) : (
           <GitResume />
