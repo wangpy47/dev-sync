@@ -28,6 +28,7 @@ export class UpdateUserDto {
   @IsString()
   @IsOptional()
   profileImageUrl?: string; 
+  
 }
 
 
