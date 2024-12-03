@@ -27,14 +27,32 @@ const containerStyle = css`
   }
 `;
 
-const panelStyle = css`
+const leftPanelStyle = css`
   flex: 1;
-  padding: 20px;
   overflow-y: auto;
-  border: 2px solid #ddd;
-  border-radius: 8px;
-  margin: 10px;
+  border: 2px solid #e8e7e7;
+  box-shadow: 2px 2px 2px #e9e9e9a5;
+  border-radius: 4px;
+  margin: 9px;
+  &:first-of-type {
+    margin-right: 5px;
+  }
 
+  @media (max-width: 768px) {
+    &:first-of-type {
+      margin-right: 0;
+      margin-bottom: 5px;
+    }
+  }
+`;
+
+const rightPanelStyle = css`
+  flex: 1;
+  overflow-y: hidden;
+  border: 2px solid #e8e7e7;
+  box-shadow: 2px 2px 2px #e9e9e9a5;
+  border-radius: 4px;
+  margin: 9px;
   &:first-of-type {
     margin-right: 5px;
   }
@@ -49,10 +67,9 @@ const panelStyle = css`
 
 const pdfViewerStyle = css`
   width: 100%;
-  height: calc(100% - 20px);
+  height: 100%;
   border: none;
   color: #853434;
-  border-radius: 10px;
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
 `;
 
@@ -85,12 +102,17 @@ export const EditResume = () => {
   const [gitBtnClick, setGitBtnClick] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [repoData, setRepoData] = useState<{ name: string }[]>([]);
-  const [selectedRepos, setSelectedRepos] = useState<{ name: string; selected: boolean }[]>([]);
+  const [selectedRepos, setSelectedRepos] = useState<
+    { name: string; selected: boolean }[]
+  >([]);
+  const [gitInfo, setGitInfo] = useState("");
 
-  const handleSelectionChange = (updatedSelection: { name: string; selected: boolean }[]) => {
+  const handleSelectionChange = (
+    updatedSelection: { name: string; selected: boolean }[]
+  ) => {
     setSelectedRepos(updatedSelection);
   };
-  
+
   const updateUserData = async () => {
     setRepoData([]); // 레포지토리 배열 초기화
     setIsLoading(true);
@@ -115,19 +137,19 @@ export const EditResume = () => {
 
     setIsLoading(true);
     const profileData = filteredRepos
-        .map(
-          (repo) =>
-            `Repository: ${repo.name}\nDescription: ${
-              repo.description || "N/A"
-            }\nLanguage: ${repo.language || "N/A"}\nSize: ${
-              repo.size
-            } KB\nStars: ${repo.stargazers_count}\nForks: ${
-              repo.forks_count
-            }\nRecent Commit Messages: ${repo.recent_commit_messages.join(
-              ", "
-            )}\n`
-        )
-        .join("\n");
+      .map(
+        (repo) =>
+          `Repository: ${repo.name}\nDescription: ${
+            repo.description || "N/A"
+          }\nLanguage: ${repo.language || "N/A"}\nSize: ${
+            repo.size
+          } KB\nStars: ${repo.stargazers_count}\nForks: ${
+            repo.forks_count
+          }\nRecent Commit Messages: ${repo.recent_commit_messages.join(
+            ", "
+          )}\n`
+      )
+      .join("\n");
 
     try {
       const response = await fetch("http://localhost:3000/resume/generate", {
@@ -140,12 +162,9 @@ export const EditResume = () => {
 
       const result = await response.json();
       console.log(result.resume);
-      // setGitBtnClick(true);
-      // setIsLoading(false);
-      
+      setGitBtnClick(true);
     } catch (error) {
       console.error("Error generating resume:", error);
-      
     }
     setIsLoading(false);
   };
@@ -157,8 +176,8 @@ export const EditResume = () => {
   return (
     <div css={containerStyle}>
       {/* 왼쪽 입력 영역 */}
-      <div css={panelStyle}>
-        {!gitBtnClick ? (
+      <div css={leftPanelStyle}>
+        {gitBtnClick ? (
           <>
             <div>
               <div css={titleStyle}>
@@ -201,41 +220,36 @@ export const EditResume = () => {
             )}
 
             {/* GitResultList 컴포넌트 호출 */}
-           
-            
-            {repoData.length > 0 && <div><GitRepoList result={repoData} onSelectionChange={handleSelectionChange}/>
-            <Button
-            variant="contained"
-            size="large"
-            color="primary"
-            onClick={()=>{generateResume(selectedRepos)}}
-          >
-            이력서 만들기
-          </Button>
-          </div>
-            }
-            
-            
+
+            {repoData.length > 0 && (
+              <div
+                css={css`
+                  padding: 0px 10px;
+                `}
+              >
+                <GitRepoList
+                  result={repoData}
+                  onSelectionChange={handleSelectionChange}
+                />
+                <Button
+                  variant="contained"
+                  size="large"
+                  color="primary"
+                  onClick={() => {
+                    generateResume(selectedRepos);
+                  }}
+                >
+                  이력서 만들기
+                </Button>
+              </div>
+            )}
           </>
         ) : (
           <GitResume />
         )}
       </div>
-      {/* <div css={panelStyle}>
-        <h2>git과 연동하여 이력서를 작성 해보세요.</h2>
-        <Button variant="contained" onClick={updateUserData}>
-          git 정보 가져오기
-        </Button>
-        <Button variant="outlined" onClick={changeNavigate}>
-          {" "}
-          돌아가기{" "}
-        </Button>
-
-        <Outlet />
-      </div> */}
-
       {/* 오른쪽 PDF 미리보기 영역 */}
-      <div css={panelStyle}>
+      <div css={rightPanelStyle}>
         <PDFViewer css={pdfViewerStyle}>
           <PdfDocument />
         </PDFViewer>
@@ -244,24 +258,7 @@ export const EditResume = () => {
             margin-top: 10px;
             text-align: center;
           `}
-        >
-          {/* <PDFDownloadLink document={<PdfDocument />} fileName="resume.pdf">
-            {({ loading}) => {
-              if (loading) {
-                return (
-                  <Button variant="contained" color="primary">
-                    Preparing...
-                  </Button>
-                );
-              }
-              return (
-                <Button variant="contained" color="secondary">
-                  Download Resume
-                </Button>
-              );
-            }}
-          </PDFDownloadLink> */}
-        </div>
+        ></div>
       </div>
     </div>
   );

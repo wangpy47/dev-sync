@@ -7,7 +7,7 @@ const containerStyle = css`
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  margin-top: 20px;
+  margin: 20px 0px;
 `;
 
 const itemStyle = css`
@@ -28,10 +28,17 @@ const itemStyle = css`
   }
 `;
 
-const GitRepoList = ({ result, onSelectionChange }: { result: { name: string }[]; onSelectionChange: (selected: { name: string; selected: boolean }[]) => void }) => {
+const GitRepoList = ({
+  result,
+  onSelectionChange,
+}: {
+  result: { name: string }[];
+  onSelectionChange: (selected: { name: string; selected: boolean }[]) => void;
+}) => {
   const [visibleIndexes, setVisibleIndexes] = useState<number[]>([]);
-  const [selectedItems, setSelectedItems] = useState<{ name: string; selected: boolean }[]>([]);
-
+  const [selectedItems, setSelectedItems] = useState<
+    { name: string; selected: boolean }[]
+  >([]);
 
   useEffect(() => {
     // 초기 상태 설정
@@ -72,9 +79,9 @@ const GitRepoList = ({ result, onSelectionChange }: { result: { name: string }[]
           css={itemStyle}
           className={visibleIndexes.includes(index) ? "visible" : ""}
         >
-          <Checkbox 
-          defaultChecked // 기본 체크 상태
-          onChange={() => handleCheckboxChange(index)}
+          <Checkbox
+            defaultChecked // 기본 체크 상태
+            onChange={() => handleCheckboxChange(index)}
           />
           <Typography>{item.name}</Typography>
         </div>
