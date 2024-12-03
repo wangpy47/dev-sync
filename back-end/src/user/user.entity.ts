@@ -25,4 +25,7 @@ export class User {
 
   @Column({ nullable: true })
   profileImageUrl: string;
+
+  @Column({ type: 'text', nullable: true })
+  portfolioText: string;
 }

@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Request, Body, HttpException, HttpStatus } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Request,
+  Body,
+  HttpException,
+  HttpStatus,
+} from '@nestjs/common';
 import { ResumeService } from './resume.service';
 import { UserService } from 'src/user/user.service';
 import { ResumeGenerationService } from './resumeGeneration.Service';
@@ -18,10 +26,14 @@ export class ResumeController {
       // 입력 데이터 길이를 최대 4000자로 제한
       const limitedProfileData = profileData.slice(0, 4000);
 
-      const resume = await this.resumeGenerationService.generateResume(limitedProfileData);
+      const resume =
+        await this.resumeGenerationService.generateResume(limitedProfileData);
       return { resume };
     } catch (error) {
-      throw new HttpException('Failed to generate resume', HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException(
+        'Failed to generate resume',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
@@ -36,7 +48,8 @@ export class ResumeController {
       const username = user.githubUrl.split('/').pop();
 
       // 모든 레포지토리 가져오기
-      const repositories = await this.resumeService.getUserRepositories(username);
+      const repositories =
+        await this.resumeService.getUserRepositories(username);
 
       // 레포지토리를 크기순으로 내림차순 정렬 후 최대 7개 선택
       const topRepositories = repositories
@@ -53,10 +66,19 @@ export class ResumeController {
           stargazers_count: repository.stargazers_count,
           forks_count: repository.forks_count,
           html_url: repository.html_url,
-          readme_content: !repository.description && await this.resumeService.getReadmeContent(username, repository.name),
+          readme_content:
+            !repository.description &&
+            (await this.resumeService.getReadmeContent(
+              username,
+              repository.name,
+            )),
         };
 
-        const additionalData = await this.resumeService.getAdditionalRepositoryData(username, repository.name);
+        const additionalData =
+          await this.resumeService.getAdditionalRepositoryData(
+            username,
+            repository.name,
+          );
         userinfo.push({ ...repoInfo, ...additionalData });
       }
 
@@ -64,6 +86,37 @@ export class ResumeController {
       return userinfo;
     } else {
       return 'Not authenticated';
+    }
+  }
+
+  @Post('save-portfolio')
+  async saveResume(
+    @Request() req,
+    @Body('resume') resume: string,
+  ) {
+    // 세션 인증 검사
+    if (!req.isAuthenticated()) {
+      throw new HttpException('Not authenticated', HttpStatus.UNAUTHORIZED);
+    }
+  
+    // 데이터 유효성 검사
+    if (!resume) {
+      throw new HttpException('자소서 내용이 필요합니다.', HttpStatus.BAD_REQUEST);
+    }
+  
+    try {
+      // 세션에서 이메일 가져오기
+      const email = req.user.email;
+  
+      // UserService의 updatePortfolio 호출
+      await this.userService.updatePortfolio(email, resume);
+  
+      return { message: 'Resume saved successfully.' };
+    } catch (error) {
+      throw new HttpException(
+        'Failed to save resume',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 }

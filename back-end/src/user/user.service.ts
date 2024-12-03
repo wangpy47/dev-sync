@@ -97,4 +97,21 @@ export class UserService {
   deleteUser(email: any) {
     return this.userRepository.delete({ email });
   }
+
+
+  // 포트폴리오 텍스트 업데이트
+  async updatePortfolio(email: string, portfolioText: string) {
+    if (!email) {
+      throw new HttpException('이메일이 필요합니다.', HttpStatus.BAD_REQUEST);
+    } 
+
+    const user = await this.userRepository.findOne({ where: { email } });
+    if (!user) {
+      throw new HttpException('사용자를 찾을 수 없습니다.', HttpStatus.NOT_FOUND);
+    } 
+
+    // 포트폴리오 텍스트 업데이트
+    user.portfolioText = portfolioText;
+    return this.userRepository.save(user);
+  }
 }
