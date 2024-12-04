@@ -1,6 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
-import { Button, TextField, Typography } from "@mui/material";
+import { Button, Chip, TextField, Typography } from "@mui/material";
+import { useState } from "react";
 
 const contentStyle = css`
   border: 2px solid #c7c7c7;
@@ -22,6 +23,20 @@ const titleStyle = css`
 const sectionStyle = css``;
 
 export const GitResume = () => {
+  const [skills, setSkills] = useState<string[]>([]);
+  const [inputValue, setInputValue] = useState<string>("");
+
+  const handleAddSkill = () => {
+    if (inputValue.trim()) {
+      setSkills([...skills, inputValue.trim()]);
+      setInputValue("");
+    }
+  };
+
+  const handleDeleteSkill = (skillToDelete: string) => {
+    setSkills(skills.filter((skill) => skill !== skillToDelete));
+  };
+
   return (
     <>
       <div
@@ -107,8 +122,54 @@ export const GitResume = () => {
             <Typography variant="h5">기술 스택</Typography>
           </div>
           <div css={sectionStyle}>
-            <TextField sx={{ width: "100%" }} multiline rows={4} />
+            <div
+              style={{
+                display: "flex",
+                gap: "10px",
+                marginBottom: "1.5rem",
+                width: "100%",
+              }}
+            >
+              <TextField
+                label="스킬 입력"
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                fullWidth
+              />
+              <Button variant="contained" onClick={handleAddSkill}>
+                추가
+              </Button>
+            </div>
+
+            <div
+              style={{
+                display: "flex",
+                flexWrap: "wrap",
+                gap: "10px",
+                width: "100%",
+              }}
+            >
+              {skills.map((skill, index) => (
+                <Chip
+                  key={index}
+                  label={skill}
+                  onDelete={() => handleDeleteSkill(skill)}
+                  color="primary"
+                  style={{ fontSize: "16px" }}
+                />
+              ))}
+            </div>
           </div>
+        </div>
+
+        <div
+          css={css`
+            text-align: center;
+          `}
+        >
+          <Button variant="outlined" size="large">
+            섹션 추가하기
+          </Button>
         </div>
       </div>
     </>
