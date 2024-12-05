@@ -1,7 +1,8 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
 import { Button, Chip, TextField, Typography } from "@mui/material";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import CustomSection from "./CustomSection";
 
 const contentStyle = css`
   border: 2px solid #c7c7c7;
@@ -25,6 +26,7 @@ const sectionStyle = css``;
 export const GitResume = () => {
   const [skills, setSkills] = useState<string[]>([]);
   const [inputValue, setInputValue] = useState<string>("");
+  const [sections, setSections] = useState<number[]>([]);
 
   const handleAddSkill = () => {
     if (inputValue.trim()) {
@@ -35,6 +37,10 @@ export const GitResume = () => {
 
   const handleDeleteSkill = (skillToDelete: string) => {
     setSkills(skills.filter((skill) => skill !== skillToDelete));
+  };
+
+  const handleAddSection = () => {
+    setSections([...sections, sections.length + 1]);
   };
 
   return (
@@ -162,12 +168,18 @@ export const GitResume = () => {
           </div>
         </div>
 
+        <>
+          {sections.map((id) => (
+            <CustomSection key={id} />
+          ))}
+        </>
+
         <div
           css={css`
             text-align: center;
           `}
         >
-          <Button variant="outlined" size="large">
+          <Button variant="outlined" size="large" onClick={handleAddSection}>
             섹션 추가하기
           </Button>
         </div>
