@@ -14,13 +14,43 @@ export class ResumeGenerationService {
   async generateResume(profileData: string): Promise<string> {
     // 간결하고 직관적인 영어 프롬프트로 작성
     const prompt = `
-Generate a professional resume in Korean based on this GitHub profile data. 
-Include strengths, weaknesses, technical stack, project contributions, and general developer traits like teamwork and problem-solving.
+Generate a detailed and structured JSON object for a developer portfolio in Korean based on the following GitHub profile data.
+The JSON object should include the following sections:
+
+1. introduction: // Developer's basic introduction
+   {
+     name: "", // Developer's name
+     description: "", // Developer's self-introduction (400 to 500 characters). Include details about their experience, core skills, and career goals.
+   }
+
+2. skills: // Developer's technical skills
+   {
+     strengths: [], // List of core technologies or strengths (e.g., React, Node.js, SQL, etc.)
+     knowledgeable: [], // List of secondary or familiar skills (e.g., Docker, TailwindCSS, etc.)
+   }
+
+3. projects: // Developer's major projects
+   [
+     {
+       name: "", // Project name
+       description: "", // Brief description of the project (what it is, what problem it solves, or its purpose).
+       outcomes: [
+         //  detailed achievements. Each should include:
+         // - What specific action the developer took (e.g., "Developed a feature to...").
+         // - What tools or technologies were used (e.g., "using React and Redux").
+         // - What result or improvement was achieved (e.g., "reduced loading time by 20%").
+       ],
+       role: "", // Developer's role in the project (e.g., "Frontend Developer", "Full-Stack Developer").
+     },
+   ]
 
 GitHub Profile Data:
 ${profileData}
 
-Output the resume in Korean within 2000 characters.
+Ensure the following:
+- The developer's self-introduction (description) includes at least 3 key points: their experience, core skills, and career goals, written in Korean and within 400-500 characters.
+- Each project's outcomes must include 2-3 detailed achievements that explain specific actions, the tools/technologies used, and the impact/results of those actions.
+- The JSON object should be in Korean and strictly adhere to the structure above.
 `;
 
     try {

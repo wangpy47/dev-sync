@@ -161,7 +161,7 @@ export const EditResume = () => {
       });
 
       const result = await response.json();
-      console.log(result.resume);
+      console.log(result);
       setGitBtnClick(true);
     } catch (error) {
       console.error("Error generating resume:", error);

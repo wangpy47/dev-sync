@@ -28,7 +28,7 @@ export class ResumeController {
 
       const resume =
         await this.resumeGenerationService.generateResume(limitedProfileData);
-      return { resume };
+      return JSON.parse(resume);
     } catch (error) {
       throw new HttpException(
         'Failed to generate resume',
