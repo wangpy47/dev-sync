@@ -177,7 +177,7 @@ export const EditResume = () => {
     <div css={containerStyle}>
       {/* 왼쪽 입력 영역 */}
       <div css={leftPanelStyle}>
-        {gitBtnClick ? (
+        {!gitBtnClick ? (
           <>
             <div>
               <div css={titleStyle}>
