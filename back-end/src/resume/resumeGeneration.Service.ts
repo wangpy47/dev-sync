@@ -14,13 +14,12 @@ export class ResumeGenerationService {
   async generateResume(profileData: string): Promise<string> {
     // 간결하고 직관적인 영어 프롬프트로 작성
     const prompt = `
-Generate a detailed and structured JSON object for a developer portfolio in Korean based on the following GitHub profile data.
+Generate a detailed and structured JSON object for a developer portfolio based on the following GitHub profile data.
 The JSON object should include the following sections:
 
 1. introduction: // Developer's basic introduction
    {
-     name: "", // Developer's name
-     description: "", // Developer's self-introduction (400 to 500 characters). Include details about their experience, core skills, and career goals.
+     description: "", // Developer's self-introduction in Korean (400 to 500 characters). Highlight their experience, core skills, and career goals.
    }
 
 2. skills: // Developer's technical skills
@@ -33,12 +32,15 @@ The JSON object should include the following sections:
    [
      {
        name: "", // Project name
-       description: "", // Brief description of the project (what it is, what problem it solves, or its purpose).
+       description: "", // Brief description of the project in Korean (what it is, what problem it solves, or its purpose).
        outcomes: [
-         //  detailed achievements. Each should include:
-         // - What specific action the developer took (e.g., "Developed a feature to...").
-         // - What tools or technologies were used (e.g., "using React and Redux").
-         // - What result or improvement was achieved (e.g., "reduced loading time by 20%").
+         {
+           title: "", // A short title describing the task or achievement in Korean (e.g., "구글 인증 구현").
+           result: "", // A detailed achievement in Korean, explaining:
+           // - What specific action the developer took (e.g., "Implemented user authentication using React and Redux").
+           // - What tools or technologies were used (e.g., "using TypeScript and Google API").
+           // - What result or improvement was achieved (e.g., "Reduced login time by 20%, improving user retention").
+         }
        ],
        role: "", // Developer's role in the project (e.g., "Frontend Developer", "Full-Stack Developer").
      },
@@ -48,10 +50,16 @@ GitHub Profile Data:
 ${profileData}
 
 Ensure the following:
-- The developer's self-introduction (description) includes at least 3 key points: their experience, core skills, and career goals, written in Korean and within 400-500 characters.
-- Each project's outcomes must include 2-3 detailed achievements that explain specific actions, the tools/technologies used, and the impact/results of those actions.
-- The JSON object should be in Korean and strictly adhere to the structure above.
+- All JSON keys (e.g., description, strengths, outcomes, title, result) must remain in **English**.
+- The developer's self-introduction, project descriptions, and outcomes must be written in **Korean**.
+- Each project's outcomes should include:
+  - 'title': A short title in Korean describing the task or achievement.
+  - 'result': A detailed explanation in Korean, emphasizing the tools/technologies used and the impact achieved.
+- Output the JSON object strictly adhering to the above structure.
 `;
+
+
+
 
     try {
       const response = await this.openai.chat.completions.create({
