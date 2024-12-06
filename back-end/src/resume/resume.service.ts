@@ -74,7 +74,6 @@ async getAdditionalRepositoryData(username: string, repositoryName: string) {
   // username에 해당하는 사용자의 커밋만 필터링
   pp.recent_commit_messages = commitMessages.data
     .filter(commit => commit.author && commit.author.login === username) // username 필터링
-    .slice(0, 10) // 최근 10개의 커밋
     .map(commit => {
       let message = commit.commit.message;
       message = message.replace(/\\n\s*\+/g, ''); // '\n' + 패턴 제거

@@ -12,9 +12,9 @@ import {
   Typography,
 } from "@mui/material";
 import { Navigate, Outlet, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { GitResume } from "./GitResume";
-import GitRepoList from "./GitRepoList";
+import GitRepoList from "./gitRepoList/GitRepoList";
 
 const containerStyle = css`
   display: flex;
@@ -107,11 +107,12 @@ export const EditResume = () => {
   >([]);
   const [gitInfo, setGitInfo] = useState("");
 
-  const handleSelectionChange = (
-    updatedSelection: { name: string; selected: boolean }[]
-  ) => {
-    setSelectedRepos(updatedSelection);
-  };
+  const handleSelectionChange = useCallback(
+    (updatedSelection: { name: string; selected: boolean; commits: { message: string; description: string} }[]) => {
+      setSelectedRepos(updatedSelection);
+    },
+    []
+  );
 
   const updateUserData = async () => {
     setRepoData([]); // 레포지토리 배열 초기화
@@ -135,21 +136,27 @@ export const EditResume = () => {
   const generateResume = async (repoData: any[]) => {
     const filteredRepos = repoData.filter((repo) => repo.selected);
 
-    setIsLoading(true);
-    const profileData = filteredRepos
-      .map(
-        (repo) =>
-          `Repository: ${repo.name}\nDescription: ${
-            repo.description || "N/A"
-          }\nLanguage: ${repo.language || "N/A"}\nSize: ${
-            repo.size
-          } KB\nStars: ${repo.stargazers_count}\nForks: ${
-            repo.forks_count
-          }\nRecent Commit Messages: ${repo.recent_commit_messages.join(
-            ", "
-          )}\n`
-      )
-      .join("\n");
+  setIsLoading(true);
+  const profileData = filteredRepos
+    .map((repo) => {
+      const commitDetails = repo.commits
+        .map(
+          (commit, index) =>
+            `- ${commit.message}\n  Description: ${
+              commit.description || "No additional details provided"
+            }`
+        )
+        .join("\n");
+
+      return `Repository: ${repo.name}\nDescription: ${
+        repo.description || "N/A"
+      }\nLanguage: ${repo.language || "N/A"}\nSize: ${
+        repo.size
+      } KB\nStars: ${repo.stargazers_count}\nForks: ${
+        repo.forks_count
+      }\nRecent Commit Details:\n${commitDetails}\n`;
+    })
+    .join("\n");
 
     try {
       const response = await fetch("http://localhost:3000/resume/generate", {
@@ -159,7 +166,7 @@ export const EditResume = () => {
         },
         body: JSON.stringify({ profileData }),
       });
-
+  
       const result = await response.json();
       console.log(result);
       setGitBtnClick(true);
@@ -168,6 +175,7 @@ export const EditResume = () => {
     }
     setIsLoading(false);
   };
+  
 
   const changeNavigate = () => {
     navigate("/");
@@ -175,17 +183,14 @@ export const EditResume = () => {
 
   return (
     <div css={containerStyle}>
-      {/* 왼쪽 입력 영역 */}
       <div css={leftPanelStyle}>
         {!gitBtnClick ? (
           <>
+            {/* 버튼 및 상태 표시 */}
             <div>
-              <div css={titleStyle}>
-                🚀 Git과 연동하여 이력서를 작성해보세요
-              </div>
+              <div css={titleStyle}>🚀 Git과 연동하여 이력서를 작성해보세요</div>
               <p css={subtitleStyle}>
-                Git 정보를 가져와 자동으로 이력서를 작성하고 PDF로 저장할 수
-                있어요.
+                Git 정보를 가져와 자동으로 이력서를 작성하고 PDF로 저장할 수 있어요.
               </p>
             </div>
             {!isLoading ? (
@@ -218,9 +223,8 @@ export const EditResume = () => {
                 <CircularProgress size={60} />
               </div>
             )}
-
-            {/* GitResultList 컴포넌트 호출 */}
-
+  
+            {/* GitRepoList 컴포넌트 */}
             {repoData.length > 0 && (
               <div
                 css={css`
@@ -248,17 +252,10 @@ export const EditResume = () => {
           <GitResume />
         )}
       </div>
-      {/* 오른쪽 PDF 미리보기 영역 */}
       <div css={rightPanelStyle}>
         <PDFViewer css={pdfViewerStyle}>
           <PdfDocument />
         </PDFViewer>
-        <div
-          css={css`
-            margin-top: 10px;
-            text-align: center;
-          `}
-        ></div>
       </div>
     </div>
   );
