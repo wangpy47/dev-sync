@@ -12,51 +12,62 @@ export class ResumeGenerationService {
   }
 
   async generateResume(profileData: string): Promise<string> {
+
     // 간결하고 직관적인 영어 프롬프트로 작성
     const prompt = `
-Generate a detailed and structured JSON object for a developer portfolio based on the following GitHub profile data.
-The JSON object should include the following sections:
+Using the following GitHub profile data, generate a structured JSON object for a developer portfolio. 
 
-1. introduction: // Developer's basic introduction
-   {
-     description: "", // Developer's self-introduction in Korean (400 to 500 characters). Highlight their experience, core skills, and career goals.
-   }
+### JSON Structure:
+{
+  "introduction": {
+    "description": "" // Developer's self-introduction in Korean (400-500 characters), focusing on their experience, core skills, and career goals.
+  },
+  "skills": {
+    "strengths": [], // List of key technical skills (e.g., React, Node.js, SQL).
+    "knowledgeable": [] // List of secondary or familiar skills (e.g., Docker, TailwindCSS).
+  },
+  "projects": [
+    {
+      "name": "", // Repository name.
+      "description": "", // Brief description of the project in Korean.
+      "outcomes": [
+        {
+          "title": "", // A short title in Korean summarizing the task or achievement (e.g., "구글 인증 구현").
+          "result": "" // Detailed explanation in Korean. Describe:
+          // - The specific action or task performed based on the commit message (e.g., "구글 인증 기능을 구현했습니다").
+          // - The tools/technologies used, if applicable (e.g., "TypeScript와 Google API를 활용").
+          // - The outcome or improvement achieved (e.g., "로그인 시간을 20% 단축하여 사용자 유지율을 높였습니다").
+        }
+      ],
+      "role": "" // Role played in the project (e.g., "Frontend Developer", "Full-Stack Developer").
+    }
+  ]
+}
 
-2. skills: // Developer's technical skills
-   {
-     strengths: [], // List of core technologies or strengths (e.g., React, Node.js, SQL, etc.)
-     knowledgeable: [], // List of secondary or familiar skills (e.g., Docker, TailwindCSS, etc.)
-   }
+### Guidelines:
+1. Use **only the information provided in the "GitHub Profile Data" section** to populate the JSON object.
+2. Do not fabricate data or add anything that is not explicitly stated in the profileData.
+3. For the "outcomes" section:
+   - Use each entry in "Recent Commit Details" to create an individual outcome.
+   - The "title" must summarize the task or feature implemented, directly reflecting the commit message.
+   - The "result" must describe the action, tools/technologies used (if applicable), and the outcome of the commit in Korean.
+   - If the commit message lacks detail, infer meaning conservatively based on the commit content and the repository's general purpose.
+4. Include all repositories from the profileData as individual projects in the "projects" key.
+5. The "description" field for each project should summarize the repository's purpose based on its name, commit history, or description in the profileData.
+6. Write all descriptive fields (e.g., introduction, outcomes) in **Korean**.
+7. Keep all JSON keys (e.g., description, strengths, outcomes) in **English**.
 
-3. projects: // Developer's major projects
-   [
-     {
-       name: "", // Project name
-       description: "", // Brief description of the project in Korean (what it is, what problem it solves, or its purpose).
-       outcomes: [
-         {
-           title: "", // A short title describing the task or achievement in Korean (e.g., "구글 인증 구현").
-           result: "", // A detailed achievement in Korean, explaining:
-           // - What specific action the developer took (e.g., "Implemented user authentication using React and Redux").
-           // - What tools or technologies were used (e.g., "using TypeScript and Google API").
-           // - What result or improvement was achieved (e.g., "Reduced login time by 20%, improving user retention").
-         }
-       ],
-       role: "", // Developer's role in the project (e.g., "Frontend Developer", "Full-Stack Developer").
-     },
-   ]
+### Important Notes:
+- Do not include work or outcomes that the user did not explicitly perform or commit, as detailed in the "GitHub Profile Data".
+- For missing or unclear details in the profileData, leave the fields empty or use placeholders such as "N/A".
+- Ensure the portfolio strictly matches the user's contributions and skills as represented in the profileData.
 
 GitHub Profile Data:
 ${profileData}
-
-Ensure the following:
-- All JSON keys (e.g., description, strengths, outcomes, title, result) must remain in **English**.
-- The developer's self-introduction, project descriptions, and outcomes must be written in **Korean**.
-- Each project's outcomes should include:
-  - 'title': A short title in Korean describing the task or achievement.
-  - 'result': A detailed explanation in Korean, emphasizing the tools/technologies used and the impact achieved.
-- Output the JSON object strictly adhering to the above structure.
 `;
+
+
+
 
 
 
