@@ -65,51 +65,70 @@ export class ResumeService {
 async getAdditionalRepositoryData(username: string, repositoryName: string) {
   const pp: any = {};
 
-  // 커밋 메시지
-  const commitMessages = await axios.get(
-    `https://api.github.com/repos/${username}/${repositoryName}/commits`, {
-      headers: this.getAuthHeaders(),
-    });
+  try {
+    // 커밋 메시지 가져오기
+    const commitMessages = await axios.get(
+      `https://api.github.com/repos/${username}/${repositoryName}/commits`, {
+        headers: this.getAuthHeaders(),
+      });
 
-  // username에 해당하는 사용자의 커밋만 필터링
-  pp.recent_commit_messages = commitMessages.data
-    .filter(commit => commit.author && commit.author.login === username) // username 필터링
-    .map(commit => {
-      let message = commit.commit.message;
-      message = message.replace(/\\n\s*\+/g, ''); // '\n' + 패턴 제거
-      message = message.replace(/\s+/g, ' '); // 여러 공백을 한 개로
-      message = message.replace(/\n+/g, '\n'); // 여러 줄바꿈을 한 줄로 통합
-      return message.trim();
-    });
+    // username에 해당하는 사용자의 커밋만 필터링
+    pp.recent_commit_messages = commitMessages.data
+      .filter(commit => commit.author && commit.author.login === username) // username 필터링
+      .map(commit => {
+        let message = commit.commit.message;
+        message = message.replace(/\n\s*\+/g, ''); // '\n' + 패턴 제거
+        message = message.replace(/\s+/g, ' '); // 여러 공백을 한 개로
+        message = message.replace(/\n+/g, '\n'); // 여러 줄바꿈을 한 줄로 통합
+        return message.trim();
+      })
+      .filter((message, index, self) => {
+        // 불필요한 메시지를 제거
+        const ignorePattern = /^(merge( branch)?|update|initial commit|release|resolve|bump|create readme|fix conflicts)/i;
+        if (ignorePattern.test(message)) return false;
 
-  // 기여자 정보
-  const contributorsData = await axios.get(
-    `https://api.github.com/repos/${username}/${repositoryName}/contributors`, {
-      headers: this.getAuthHeaders(),
-    });
-  const userContributions = contributorsData.data.find(contributor => contributor.login === username);
-  pp.contributions = userContributions ? userContributions.contributions : 0;
+        // 중복 메시지 제거
+        return self.indexOf(message) === index;
+      })
+      .filter(message => {
+        // 의미 없는 커밋 메시지 제거 (너무 짧은 메시지)
+        return message.length > 10; // 메시지가 10자 이하인 경우 제거
+      });
 
-  // 풀 리퀘스트
-  const pullRequests = await axios.get(
-    `https://api.github.com/repos/${username}/${repositoryName}/pulls`, {
-      headers: this.getAuthHeaders(),
-    });
-  pp.recent_pull_requests = pullRequests.data.slice(0, 3).map(pr => ({
-    title: pr.title,
-    created_at: pr.created_at,
-    status: pr.state,
-  }));
+    // 기여자 정보
+    const contributorsData = await axios.get(
+      `https://api.github.com/repos/${username}/${repositoryName}/contributors`, {
+        headers: this.getAuthHeaders(),
+      });
+    const userContributions = contributorsData.data.find(contributor => contributor.login === username);
+    pp.contributions = userContributions ? userContributions.contributions : 0;
 
-  // 릴리즈 정보
-  const releasesData = await axios.get(
-    `https://api.github.com/repos/${username}/${repositoryName}/releases`, {
-      headers: this.getAuthHeaders(),
-    });
-  pp.latest_release = releasesData.data.length > 0 ? releasesData.data[0].name : 'No release';
+    // 풀 리퀘스트
+    const pullRequests = await axios.get(
+      `https://api.github.com/repos/${username}/${repositoryName}/pulls`, {
+        headers: this.getAuthHeaders(),
+      });
+    pp.recent_pull_requests = pullRequests.data.slice(0, 3).map(pr => ({
+      title: pr.title,
+      created_at: pr.created_at,
+      status: pr.state,
+    }));
+
+    // 릴리즈 정보
+    const releasesData = await axios.get(
+      `https://api.github.com/repos/${username}/${repositoryName}/releases`, {
+        headers: this.getAuthHeaders(),
+      });
+    pp.latest_release = releasesData.data.length > 0 ? releasesData.data[0].name : 'No release';
+
+  } catch (error) {
+    console.error('Error fetching repository data:', error.response?.data || error.message);
+    throw new Error('Failed to fetch repository data');
+  }
 
   return pp;
 }
+
 
   
 
