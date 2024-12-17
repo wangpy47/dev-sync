@@ -69,11 +69,8 @@ const Header = () => {
             >
               이력서
             </Button>
-            <Button
-              onClick={() => handleNavigate("/")}
-              sx={{ my: 0, color: "#3369c7", display: "block" }}
-            >
-              문의하기
+            <Button sx={{ my: 0, color: "#3369c7", display: "block" }} onClick={()=>navigate('/contact')}>
+              문의
             </Button>
             <Button
               onClick={() => handleNavigate("/")}
