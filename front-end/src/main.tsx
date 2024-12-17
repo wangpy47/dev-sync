@@ -8,6 +8,8 @@ import { UserPage } from "./components/UserPage.tsx";
 import { EditResume } from "./components/EditResume.tsx";
 import { GitResume } from "./components/GitResume.tsx";
 import MainBody from "./components/body/Main.body.tsx";
+import ContactForm from "./components/contact/ContactForm.tsx";
+import Contact from "./components/contact/Contact.tsx";
 
 const router = createBrowserRouter([
   {
@@ -22,6 +24,15 @@ const router = createBrowserRouter([
         index: true,
         element: <MainBody />,
       },
+      {
+        path: "contact",
+        element: <Contact />,
+      },
+      {
+        path: "contact_form",
+        element: <ContactForm />,
+      },
+
     ],
   },
   {
@@ -34,6 +45,7 @@ const router = createBrowserRouter([
       },
     ],
   },
+  
 ]);
 
 createRoot(document.getElementById("root")!).render(
