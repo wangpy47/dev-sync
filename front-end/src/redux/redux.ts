@@ -13,6 +13,7 @@ interface LoginState {
     githubUrl: string | null;
     blogUrl: string | null;
   };
+  loginForm :boolean;
 }
 
 
@@ -28,6 +29,7 @@ const initialState : LoginState = {
     githubUrl: null,
     blogUrl: null,
   },
+  loginForm:false,
 }
 const loginSlice = createSlice({
     name : 'login',
@@ -40,9 +42,15 @@ const loginSlice = createSlice({
       logout(state){
        state.loggedIn = false;
        state.loginInfo = initialState.loginInfo
-      }
+      },
+      openLoginForm(state) {
+        state.loginForm = true; // 로그인폼 띄우기
+      },
+      closeLoginForm(state) {
+        state.loginForm = false; // 로그인폼 닫기
+      },
     }
 });
 
-export const {login, logout} = loginSlice.actions; // 액션 내보내기
+export const {login, logout, openLoginForm , closeLoginForm} = loginSlice.actions; // 액션 내보내기
 export default loginSlice.reducer; // 리듀서 내보내기

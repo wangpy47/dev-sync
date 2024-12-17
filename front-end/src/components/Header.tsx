@@ -8,24 +8,29 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import LoginForm from "./LoginForm";
-import LogoutButton from "./logoutButton";
-import TestButton from "./TestButton";
-import { useSelector } from "react-redux";
+// import LogoutButton from "./logoutButton";
+// import TestButton from "./TestButton";
+import { useDispatch, useSelector } from "react-redux";
 import ProfileButton from "./ProfileButton";
 import { Link, useNavigate } from "react-router-dom";
-// import AccountCircle from "@mui/icons-material/AccountCircle";
+import { openLoginForm } from "../redux/redux";
 
 const Header = () => {
-  const [clickLoginForm, setClickLoginForm] = useState(false);
   const isLogin = useSelector((state: any) => state.login.loggedIn);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleOpenLogin = () => {
-    setClickLoginForm(true);
+    dispatch(openLoginForm());
   };
 
-  const handleNavigate = () => {
-    navigate("/resume");
+  // 버튼 클릭 시 로그인 여부 체크 후 동작 처리
+  const handleNavigate = (path: string) => {
+    if (!isLogin) {
+      dispatch(openLoginForm()); // 로그인되지 않았다면 로그인 폼 열기
+    } else {
+      navigate(path); // 로그인 상태면 해당 경로로 이동
+    }
   };
 
   return (
@@ -59,7 +64,7 @@ const Header = () => {
           </h3>
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
             <Button
-              onClick={handleNavigate}
+              onClick={() => handleNavigate("/resume")}
               sx={{ my: 0, color: "#3369c7", display: "block" }}
             >
               이력서
@@ -67,7 +72,10 @@ const Header = () => {
             <Button sx={{ my: 0, color: "#3369c7", display: "block" }} onClick={()=>navigate('/contact')}>
               문의
             </Button>
-            <Button sx={{ my: 0, color: "#3369c7", display: "block" }}>
+            <Button
+              onClick={() => handleNavigate("/")}
+              sx={{ my: 0, color: "#3369c7", display: "block" }}
+            >
               커뮤니티
             </Button>
           </Box>
@@ -91,8 +99,8 @@ const Header = () => {
         </Toolbar>
       </AppBar>
       <LoginForm
-        clickLoginForm={clickLoginForm}
-        setClickLoginForm={setClickLoginForm}
+      // clickLoginForm={clickLoginForm}
+      // setClickLoginForm={setClickLoginForm}
       />
     </>
   );
