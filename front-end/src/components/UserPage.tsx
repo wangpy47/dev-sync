@@ -3,9 +3,19 @@ import { css } from "@emotion/react";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type SetStateAction } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Alert, Collapse, Divider, InputAdornment } from "@mui/material";
+import {
+  Alert,
+  Collapse,
+  Divider,
+  FormControl,
+  InputAdornment,
+  InputLabel,
+  MenuItem,
+  Select,
+  type SelectChangeEvent,
+} from "@mui/material";
 import { login } from "../redux/redux";
 
 // 공통 스타일 정의
@@ -23,6 +33,7 @@ const sectionStyle = css`
   flex-grow: 1;
   padding: 1.4rem;
   box-shadow: 0px 1px 3px rgba(134, 134, 134, 0.2);
+  width: 60%;
 `;
 
 const headerStyle = css`
@@ -38,14 +49,28 @@ const buttonGroupStyle = css`
 `;
 
 const labelStyle = css`
-  font-size: 0.9rem;
   font-weight: bold;
   margin: 1rem;
-  width: 35%;
+  flex-direction: column; /* 수직 정렬 */
+  align-items: flex-start; /* 왼쪽 정렬 */
+  display: flex;
+  width: 100%;
+`;
+
+const LongLabelStyle = css`
+  font-weight: bold;
+  margin: 1rem;
+  width: 100%;
 `;
 
 const customTextFieldStyle = css`
   background-color: #f9f9f9;
+  width: 75%;
+`;
+
+const longTextFieldStyle = css`
+  background-color: #f9f9f9;
+  width: 88.5%;
 `;
 
 // CustomTextField 컴포넌트
@@ -92,6 +117,25 @@ export const UserPage = () => {
   );
   const [alertProfile, setAlertProfile] = useState(false);
   const [alertInfor, setAlertInfor] = useState(false);
+  const [endEducation, setEndEducation] = useState<string>("");
+  const univApi = import.meta.env.VITE_APP_UNIVLIST_API_KEY;
+  const univUrl = import.meta.env.VITE_APP_UNIV_URL;
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(
+          `${univUrl}?serviceKey=${univApi}&type=json`
+        );
+        const result = await response.json();
+        console.log(result);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   useEffect(() => {
     if (userData) {
@@ -173,6 +217,11 @@ export const UserPage = () => {
       setPreviewImage(userData.profileImageUrl);
     }
   }, [userData.profileImageUrl]);
+
+  const handleEducationChange = (e: SelectChangeEvent<string>) => {
+    console.log(e.target.value);
+    setEndEducation(e.target.value);
+  };
 
   return (
     <>
@@ -281,12 +330,99 @@ export const UserPage = () => {
               />
             </div>
           </div>
+          <div
+            css={css`
+              display: flex;
+              flex-wrap: wrap;
+            `}
+          >
+            <div css={LongLabelStyle}>
+              Phone Number
+              <TextField
+                placeholder="01012341234"
+                variant="outlined"
+                size="small"
+                css={longTextFieldStyle}
+                slotProps={{
+                  input: {
+                    startAdornment: (
+                      <InputAdornment position="start">+82 |</InputAdornment>
+                    ),
+                  },
+                }}
+              />
+            </div>
+          </div>
           <div css={buttonGroupStyle}>
             <Button
               variant="contained"
               color="primary"
               size="medium"
               onClick={handleSave}
+            >
+              Save
+            </Button>
+          </div>
+        </div>
+      </div>
+      <Divider
+        css={css`
+          width: 80%;
+          margin: auto;
+        `}
+      />
+      <div css={containerStyle}>
+        <div css={headerStyle}>Career Information</div>
+        <div css={sectionStyle}>
+          <Collapse in={alertProfile}>
+            <Alert severity="success">프로필이 업데이트 되었습니다.</Alert>
+          </Collapse>
+          <div
+            css={css`
+              display: flex;
+              flex-direction: column;
+              width: 100%;
+            `}
+          >
+            <div css={labelStyle}>
+              Education
+              <FormControl sx={{ width: "45%" }}>
+                <Select
+                  displayEmpty
+                  size="small"
+                  value={endEducation}
+                  onChange={handleEducationChange}
+                >
+                  <MenuItem value="" disabled>
+                    학력 구분 선택
+                  </MenuItem>
+                  <MenuItem value="초등학교 졸업">초등학교 졸업</MenuItem>
+                  <MenuItem value="중학교 졸업">중학교 졸업</MenuItem>
+                  <MenuItem value="고등학교 졸업">고등학교 졸업</MenuItem>
+                  <MenuItem value="대학교대학원 이상 졸업">
+                    대학교·대학원 이상 졸업
+                  </MenuItem>
+                </Select>
+              </FormControl>
+            </div>
+            {endEducation === "대학교대학원 이상 졸업" && (
+              <div css={labelStyle}>
+                Univ
+                <TextField
+                  placeholder="학교명을 입력하세요"
+                  variant="outlined"
+                  size="small"
+                  sx={{ width: "45%" }}
+                />
+              </div>
+            )}
+          </div>
+          <div css={buttonGroupStyle}>
+            <Button
+              variant="contained"
+              color="primary"
+              size="medium"
+              onClick={updateProfileImage}
             >
               Save
             </Button>
