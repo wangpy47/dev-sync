@@ -7,6 +7,7 @@ import { User } from './user/user.entity';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import { ResumeModule } from './resume/resume.module';
+import { ContactModule } from './contact/contact.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { ResumeModule } from './resume/resume.module';
     AuthModule,
     ConfigModule.forRoot(),
     ResumeModule,
+    ContactModule,
   ],
   controllers: [AppController],
   providers: [AppService],
