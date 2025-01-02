@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import * as styles from "./Contact.styles";
+import * as styles from "./Inquiry.styles";
 
 
 // 저장된 문의 데이터 (조회 시 사용)
@@ -31,7 +31,6 @@ const Contact: React.FC = () => {
     message: "",
   });
 
-  const [inquiries, setInquiries] = useState<Inquiry[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const navigate = useNavigate();
 
@@ -66,6 +65,7 @@ const Contact: React.FC = () => {
       }
 
       alert("문의가 성공적으로 제출되었습니다!");
+      navigate("/inquiry");
       setFormData({ name: "", email: "", subject: "", message: "" });
     } catch (error) {
       console.error("Error:", error);
@@ -75,32 +75,11 @@ const Contact: React.FC = () => {
     }
   };
 
-  // 문의사항 조회
-  const fetchInquiries = async () => {
-    setLoading(true);
-    try {
-      const response = await fetch(
-        `http://localhost:3000/contact/inquiries?email=${formData.email}`
-      );
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch inquiries");
-      }
-
-      const data: Inquiry[] = await response.json();
-      setInquiries(data);
-    } catch (error) {
-      console.error("Error:", error);
-      alert("문의사항 조회에 실패했습니다.");
-    } finally {
-      setLoading(false);
-    }
-  };
 
   return (
     <div css={styles.container}>
       <div css={styles.card}>
-        <h2 css={styles.title}>내 문의사항</h2>
+        <h2 css={styles.title}>문의 하기</h2>
         <div css={styles.inputGroup}>
           <label>이름</label>
           <input
@@ -140,31 +119,10 @@ const Contact: React.FC = () => {
           <button onClick={submitInquiry} disabled={loading}>
             {loading ? "전송 중..." : "문의 제출"}
           </button>
-          <button onClick={fetchInquiries} disabled={loading}>
-            {loading ? "조회 중..." : "문의 조회"}
+          <button onClick={()=> navigate("/inquiry")} disabled={loading}>
+            돌아가기
           </button>
         </div>
-
-        {inquiries.length > 0 ? (
-          <ul css={styles.inquiryList}>
-            {inquiries.map((inquiry) => (
-              <li key={inquiry.id}>
-                <p>제목: {inquiry.subject}</p>
-                <p>내용: {inquiry.message}</p>
-                <p>작성일: {new Date(inquiry.createdAt).toLocaleString()}</p>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p>조회된 문의사항이 없습니다.</p>
-        )}
-
-        <button
-          css={styles.bottomButton}
-          onClick={() => navigate("/contact_form")}
-        >
-          문의하기
-        </button>
       </div>
     </div>
   );
