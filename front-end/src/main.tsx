@@ -8,8 +8,8 @@ import { UserPage } from "./components/UserPage.tsx";
 import { EditResume } from "./components/EditResume.tsx";
 import { GitResume } from "./components/GitResume.tsx";
 import MainBody from "./components/body/Main.body.tsx";
-import ContactForm from "./components/contact/ContactForm.tsx";
 import Contact from "./components/contact/Contact.tsx";
+import InquiryList from "./components/contact/InquiryList.tsx";
 
 const router = createBrowserRouter([
   {
@@ -25,14 +25,13 @@ const router = createBrowserRouter([
         element: <MainBody />,
       },
       {
+        path: "inquiry",
+        element: <InquiryList />,
+      },
+      {
         path: "contact",
         element: <Contact />,
       },
-      {
-        path: "contact_form",
-        element: <ContactForm />,
-      },
-
     ],
   },
   {

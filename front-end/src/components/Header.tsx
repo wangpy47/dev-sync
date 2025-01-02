@@ -69,7 +69,7 @@ const Header = () => {
             >
               이력서
             </Button>
-            <Button sx={{ my: 0, color: "#3369c7", display: "block" }} onClick={()=>navigate('/contact')}>
+            <Button sx={{ my: 0, color: "#3369c7", display: "block" }} onClick={()=>navigate('/inquiry')}>
               문의
             </Button>
             <Button
