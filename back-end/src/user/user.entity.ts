@@ -3,19 +3,22 @@ import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 @Entity()
 export class User {
   @PrimaryGeneratedColumn()
-  id?: number;
+  user_id?: number;
 
   @Column({ unique: true })
   email: string;
 
   @Column()
-  username: string;
+  name: string;
 
-  @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
-  createdDt: Date;
+  @Column({ nullable: true})
+  age:number;
 
-  @Column({ nullable: true, unique: true })
-  providerId: string;
+  @Column({nullable: true})
+  phone_number: string;
+
+  @Column({nullable: true})
+  profile_image: string;
 
   @Column({ nullable: true })
   githubUrl: string;
@@ -23,9 +26,6 @@ export class User {
   @Column({ nullable: true })
   blogUrl: string;
 
-  @Column({ nullable: true })
-  profileImageUrl: string;
-
-  @Column({ type: 'text', nullable: true })
-  portfolioText: string;
+  @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
+  createdDt: Date;
 }
