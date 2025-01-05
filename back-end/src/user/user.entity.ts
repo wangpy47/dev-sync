@@ -11,8 +11,8 @@ export class User {
   @Column()
   name: string;
 
-  @Column({ nullable: true})
-  age:number;
+  @Column({ type: 'date', nullable: true })
+  birthDate: Date;
 
   @Column({nullable: true})
   phone_number: string;
@@ -25,6 +25,16 @@ export class User {
 
   @Column({ nullable: true })
   blogUrl: string;
+
+  @Column({ type: 'varchar', nullable: true })
+  educationLevel: string; 
+
+  @Column({ type: 'varchar', nullable: true })
+  universityName: string; 
+
+  @Column({ type: 'varchar', nullable: true })
+  departmentName: string; 
+
 
   @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
   createdDt: Date;
