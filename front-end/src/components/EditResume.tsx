@@ -15,6 +15,7 @@ import { Navigate, Outlet, useNavigate } from "react-router-dom";
 import { useCallback, useEffect, useState } from "react";
 import { GitResume } from "./GitResume";
 import GitRepoList from "./gitRepoList/GitRepoList";
+import { ThreeCanvas } from "./ThreeCanvas";
 
 const containerStyle = css`
   display: flex;
@@ -97,6 +98,24 @@ const subtitleStyle = css`
   text-align: center;
 `;
 
+interface Project {
+  name: string;
+  description: string;
+  outcomes: string[];
+  role: string;
+}
+
+interface GitInfo {
+  introduction: {
+    description: string;
+  };
+  projects: Project[];
+  skills: {
+    knowledgeable: string[];
+    strengths: string[];
+  };
+}
+
 export const EditResume = () => {
   const navigate = useNavigate();
   const [gitBtnClick, setGitBtnClick] = useState(false);
@@ -105,10 +124,16 @@ export const EditResume = () => {
   const [selectedRepos, setSelectedRepos] = useState<
     { name: string; selected: boolean }[]
   >([]);
-  const [gitInfo, setGitInfo] = useState("");
+  const [gitInfo, setGitInfo] = useState<GitInfo | undefined>();
 
   const handleSelectionChange = useCallback(
-    (updatedSelection: { name: string; selected: boolean; commits: { message: string; description: string} }[]) => {
+    (
+      updatedSelection: {
+        name: string;
+        selected: boolean;
+        commits: { message: string; description: string };
+      }[]
+    ) => {
       setSelectedRepos(updatedSelection);
     },
     []
@@ -136,27 +161,27 @@ export const EditResume = () => {
   const generateResume = async (repoData: any[]) => {
     const filteredRepos = repoData.filter((repo) => repo.selected);
 
-  setIsLoading(true);
-  const profileData = filteredRepos
-    .map((repo) => {
-      const commitDetails = repo.commits
-        .map(
-          (commit, index) =>
-            `- ${commit.message}\n  Description: ${
-              commit.description || "No additional details provided"
-            }`
-        )
-        .join("\n");
+    setIsLoading(true);
+    const profileData = filteredRepos
+      .map((repo) => {
+        const commitDetails = repo.commits
+          .map(
+            (commit, index) =>
+              `- ${commit.message}\n  Description: ${
+                commit.description || "No additional details provided"
+              }`
+          )
+          .join("\n");
 
-      return `Repository: ${repo.name}\nDescription: ${
-        repo.description || "N/A"
-      }\nLanguage: ${repo.language || "N/A"}\nSize: ${
-        repo.size
-      } KB\nStars: ${repo.stargazers_count}\nForks: ${
-        repo.forks_count
-      }\nRecent Commit Details:\n${commitDetails}\n`;
-    })
-    .join("\n");
+        return `Repository: ${repo.name}\nDescription: ${
+          repo.description || "N/A"
+        }\nLanguage: ${repo.language || "N/A"}\nSize: ${repo.size} KB\nStars: ${
+          repo.stargazers_count
+        }\nForks: ${
+          repo.forks_count
+        }\nRecent Commit Details:\n${commitDetails}\n`;
+      })
+      .join("\n");
 
     try {
       const response = await fetch("http://localhost:3000/resume/generate", {
@@ -166,16 +191,16 @@ export const EditResume = () => {
         },
         body: JSON.stringify({ profileData }),
       });
-  
+
       const result = await response.json();
       console.log(result);
+      setGitInfo(result);
       setGitBtnClick(true);
     } catch (error) {
       console.error("Error generating resume:", error);
     }
     setIsLoading(false);
   };
-  
 
   const changeNavigate = () => {
     navigate("/");
@@ -190,7 +215,7 @@ export const EditResume = () => {
             <div>
               <div css={titleStyle}>🚀 Git과 연동하여 포트폴리오를 작성해보세요.</div>
               <p css={subtitleStyle}>
-                Git 정보를 가져와 자동으로 포트폴리오를 작성하고 PDF로 저장할 수 있어요.
+                Git 정보를 가져와 자동으로 이력서를 작성하고 PDF로 저장할 수 있어요.
               </p>
             </div>
             {!isLoading ? (
@@ -223,7 +248,7 @@ export const EditResume = () => {
                 <CircularProgress size={60} />
               </div>
             )}
-  
+
             {/* GitRepoList 컴포넌트 */}
             {repoData.length > 0 && (
               <div
@@ -253,9 +278,10 @@ export const EditResume = () => {
         )}
       </div>
       <div css={rightPanelStyle}>
-        <PDFViewer css={pdfViewerStyle}>
+        {/* <PDFViewer css={pdfViewerStyle}>
           <PdfDocument />
-        </PDFViewer>
+        </PDFViewer> */}
+        {gitInfo && <ThreeCanvas gitInfo={gitInfo} />}
       </div>
     </div>
   );

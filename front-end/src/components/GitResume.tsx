@@ -1,8 +1,15 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
-import { Button, Chip, TextField, Typography } from "@mui/material";
+import {
+  Button,
+  Chip,
+  InputAdornment,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { useEffect, useState } from "react";
 import CustomSection from "./CustomSection";
+import { useSelector } from "react-redux";
 
 const contentStyle = css`
   border: 2px solid #c7c7c7;
@@ -27,6 +34,19 @@ export const GitResume = () => {
   const [skills, setSkills] = useState<string[]>([]);
   const [inputValue, setInputValue] = useState<string>("");
   const [sections, setSections] = useState<number[]>([]);
+  const userData = useSelector((state: any) => state.login.loginInfo);
+  const [username, setUsername] = useState(userData.username || "");
+  const [email, setEmail] = useState(userData.email || "");
+  const [githubUrl, setGithubUrl] = useState(userData.githubUrl || "");
+
+  useEffect(() => {
+    if (userData) {
+      setUsername(userData.username || "");
+      setEmail(userData.email || "");
+      setGithubUrl(userData.githubUrl || "");
+    }
+    console.log(userData);
+  }, [userData]);
 
   const handleAddSkill = () => {
     if (inputValue.trim()) {
@@ -93,6 +113,7 @@ export const GitResume = () => {
               variant="outlined"
               placeholder="이름을 입력하세요"
               required
+              value={username}
             />
 
             <TextField
@@ -102,6 +123,7 @@ export const GitResume = () => {
               placeholder="이메일을 입력하세요"
               required
               type="email"
+              value={email}
             />
 
             <TextField
@@ -119,6 +141,16 @@ export const GitResume = () => {
               variant="outlined"
               placeholder="GitHub 링크를 입력하세요"
               required
+              value={githubUrl}
+              slotProps={{
+                input: {
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      github.com/
+                    </InputAdornment>
+                  ),
+                },
+              }}
             />
           </div>
         </div>
