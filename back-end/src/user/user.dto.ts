@@ -41,6 +41,7 @@ export class UpdateUserDto {
   blogUrl?: string;
 
   @IsString()
+  @IsOptional()
   educationLevel?: string;
 
   @IsString()
@@ -55,3 +56,4 @@ export class UpdateUserDto {
   @IsOptional()
   profile_image?: string;
 }
+
