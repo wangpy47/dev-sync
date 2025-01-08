@@ -88,35 +88,4 @@ export class ResumeController {
       return 'Not authenticated';
     }
   }
-
-  @Post('save-portfolio')
-  async saveResume(
-    @Request() req,
-    @Body('resume') resume: string,
-  ) {
-    // 세션 인증 검사
-    if (!req.isAuthenticated()) {
-      throw new HttpException('Not authenticated', HttpStatus.UNAUTHORIZED);
-    }
-  
-    // 데이터 유효성 검사
-    if (!resume) {
-      throw new HttpException('자소서 내용이 필요합니다.', HttpStatus.BAD_REQUEST);
-    }
-  
-    try {
-      // 세션에서 이메일 가져오기
-      const email = req.user.email;
-  
-      // UserService의 updatePortfolio 호출
-      await this.userService.updatePortfolio(email, resume);
-  
-      return { message: 'Resume saved successfully.' };
-    } catch (error) {
-      throw new HttpException(
-        'Failed to save resume',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
-  }
 }

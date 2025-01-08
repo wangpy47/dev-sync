@@ -12,10 +12,6 @@ export class UserService {
     @InjectRepository(User) private userRepository: Repository<User>,
   ) {}
 
-  // 사용자 생성
-  createUser(user): Promise<User> {
-    return this.userRepository.save(user);
-  }
 
   // 사용자 조회
   async getUser(email: string) {
@@ -36,7 +32,7 @@ export class UserService {
       throw new HttpException('사용자를 찾을 수 없습니다.', HttpStatus.NOT_FOUND);
     }
   
-    const { profileImageUrl, ...restDto } = updateUserDto;
+    const { profile_image, ...restDto } = updateUserDto;
     Object.assign(user, restDto);
 
     return this.userRepository.save(user);
@@ -66,7 +62,7 @@ export class UserService {
       if (file.buffer) {
         // 버퍼로 파일을 저장하고 새로운 이미지 URL 설정
         fs.writeFileSync(newPath, file.buffer);
-        user.profileImageUrl = `http://localhost:3000/uploads/${uniqueFilename}`;
+        user.profile_image = `http://localhost:3000/uploads/${uniqueFilename}`;
       } else {
         console.error('파일 버퍼가 존재하지 않습니다.');
         throw new HttpException('파일 전송 실패', HttpStatus.INTERNAL_SERVER_ERROR);
@@ -80,15 +76,14 @@ export class UserService {
 
 
   // 이메일로 사용자 조회 후 없으면 저장
-  async findByEmailOrSave(email, username, providerId) {
+  async findByEmailOrSave(email, name) {
     const foundUser = await this.getUser(email);
     if (foundUser) {
       return foundUser;
     }
     const newUser = this.userRepository.create({
       email,
-      username,
-      providerId,
+      name,
     });
     return this.userRepository.save(newUser);
   }
@@ -96,22 +91,5 @@ export class UserService {
   // 사용자 삭제
   deleteUser(email: any) {
     return this.userRepository.delete({ email });
-  }
-
-
-  // 포트폴리오 텍스트 업데이트
-  async updatePortfolio(email: string, portfolioText: string) {
-    if (!email) {
-      throw new HttpException('이메일이 필요합니다.', HttpStatus.BAD_REQUEST);
-    } 
-
-    const user = await this.userRepository.findOne({ where: { email } });
-    if (!user) {
-      throw new HttpException('사용자를 찾을 수 없습니다.', HttpStatus.NOT_FOUND);
-    } 
-
-    // 포트폴리오 텍스트 업데이트
-    user.portfolioText = portfolioText;
-    return this.userRepository.save(user);
   }
 }

@@ -8,7 +8,7 @@ import {
   UploadedFile,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { CreateUserDto, UpdateUserDto } from './user.dto';
+import { UpdateUserDto } from './user.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer'; 
 
@@ -16,10 +16,6 @@ import { memoryStorage } from 'multer';
 export class UserController {
   constructor(private userService: UserService) {}
 
-  @Post('/create')
-  createUser(@Body() user: CreateUserDto) {
-    return this.userService.createUser(user);
-  }
 
   @Get('/getUser')
   async getUser(@Request() req) {
