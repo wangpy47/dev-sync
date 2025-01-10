@@ -9,13 +9,14 @@ import { ConfigModule } from '@nestjs/config';
 import { ResumeModule } from './resume/resume.module';
 import { ContactModule } from './contact/contact.module';
 import { PostsModule } from './posts/posts.module';
+import { Category, Post } from './posts/post.entity';
 
 @Module({
   imports: [
     TypeOrmModule.forRoot({
       type: 'sqlite',
       database: 'dev-sync.sqlite',
-      entities: [User],
+      entities: [User, Post, Category],
       synchronize: true,
       logging: true,
     }),
