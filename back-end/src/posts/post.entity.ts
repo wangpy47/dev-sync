@@ -15,6 +15,7 @@ export class Category {
 
 @Entity()
 export class Post {
+    
   @PrimaryGeneratedColumn()
   post_id?: number;
 
