@@ -5,6 +5,9 @@ import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import { useEffect, useState, type SetStateAction } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import {
   Alert,
   Collapse,
@@ -17,6 +20,8 @@ import {
   type SelectChangeEvent,
 } from "@mui/material";
 import { login } from "../redux/redux";
+import type { Dayjs } from "dayjs";
+import dayjs from "dayjs";
 
 // 공통 스타일 정의
 const containerStyle = css`
@@ -107,44 +112,41 @@ export const UserPage = () => {
   const userData = useSelector((state: any) => state.login.loginInfo);
   const dispatch = useDispatch();
   // 로컬 상태로 사용자 데이터 관리
-  const [username, setUsername] = useState(userData.username || "");
+  const [name, setUsername] = useState(userData.name || "name 값이 비어 있음");
   const [email, setEmail] = useState(userData.email || "");
   const [githubUrl, setGithubUrl] = useState(userData.githubUrl || "");
   const [blogUrl, setBlogUrl] = useState(userData.blogUrl || "");
   const [selectedFile, setSelectedFile] = useState(null); // 선택된 파일 상태
   const [previewImage, setPreviewImage] = useState(
-    userData.profileImageUrl || ""
+    userData.profile_image || ""
   );
   const [alertProfile, setAlertProfile] = useState(false);
   const [alertInfor, setAlertInfor] = useState(false);
-  const [endEducation, setEndEducation] = useState<string>("");
-  const univApi = import.meta.env.VITE_APP_UNIVLIST_API_KEY;
-  const univUrl = import.meta.env.VITE_APP_UNIV_URL;
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch(
-          `${univUrl}?serviceKey=${univApi}&type=json`
-        );
-        const result = await response.json();
-        console.log(result);
-      } catch (err) {
-        console.log(err);
-      }
-    };
-
-    fetchData();
-  }, []);
+  const [birthDate, setBirthDate] = useState(userData.BirthDate || null);
+  const [educationLevel, setEduLevel] = useState(
+    userData.educationLevel || null
+  );
+  const [universityName, setUnivName] = useState(userData.universityName);
+  const [departmentName, setDepartName] = useState(
+    userData.departmentName || null
+  );
+  const [phone_number, setPhone] = useState(userData.phone_number || "");
 
   useEffect(() => {
     if (userData) {
-      setUsername(userData.username || "");
+      setUsername(userData.name || "");
       setEmail(userData.email || "");
       setGithubUrl(userData.githubUrl || "");
       setBlogUrl(userData.blogUrl || "");
-      setPreviewImage(userData.profileImageUrl || "");
+      setPreviewImage(userData.profile_image || "");
+      setUnivName(userData.universityName || "");
+      setDepartName(userData.departmentName || "");
+      setEduLevel(userData.educationLevel || "");
+      setBirthDate(userData.birthDate || "");
+      setPhone(userData.phone_number || "");
     }
+
+    console.log(birthDate);
   }, [userData]);
 
   const handlePreviewChange = (event: any) => {
@@ -196,31 +198,36 @@ export const UserPage = () => {
 
       body: JSON.stringify({
         email,
-        username,
+        name,
         githubUrl,
         blogUrl,
+        educationLevel,
+        departmentName,
+        universityName,
+        phone_number,
+        birthDate,
       }),
     });
+
     if (response.ok) {
       const result = await response.json();
-      console.log("Update success:", result.githubUrl);
       dispatch(login(result));
       setAlertInfor(true);
     } else {
       const error = await response.json();
-      console.error("Update failed:", error);
+      console.error("Update failed:", error, response);
     }
   };
 
   useEffect(() => {
-    if (userData.profileImageUrl) {
-      setPreviewImage(userData.profileImageUrl);
+    if (userData.profile_image) {
+      setPreviewImage(userData.profile_image);
     }
-  }, [userData.profileImageUrl]);
+  }, [userData.profile_image]);
 
   const handleEducationChange = (e: SelectChangeEvent<string>) => {
     console.log(e.target.value);
-    setEndEducation(e.target.value);
+    setEduLevel(e.target.value);
   };
 
   return (
@@ -295,7 +302,7 @@ export const UserPage = () => {
               Name
               <CustomTextField
                 label="Username"
-                value={username}
+                value={name}
                 onChange={setUsername}
               />
             </div>
@@ -329,6 +336,28 @@ export const UserPage = () => {
                 onChange={setBlogUrl}
               />
             </div>
+          </div>{" "}
+          <div
+            css={css`
+              display: flex;
+            `}
+          >
+            <div css={labelStyle}>
+              BirthDay
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DatePicker
+                  value={birthDate ? dayjs(birthDate) : null}
+                  onChange={(newValue) => {
+                    if (newValue) {
+                      const formattedDate = newValue.format("YYYY-MM-DD");
+                      setBirthDate(formattedDate); // 상태 업데이트
+                    } else {
+                      setBirthDate(null); // null 처리
+                    }
+                  }}
+                />
+              </LocalizationProvider>
+            </div>
           </div>
           <div
             css={css`
@@ -339,10 +368,12 @@ export const UserPage = () => {
             <div css={LongLabelStyle}>
               Phone Number
               <TextField
-                placeholder="01012341234"
+                placeholder="010-1234-1234"
                 variant="outlined"
                 size="small"
                 css={longTextFieldStyle}
+                onChange={(e) => setPhone(e.target.value)}
+                value={phone_number}
                 slotProps={{
                   input: {
                     startAdornment: (
@@ -374,9 +405,6 @@ export const UserPage = () => {
       <div css={containerStyle}>
         <div css={headerStyle}>Career Information</div>
         <div css={sectionStyle}>
-          <Collapse in={alertProfile}>
-            <Alert severity="success">프로필이 업데이트 되었습니다.</Alert>
-          </Collapse>
           <div
             css={css`
               display: flex;
@@ -390,7 +418,7 @@ export const UserPage = () => {
                 <Select
                   displayEmpty
                   size="small"
-                  value={endEducation}
+                  value={educationLevel}
                   onChange={handleEducationChange}
                 >
                   <MenuItem value="" disabled>
@@ -405,16 +433,31 @@ export const UserPage = () => {
                 </Select>
               </FormControl>
             </div>
-            {endEducation === "대학교대학원 이상 졸업" && (
-              <div css={labelStyle}>
-                Univ
-                <TextField
-                  placeholder="학교명을 입력하세요"
-                  variant="outlined"
-                  size="small"
-                  sx={{ width: "45%" }}
-                />
-              </div>
+            {educationLevel === "대학교대학원 이상 졸업" && (
+              <>
+                <div css={labelStyle}>
+                  Univ
+                  <TextField
+                    placeholder="학교명을 입력하세요"
+                    variant="outlined"
+                    value={universityName}
+                    size="small"
+                    sx={{ width: "45%" }}
+                    onChange={(e) => setUnivName(e.target.value)}
+                  />
+                </div>
+                <div css={labelStyle}>
+                  Major
+                  <TextField
+                    placeholder="학과명을 입력하세요"
+                    variant="outlined"
+                    value={departmentName}
+                    size="small"
+                    sx={{ width: "45%" }}
+                    onChange={(e) => setDepartName(e.target.value)}
+                  />
+                </div>
+              </>
             )}
           </div>
           <div css={buttonGroupStyle}>
@@ -422,7 +465,7 @@ export const UserPage = () => {
               variant="contained"
               color="primary"
               size="medium"
-              onClick={updateProfileImage}
+              onClick={handleSave}
             >
               Save
             </Button>
