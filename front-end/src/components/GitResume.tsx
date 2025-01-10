@@ -41,7 +41,7 @@ export const GitResume = () => {
 
   useEffect(() => {
     if (userData) {
-      setUsername(userData.username || "");
+      setUsername(userData.name || "");
       setEmail(userData.email || "");
       setGithubUrl(userData.githubUrl || "");
     }
