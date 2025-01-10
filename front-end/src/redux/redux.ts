@@ -4,14 +4,18 @@ import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 interface LoginState {
   loggedIn: boolean;
   loginInfo: {
-    id: number | null;
+    user_id: number | null;
     email: string | null;
-    username: string | null;
-    profileImageUrl: string | null;
+    name: string | null;
+    phone_number : number | null;
+    profile_image: string | null;
     createdDt: string | null;
-    providerId: string | null;
     githubUrl: string | null;
     blogUrl: string | null;
+    universityName :string | null;
+    departmentName :string | null;
+    educationLevel: string | null;
+    birthDate :  string | null;
   };
   loginForm :boolean;
 }
@@ -20,14 +24,18 @@ interface LoginState {
 const initialState : LoginState = {
   loggedIn: false,
   loginInfo: {
-    id: null,
+    user_id: null,
     email: null,
-    username: null,
-    profileImageUrl: null,
+    name: null,
+    birthDate :null,
+    phone_number:null,
+    profile_image: null,
     createdDt: null,
-    providerId: null,
     githubUrl: null,
     blogUrl: null,
+    universityName :null,
+    departmentName :null,
+    educationLevel :null,
   },
   loginForm:false,
 }

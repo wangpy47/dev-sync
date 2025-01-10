@@ -32,7 +32,7 @@ interface ChildComponentProps {
 
 export const ThreeCanvas = ({ gitInfo }: ChildComponentProps) => {
   const userData = useSelector((state: any) => state.login.loginInfo);
-  const [username, setUsername] = useState(userData.username || "");
+  const [username, setUsername] = useState(userData.name || "");
   const [email, setEmail] = useState(userData.email || "");
   const [githubUrl, setGithubUrl] = useState(userData.githubUrl || "");
 
