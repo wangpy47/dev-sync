@@ -130,7 +130,7 @@ export const UserPage = () => {
   const [departmentName, setDepartName] = useState(
     userData.departmentName || null
   );
-  const [phone_number, setPhone] = useState(userData.phone_number || "");
+  const [phone_number, setPhone] = useState(userData.phone_number || null);
 
   useEffect(() => {
     if (userData) {
@@ -143,10 +143,8 @@ export const UserPage = () => {
       setDepartName(userData.departmentName || "");
       setEduLevel(userData.educationLevel || "");
       setBirthDate(userData.birthDate || "");
-      setPhone(userData.phone_number || "");
+      setPhone(userData.phone_number || null);
     }
-
-    console.log(birthDate);
   }, [userData]);
 
   const handlePreviewChange = (event: any) => {
@@ -226,7 +224,6 @@ export const UserPage = () => {
   }, [userData.profile_image]);
 
   const handleEducationChange = (e: SelectChangeEvent<string>) => {
-    console.log(e.target.value);
     setEduLevel(e.target.value);
   };
 
@@ -368,11 +365,11 @@ export const UserPage = () => {
             <div css={LongLabelStyle}>
               Phone Number
               <TextField
-                placeholder="010-1234-1234"
+                placeholder="01012341234"
                 variant="outlined"
                 size="small"
                 css={longTextFieldStyle}
-                onChange={(e) => setPhone(e.target.value)}
+                onChange={(e) => setPhone(Number(e.target.value))}
                 value={phone_number}
                 slotProps={{
                   input: {
