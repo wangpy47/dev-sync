@@ -1,10 +1,14 @@
 import {
   IsDate,
   IsEmail,
+  IsNumber,
   IsOptional,
+  isPhoneNumber,
   IsString,
   Matches,
 } from 'class-validator';
+import { Transform } from 'class-transformer';  
+
 
 export class CreateUserDto {
   @IsEmail()
@@ -24,13 +28,12 @@ export class UpdateUserDto {
   @IsString()
   name: string;
 
+  @Transform(({ value }) => new Date(value)) 
   @IsDate()
   birthDate?: Date;
 
-  @Matches(/^\d{2,3}-\d{3,4}-\d{4}$/, {
-    message: '전화번호는 010-1234-5678 형식이어야 합니다.',
-  })
-  phone_number?: string;
+ @IsNumber()
+  phone_number?: number;
 
   @IsString()
   @IsOptional()
