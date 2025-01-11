@@ -16,7 +16,7 @@ export class User {
   birthDate: Date;
 
   @Column({nullable: true})
-  phone_number: string;
+  phone_number: number;
 
   @Column({nullable: true})
   profile_image: string;
