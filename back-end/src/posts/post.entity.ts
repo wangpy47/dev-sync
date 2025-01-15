@@ -29,9 +29,10 @@ export class Post {
   @JoinColumn({ name: 'category_id' })
   category: Category; 
 
-  @ManyToOne(() => User, (user) => user.name, { nullable: false, onDelete: 'CASCADE' })
+  @ManyToOne(() => User, (user) => user.posts, { nullable: false, onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })
-  user: User; 
+  user: User;
+
 
   @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
