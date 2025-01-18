@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Category, Post } from './post.entity';
 import { Repository } from 'typeorm';
 import { User } from 'src/user/user.entity';
+import { GetPostsByCategoryDto } from './dto/category/get-posts-by-category.dto';
 
 
 
@@ -19,12 +20,12 @@ export class PostsService {
         return await this.categoryRepository.find();
     }
 
-    // 카테고리 이름으로 조회
+    // 카테고리 이름으로 단일 카테고리 조회
     async getCategoryByName(name: string) {
         return await this.categoryRepository.findOne({where: {name}});
     }
 
-    // 카테고리 생성
+    // 카테고리 ID로 단일 카테고리 조회
     private async findCategoryById(category_id: number) {
         const category = await this.categoryRepository.findOne({ where: { category_id } });
         if (!category) {
@@ -33,8 +34,10 @@ export class PostsService {
         return category;
     }
 
-    // 카테고리 이름으로 조회
-    async getPostsByCategory(name: string) {
+    // 특정 카테고리에 속한 게시글 조회
+    async getPostsByCategory(getPostsByCategoryDto: GetPostsByCategoryDto) {
+        const { name } = getPostsByCategoryDto;
+        
         const category = await this.categoryRepository.findOne({
             where: { name },
             relations: ['posts'], 
