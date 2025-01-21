@@ -1,0 +1,56 @@
+//o
+### Get All Categories
+GET http://localhost:3000/posts/categories
+
+
+//o
+### Get All Posts
+GET http://localhost:3000/posts
+
+//o
+### Get Posts by Category
+GET http://localhost:3000/posts/categories/자유게시판
+
+
+//o
+### Get Posts by User Email
+GET http://localhost:3000/posts/users/cool102476@naver.com
+
+//o
+### Get Top Posts
+GET http://localhost:3000/posts/top?n=5
+
+
+//o
+### Create a Post
+POST http://localhost:3000/posts
+Content-Type: application/json
+
+{
+  "title": "New Post Title",
+  "content": "This is the content of the new post.",
+  "name": "자유게시판",
+  "user_id": 1
+}
+
+
+
+//o
+### Delete a Post
+DELETE http://localhost:3000/posts/1
+
+
+//?
+### Update a Post
+PATCH http://localhost:3000/posts/7
+Content-Type: application/json
+
+{
+  "title": "Updated Post Title",
+  "content": "Updated content of the post.",
+  "category_id": 2
+}
+
+//o
+### Increase Post View Count
+PATCH http://localhost:3000/posts/7/view
