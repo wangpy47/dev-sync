@@ -30,7 +30,7 @@ export class UserController {
   @Post('/updateProfile')
   @UseInterceptors(FileInterceptor('file', { storage: memoryStorage() }))
   async updateProfile(@Request() req, @UploadedFile() file: Express.Multer.File) {
-    const email = req.user?.email; // 세션에서 이메일 가져오기
+    const email = req.user?.email; 
   
     if (req.isAuthenticated() && email) {
       if (!file) {
