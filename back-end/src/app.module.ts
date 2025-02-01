@@ -9,7 +9,9 @@ import { ConfigModule } from '@nestjs/config';
 import { ResumeModule } from './resume/resume.module';
 import { ContactModule } from './contact/contact.module';
 import { PostsModule } from './posts/posts.module';
-import { Category, Post } from './posts/post.entity';
+import { Post } from './posts/entities/post.entity';
+import { Category } from './posts/entities/category.entity';
+
 
 @Module({
   imports: [
