@@ -8,9 +8,10 @@ import { User } from 'src/user/user.entity';
 import { UserModule } from 'src/user/user.module';
 import { Post } from './entities/post.entity';
 import { Category } from './entities/category.entity';
+import { Like } from './entities/like.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Post, Category, User]), UserModule],
+  imports: [TypeOrmModule.forFeature([Post, Category, User, Like]), UserModule],
   controllers: [PostsController],
   providers: [PostsService, CategoryService],
 })

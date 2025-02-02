@@ -19,6 +19,7 @@ import { UserService } from 'src/user/user.service';
 import { CreatePostDto } from './dto/post/create-post.dto';
 import { UpdatePostDto } from './dto/post/update-post.dto';
 
+
 @Controller('posts')
 export class PostsController {
   constructor(
@@ -107,7 +108,38 @@ export class PostsController {
 
   // 게시글 조회수 증가
   @Patch('/:id/view')
-  async increaseViewCount(@Param('id', ParseIntPipe) id: number) {
-    return await this.postsService.increaseViewCount(id);
+  async increaseViewCount(@Param('id', ParseIntPipe) post_id: number) {
+    return await this.postsService.increaseViewCount(post_id);
   }
+
+
+  //특정 게시글의 좋아요 개수 조회
+  @Get('/:id/likes/count')
+  async getLikeCount(@Param('id', ParseIntPipe) post_id: number) {
+    return await this.postsService.getLikeCount(post_id);
+  }
+
+  // 특정 게시글에서 현재 유저가 좋아요를 눌렀는지 확인
+  @Get('/:id/likes/status')
+  async getLikeStatus(@Param('id', ParseIntPipe) post_id: number, @Request() req) {
+    const user = req.session?.user;
+    if (!user) {
+      throw new BadRequestException('인증된 사용자가 아닙니다.');
+    }
+    
+    const like = await this.postsService.getLike(user.user_id, post_id);
+    return like; 
+  }
+
+  //좋아요 추가/취소 (토글 기능)
+  @Post('/:id/like-toggle')
+  async toggleLike(@Param('id', ParseIntPipe) post_id: number, @Request() req) {
+    const user = req.session?.user;
+    if (!user) {
+      throw new BadRequestException('인증된 사용자가 아닙니다.');
+    }
+    
+    return await this.postsService.toggleLike(user.user_id, post_id);
+  }
+
 }
