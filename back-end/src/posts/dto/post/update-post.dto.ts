@@ -1,4 +1,4 @@
-import { IsOptional, IsString } from 'class-validator';
+import { IsInt, IsOptional, IsString, Min } from 'class-validator';
 
 export class UpdatePostDto {
   @IsOptional()
@@ -11,5 +11,10 @@ export class UpdatePostDto {
 
   @IsOptional()
   @IsString()
-  name?: string; // 카테고리 이름
+  category?: string; // 카테고리 이름
+
+  @IsInt()
+  @Min(1)
+  post_id: number;
 }
+

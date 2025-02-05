@@ -29,7 +29,7 @@ Content-Type: application/json
 {
   "title": "New Post Title",
   "content": "This is the content of the new post.",
-  "name": "자유게시판",
+  "category": "자유게시판",
   "user_id": 1
 }
 
@@ -37,7 +37,7 @@ Content-Type: application/json
 
 //o
 ### Delete a Post
-DELETE http://localhost:3000/posts/1
+DELETE http://localhost:3000/posts/7
 
 
 //?
@@ -48,15 +48,16 @@ Content-Type: application/json
 {
   "title": "Updated Post Title",
   "content": "Updated content of the post.",
-  "category_id": 2
+  "category": "자유게시판",
+  "post_id":1
 }
 
 //o
 ### Increase Post View Count
-PATCH http://localhost:3000/posts/7/view
+PATCH http://localhost:3000/posts/6/view
 
 ### Get Like Count for a Post
-GET http://localhost:3000/posts/7/likes/count
+GET http://localhost:3000/posts/6/likes/count
 
 ### Check if User Liked a Post (User ID 1)
 GET http://localhost:3000/posts/7/likes/status

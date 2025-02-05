@@ -1,4 +1,4 @@
-import { IsString, IsInt, Min, Length } from 'class-validator';
+import { IsString,  Length } from 'class-validator';
 
 export class CreatePostDto {
   @IsString()
@@ -9,9 +9,5 @@ export class CreatePostDto {
   content: string;
 
   @IsString()
-  name: string;
-
-  @IsInt()
-  @Min(1)
-  user_id: number;
+  category: string;
 }
