@@ -17,15 +17,15 @@ export class CategoryService implements OnModuleInit {
 
   async initRepository() {
     const defaultCategories = [
-      { name: '자유게시판' },
-      { name: '질문게시판' },
-      { name: '정보게시판' },
-      { name: '공지사항' },
-      { name: '문의하기' },
+      { category: '자유게시판' },
+      { category: '질문게시판' },
+      { ㅍcategory: '정보게시판' },
+      { category: '공지사항' },
+      { category: '문의하기' },
     ];
 
     for (const category of defaultCategories) {
-      const exists = await this.categoryRepository.findOne({ where: { name: category.name } });
+      const exists = await this.categoryRepository.findOne({ where: { category: category.category } });
       if (!exists) {
         await this.categoryRepository.save(category);
       }

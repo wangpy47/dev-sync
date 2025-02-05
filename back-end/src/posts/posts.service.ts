@@ -30,8 +30,8 @@ export class PostsService {
   }
 
   // 카테고리 이름으로 단일 카테고리 조회
-  async getCategoryByName(name: string) {
-    return await this.categoryRepository.findOne({ where: { name } });
+  async getCategoryByName(category: string) {
+    return await this.categoryRepository.findOne({ where: { category } });
   }
 
   // 카테고리 ID로 단일 카테고리 조회
@@ -49,18 +49,18 @@ export class PostsService {
 
   // 특정 카테고리에 속한 게시글 조회
   async getPostsByCategory(getPostsByCategoryDto: GetPostsByCategoryDto) {
-    const { name } = getPostsByCategoryDto;
+    const { category } = getPostsByCategoryDto;
 
-    const category = await this.categoryRepository.findOne({
-      where: { name },
+    const category_data = await this.categoryRepository.findOne({
+      where: { category },
       relations: ['posts'],
     });
-    if (!category) {
+    if (!category_data) {
       throw new NotFoundException(
-        `NAME이 ${name}인 카테고리를 찾을 수 없습니다.`,
+        `NAME이 ${category}인 카테고리를 찾을 수 없습니다.`,
       );
     }
-    return category.posts;
+    return category_data.posts;
   }
 
   //-----------------------------------post----------------------------------------------------
@@ -128,11 +128,15 @@ export class PostsService {
   }
   //게시글 업데이트
   async updatePost(
-    post_id: number,
     user_id: number, // 요청한 유저의 ID
-    updates: { name?: string; title?: string; content?: string },
+    updates: {
+      post_id: number;
+      category?: string;
+      title?: string;
+      content?: string;
+    },
   ) {
-    const post = await this.findPostById(post_id);
+    const post = await this.findPostById(updates.post_id);
 
     // 작성자인지 확인
     if (post.user.user_id !== user_id) {
@@ -150,11 +154,11 @@ export class PostsService {
     }
 
     // 카테고리 변경 (카테고리 이름으로 ID 조회)
-    if (updates.name) {
-      const category = await this.getCategoryByName(updates.name);
+    if (updates.category) {
+      const category = await this.getCategoryByName(updates.category);
       if (!category) {
         throw new NotFoundException(
-          `카테고리 '${updates.name}'를 찾을 수 없습니다.`,
+          `카테고리 '${updates.category}'를 찾을 수 없습니다.`,
         );
       }
       post.category = category;
@@ -173,31 +177,28 @@ export class PostsService {
 
   //-----------------------------------like----------------------------------------------------
 
-  async getLike(user_id:number, post_id:number){
+  async getLike(user_id: number, post_id: number) {
     return await this.likeRepository.findOne({
       where: { user: { user_id }, post: { post_id } },
     });
   }
-  async getLikeCount(post_id:number) {
+  async getLikeCount(post_id: number) {
     return await this.likeRepository.count({ where: { post: { post_id } } });
   }
 
+  async toggleLike(user_id: number, post_id: number) {
+    const existingLike = await this.getLike(user_id, post_id);
 
-  async toggleLike(user_id:number, post_id:number){
-    const existingLike = await this.getLike(user_id, post_id)
-  
     if (existingLike) {
       // 2️⃣ 이미 좋아요가 존재하면 삭제
-      await this.removelike(user_id, post_id)
+      await this.removelike(user_id, post_id);
     } else {
       // 3️⃣ 좋아요 추가
       return await this.addlike(user_id, post_id);
     }
   }
 
-  
- private async addlike(user_id:number, post_id:number) {
-
+  private async addlike(user_id: number, post_id: number) {
     const user = await this.userRepository.findOne({ where: { user_id } });
     if (!user) {
       throw new Error('해당 유저가 존재하지 않음');
@@ -217,7 +218,7 @@ export class PostsService {
     return { message: '좋아요 성공' };
   }
 
- private async removelike(user_id:number, post_id:number) {
+  private async removelike(user_id: number, post_id: number) {
     const like = await this.likeRepository.findOne({
       where: { user: { user_id }, post: { post_id } },
     });
@@ -230,7 +231,4 @@ export class PostsService {
 
     return { message: '좋아요 취소' };
   }
-
-
-  
 }

@@ -40,7 +40,7 @@ export class PostsController {
   }
 
   // 카테고리 이름으로 게시글 조회
-  @Get('/categories/:name')
+  @Get('/categories/:category')
   async getPostsByCategory(@Param() params: GetPostsByCategoryDto) {
     return await this.postsService.getPostsByCategory(params);
   }
@@ -69,15 +69,15 @@ export class PostsController {
       throw new BadRequestException('인증된 사용자가 아닙니다.');
     }
 
-    const { title, content, name, user_id } = createPostDto;
-    const category=await this.postsService.getCategoryByName(name);
-    if (!category) {
+    const { title, content, category } = createPostDto;
+    const category_data=await this.postsService.getCategoryByName(category);
+    if (!category_data) {
         throw new NotFoundException(`카테고리 '${name}'을(를) 찾을 수 없습니다.`);
       }
       
     try {
-        console.log(title, content, name, user_id )
-      return await this.postsService.createPost(title, content, name, user_id);
+        console.log(title, content, category )
+      return await this.postsService.createPost(title, content, category, user.user_id);
     } catch (error) {
       if (error instanceof Error) {
         throw new BadRequestException(error.message);
@@ -92,9 +92,8 @@ export class PostsController {
     return await this.postsService.deletePost(id);
   }
 
-  @Patch('/:id')
+  @Patch()
   async updatePost(
-    @Param('id', ParseIntPipe) id: number,
     @Body() updatePostDto: UpdatePostDto,
     @Request() req, 
   ) {
@@ -103,7 +102,7 @@ export class PostsController {
       throw new BadRequestException('인증된 사용자가 아닙니다.');
     }
 
-    return await this.postsService.updatePost(id, user.user_id, updatePostDto);
+    return await this.postsService.updatePost(user.user_id, updatePostDto);
   }
 
   // 게시글 조회수 증가
