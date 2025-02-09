@@ -159,7 +159,7 @@ export class PostsController {
     return await this.postsService.getComment(post_id, page);
   }
 
-  // 게시글 생성
+  // 댓글 생성
   @Post('/comment')
   async addComment(@Body() addCommentDto: AddCommentDto, @Request() req) {
     const user = req.session?.user;
@@ -182,7 +182,7 @@ export class PostsController {
       );
     }
   }
-
+  // 댓글 수정
   @Patch('/comment')
   async updateComment(
     @Body() updateCommentDto: UpdateCommentDto,
@@ -199,7 +199,7 @@ export class PostsController {
       comment,
     );
   }
-
+  // 댓글 삭제
   @Delete('/comment/:id')
   async deleteComment(
     @Param('comment_id', ParseIntPipe) comment_id: number,
