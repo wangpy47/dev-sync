@@ -9,9 +9,10 @@ import { UserModule } from 'src/user/user.module';
 import { Post } from './entities/post.entity';
 import { Category } from './entities/category.entity';
 import { Like } from './entities/like.entity';
+import { Comment } from './entities/comment.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Post, Category, User, Like]), UserModule],
+  imports: [TypeOrmModule.forFeature([Post, Category, User, Like, Comment]), UserModule],
   controllers: [PostsController],
   providers: [PostsService, CategoryService],
 })

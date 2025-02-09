@@ -12,6 +12,7 @@ import { PostsModule } from './posts/posts.module';
 import { Post } from './posts/entities/post.entity';
 import { Category } from './posts/entities/category.entity';
 import { Like } from './posts/entities/like.entity';
+import { Comment } from './posts/entities/comment.entity';
 
 
 @Module({
@@ -19,7 +20,7 @@ import { Like } from './posts/entities/like.entity';
     TypeOrmModule.forRoot({
       type: 'sqlite',
       database: 'dev-sync.sqlite',
-      entities: [User, Post, Category, Like],
+      entities: [User, Post, Category, Like, Comment],
       synchronize: true,
       logging: true,
     }),

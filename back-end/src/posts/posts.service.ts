@@ -11,6 +11,8 @@ import { GetPostsByCategoryDto } from './dto/category/get-posts-by-category.dto'
 import { Post } from './entities/post.entity';
 import { Category } from './entities/category.entity';
 import { Like } from './entities/like.entity';
+import { Comment } from './entities/comment.entity';
+import { UserService } from 'src/user/user.service';
 
 @Injectable()
 export class PostsService {
@@ -20,6 +22,8 @@ export class PostsService {
     private categoryRepository: Repository<Category>,
     @InjectRepository(User) private userRepository: Repository<User>,
     @InjectRepository(Like) private likeRepository: Repository<Like>,
+    @InjectRepository(Comment) private commentRepository: Repository<Comment>,
+    private readonly userService: UserService,
   ) {}
 
   //-----------------------------------category----------------------------------------------------
@@ -230,5 +234,84 @@ export class PostsService {
     await this.likeRepository.remove(like);
 
     return { message: '좋아요 취소' };
+  }
+
+  //----------------------comment----------------------------------
+
+  //전체 댓글 조회
+  async getComment(post_id: number, page: number) {
+    return await this.commentRepository.find({
+      where: { post_id: { post_id } },
+      order: { createdAt: 'DESC' },
+      skip: (page - 1) * 20,
+      take: page * 20,
+    });
+  }
+
+  //댓글 추가
+  async addComment(
+    user_id: number,
+    post_id: number,
+    parent_id: number | null,
+    comment: string,
+  ) {
+    const user = await this.userService.getUserById(user_id);
+    if (!user) throw new Error('해당 유저가 존재하지 않음');
+
+    const post = await this.findPostById(post_id);
+    if (!post) throw new Error('해당 게시글을 찾을 수 없음');
+
+    let parentComment = null;
+    if (parent_id) {
+      parentComment = await this.commentRepository.findOne({
+        where: { comment_id: parent_id },
+      });
+      if (!parentComment) throw new Error('부모 댓글이 존재하지 않음');
+    }
+
+    const newComment = this.commentRepository.create({
+      user_id: user,
+      post_id: post,
+      parent: parentComment,
+      comment,
+    });
+
+    return await this.commentRepository.save(newComment);
+  }
+
+  //댓글 삭제
+  async deleteComment(user_id: number, comment_id: number) {
+    const user = await this.userService.getUserById(user_id);
+    if (!user) throw new Error('해당 유저가 존재하지 않음');
+
+    const target = await this.commentRepository.findOne({
+      where: { comment_id, user_id: { user_id } }, 
+    });
+
+    if (!target) throw new Error('해당 댓글을 찾을 수 없거나 삭제할 권한이 없습니다.');
+
+    return await this.commentRepository.remove(target);
+  }
+
+  //댓글 수정
+  async updateComment(
+    user_id: number,
+    comment_id: number,
+    comment: string,
+  ) {
+    const user = await this.userService.getUserById(user_id);
+    if (!user) throw new Error('해당 유저가 존재하지 않음');
+
+    
+    const target = await this.commentRepository.findOne({
+      where: { comment_id, user_id: { user_id } }, 
+    });
+
+    if (!target) throw new Error('해당 댓글을 찾을 수 없거나 수정할 권한이 없습니다.');
+    else {
+      target.comment = comment;
+    }
+
+    return await this.commentRepository.save(target);
   }
 }

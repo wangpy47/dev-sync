@@ -30,7 +30,6 @@ Content-Type: application/json
   "title": "New Post Title",
   "content": "This is the content of the new post.",
   "category": "자유게시판",
-  "user_id": 1
 }
 
 
@@ -66,3 +65,6 @@ GET http://localhost:3000/posts/7/likes/status
 ### Toggle Like (Like or Unlike)
 POST http://localhost:3000/posts/7/like-toggle
 
+
+###Get Comment for a post
+GET http://localhost:3000/posts/comments/10?page=2
