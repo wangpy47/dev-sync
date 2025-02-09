@@ -63,6 +63,30 @@ export const GitResume = () => {
     setSections([...sections, sections.length + 1]);
   };
 
+  // 섹션을 위로 이동하는 함수
+  const moveSectionUp = (index: number) => {
+    if (index > 0) {
+      const newSections = [...sections];
+      [newSections[index - 1], newSections[index]] = [
+        newSections[index],
+        newSections[index - 1],
+      ];
+      setSections(newSections);
+    }
+  };
+
+  // 섹션을 아래로 이동하는 함수
+  const moveSectionDown = (index: number) => {
+    if (index < sections.length - 1) {
+      const newSections = [...sections];
+      [newSections[index], newSections[index + 1]] = [
+        newSections[index + 1],
+        newSections[index],
+      ];
+      setSections(newSections);
+    }
+  };
+
   return (
     <>
       <div
@@ -201,8 +225,32 @@ export const GitResume = () => {
         </div>
 
         <>
-          {sections.map((id) => (
-            <CustomSection key={id} />
+          {sections.map((id, index) => (
+            <>
+              <CustomSection key={id} />
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  marginBottom: "1rem",
+                }}
+              >
+                <Button
+                  variant="outlined"
+                  onClick={() => moveSectionUp(index)}
+                  disabled={index === 0}
+                >
+                  위로
+                </Button>
+                <Button
+                  variant="outlined"
+                  onClick={() => moveSectionDown(index)}
+                  disabled={index === sections.length - 1}
+                >
+                  아래로
+                </Button>
+              </div>
+            </>
           ))}
         </>
 

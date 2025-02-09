@@ -10,6 +10,8 @@ import { GitResume } from "./components/GitResume.tsx";
 import MainBody from "./components/body/Main.body.tsx";
 import Contact from "./components/contact/Contact.tsx";
 import InquiryList from "./components/contact/InquiryList.tsx";
+import { WritePost } from "./components/community/WritePost.tsx";
+import { CommunityComponent } from "./components/community/CommunityComponent.tsx";
 
 const router = createBrowserRouter([
   {
@@ -32,6 +34,28 @@ const router = createBrowserRouter([
         path: "contact",
         element: <Contact />,
       },
+      {
+        path: "community",
+        // element: <CommunityPage />,
+        children: [
+          {
+            path: "question",
+            element: < CommunityComponent/>,
+          },
+          {
+            path: "notice",
+            element: <CommunityComponent />,
+          },
+          {
+            path: "general",
+            element: <CommunityComponent/>,
+          },
+        ],
+      },
+      {
+        path: "writepost",
+        element: <WritePost />,
+      },
     ],
   },
   {
@@ -44,7 +68,6 @@ const router = createBrowserRouter([
       },
     ],
   },
-  
 ]);
 
 createRoot(document.getElementById("root")!).render(

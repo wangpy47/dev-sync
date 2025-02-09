@@ -6,14 +6,14 @@ import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { login, logout } from "./redux/redux";
 import { Outlet } from "react-router-dom";
-import MainBody from "./components/body/Main.body";
 
 const layoutStyle = css`
   display: flex;
   flex-direction: column;
   min-height: 100vh;
   width: 100vw;
-  overflow-x: hidden; /* 가로 스크롤 숨기기 */
+  box-sizing: border-box;
+  // border: 5px solid red;
 `;
 
 const contentWrapperStyle = css`
@@ -21,6 +21,8 @@ const contentWrapperStyle = css`
   margin: 0;
   box-sizing: border-box; /* 패딩 포함 */
   overflow-x: hidden; /* 가로 스크롤 숨기기 */
+  margin-top: 70px;
+  width: 100vw;
 `;
 
 const innerContentStyle = css`

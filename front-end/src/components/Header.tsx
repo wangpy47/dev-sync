@@ -43,10 +43,13 @@ const Header = () => {
           boxShadow: "none", // 그림자 제거
           color: "black", // 텍스트 색상 변경
           top: 0, // 화면 최상단에 고정
-          zIndex: 500,
+          zIndex: 1000,
+          position: "fixed",
+          width: "100%",
           border: 1,
           borderColor: "#d2d1d1",
           overFlowX: "auto",
+          height: "70px",
         }}
       >
         <Toolbar>
@@ -69,11 +72,14 @@ const Header = () => {
             >
               이력서
             </Button>
-            <Button sx={{ my: 0, color: "#3369c7", display: "block" }} onClick={()=>navigate('/inquiry')}>
+            <Button
+              sx={{ my: 0, color: "#3369c7", display: "block" }}
+              onClick={() => navigate("/inquiry")}
+            >
               문의
             </Button>
             <Button
-              onClick={() => handleNavigate("/")}
+              onClick={() => handleNavigate("/community/general")}
               sx={{ my: 0, color: "#3369c7", display: "block" }}
             >
               커뮤니티
