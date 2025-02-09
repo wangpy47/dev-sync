@@ -11,14 +11,14 @@ export class Comment{
     comment:string;
 
     @ManyToOne(()=>User, {nullable:false, onDelete:'CASCADE'})
-    user:User;
+    user_id:User;
 
     @ManyToOne(()=>Post, {nullable:false, onDelete:'CASCADE'})
-    post:Post;
+    post_id:Post;
 
     @ManyToOne(()=>Comment, {nullable:true, onDelete:'CASCADE'})
     parent:Comment;
 
     @Column({ type: 'datetime', default: () => 'CURRENT_TIMESTAMP' })
-      createdAt: Date;
+    createdAt: Date;
 }

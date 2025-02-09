@@ -18,6 +18,10 @@ export class UserService {
     return await this.userRepository.findOne({ where: { email } });
   }
 
+  async getUserById(user_id: number) {
+    return await this.userRepository.findOne({ where: { user_id } });
+  }
+
   // 사용자 업데이트 (프로필 이미지 포함)
   async updateUser(updateUserDto: Partial<UpdateUserDto>) {
     const email = updateUserDto.email;
