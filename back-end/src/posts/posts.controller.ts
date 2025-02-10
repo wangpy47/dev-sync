@@ -65,7 +65,7 @@ export class PostsController {
   // 게시글 생성
   @Post()
   async createPost(@Body() createPostDto: CreatePostDto, @Request() req) {
-    const user = req.session?.user;
+    const user = req.user;
     if (!user) {
       throw new BadRequestException('인증된 사용자가 아닙니다.');
     }
@@ -95,7 +95,7 @@ export class PostsController {
   // 게시글 삭제
   @Delete('/:id')
   async deletePost(@Param('id', ParseIntPipe) id: number, @Request() req) {
-    const user = req.session?.user;
+    const user = req.user;
     if (!user) {
       throw new BadRequestException('인증된 사용자가 아닙니다.');
     }
@@ -105,7 +105,7 @@ export class PostsController {
 
   @Patch()
   async updatePost(@Body() updatePostDto: UpdatePostDto, @Request() req) {
-    const user = req.session?.user;
+    const user = req.user;
     if (!user) {
       throw new BadRequestException('인증된 사용자가 아닙니다.');
     }
@@ -131,7 +131,7 @@ export class PostsController {
     @Param('id', ParseIntPipe) post_id: number,
     @Request() req,
   ) {
-    const user = req.session?.user;
+    const user = req.user;
     if (!user) {
       throw new BadRequestException('인증된 사용자가 아닙니다.');
     }
@@ -143,7 +143,7 @@ export class PostsController {
   //좋아요 추가/취소 (토글 기능)
   @Post('/:id/like-toggle')
   async toggleLike(@Param('id', ParseIntPipe) post_id: number, @Request() req) {
-    const user = req.session?.user;
+    const user = req.user;
     if (!user) {
       throw new BadRequestException('인증된 사용자가 아닙니다.');
     }
@@ -162,7 +162,7 @@ export class PostsController {
   // 댓글 생성
   @Post('/comment')
   async addComment(@Body() addCommentDto: AddCommentDto, @Request() req) {
-    const user = req.session?.user;
+    const user = req.user;
     if (!user) {
       throw new BadRequestException('인증된 사용자가 아닙니다.');
     }
@@ -188,7 +188,7 @@ export class PostsController {
     @Body() updateCommentDto: UpdateCommentDto,
     @Request() req,
   ) {
-    const user = req.session?.user;
+    const user = req.user;
     if (!user) {
       throw new BadRequestException('인증된 사용자가 아닙니다.');
     }
@@ -205,7 +205,7 @@ export class PostsController {
     @Param('comment_id', ParseIntPipe) comment_id: number,
     @Request() req,
   ) {
-    const user = req.session?.user;
+    const user = req.user;
     if (!user) {
       throw new BadRequestException('인증된 사용자가 아닙니다.');
     }
