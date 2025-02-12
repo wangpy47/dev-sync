@@ -11,6 +11,7 @@ import {
   Post,
   Query,
   Request,
+  UseGuards,
 } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { GetPostsByCategoryDto } from './dto/category/get-posts-by-category.dto';
@@ -20,6 +21,7 @@ import { CreatePostDto } from './dto/post/create-post.dto';
 import { UpdatePostDto } from './dto/post/update-post.dto';
 import { AddCommentDto } from './dto/comment/add-comment.dto';
 import { UpdateCommentDto } from './dto/comment/update-comment.dto';
+import { AuthenticatedGuard } from 'src/auth/auth.guard';
 
 @Controller('posts')
 export class PostsController {
@@ -64,11 +66,9 @@ export class PostsController {
 
   // 게시글 생성
   @Post()
+  @UseGuards(AuthenticatedGuard)
   async createPost(@Body() createPostDto: CreatePostDto, @Request() req) {
     const user = req.user;
-    if (!user) {
-      throw new BadRequestException('인증된 사용자가 아닙니다.');
-    }
 
     const { title, content, category } = createPostDto;
     const category_data = await this.postsService.getCategoryByName(category);
@@ -94,21 +94,17 @@ export class PostsController {
 
   // 게시글 삭제
   @Delete('/:id')
-  async deletePost(@Param('id', ParseIntPipe) id: number, @Request() req) {
-    const user = req.user;
-    if (!user) {
-      throw new BadRequestException('인증된 사용자가 아닙니다.');
-    }
+  @UseGuards(AuthenticatedGuard)
+  async deletePost(@Param('id', ParseIntPipe) id: number) {
 
     return await this.postsService.deletePost(id);
   }
 
+  // 게시글 수정
   @Patch()
+  @UseGuards(AuthenticatedGuard)
   async updatePost(@Body() updatePostDto: UpdatePostDto, @Request() req) {
     const user = req.user;
-    if (!user) {
-      throw new BadRequestException('인증된 사용자가 아닙니다.');
-    }
 
     return await this.postsService.updatePost(user.user_id, updatePostDto);
   }
@@ -127,14 +123,13 @@ export class PostsController {
 
   // 특정 게시글에서 현재 유저가 좋아요를 눌렀는지 확인
   @Get('/:id/likes/status')
+  @UseGuards(AuthenticatedGuard)
   async getLikeStatus(
     @Param('id', ParseIntPipe) post_id: number,
     @Request() req,
   ) {
     const user = req.user;
-    if (!user) {
-      throw new BadRequestException('인증된 사용자가 아닙니다.');
-    }
+
 
     const like = await this.postsService.getLike(user.user_id, post_id);
     return like;
@@ -142,15 +137,15 @@ export class PostsController {
 
   //좋아요 추가/취소 (토글 기능)
   @Post('/:id/like-toggle')
+  @UseGuards(AuthenticatedGuard)
   async toggleLike(@Param('id', ParseIntPipe) post_id: number, @Request() req) {
     const user = req.user;
-    if (!user) {
-      throw new BadRequestException('인증된 사용자가 아닙니다.');
-    }
+  
 
     return await this.postsService.toggleLike(user.user_id, post_id);
   }
 
+  // 특정 게시글의 댓글 조회
   @Get('/comment/:post_id')
   async getComments(
     @Param('post_id') post_id: number,
@@ -161,11 +156,9 @@ export class PostsController {
 
   // 댓글 생성
   @Post('/comment')
+  @UseGuards(AuthenticatedGuard)
   async addComment(@Body() addCommentDto: AddCommentDto, @Request() req) {
     const user = req.user;
-    if (!user) {
-      throw new BadRequestException('인증된 사용자가 아닙니다.');
-    }
 
     const { post_id, parent_id, comment } = addCommentDto;
 
@@ -184,14 +177,13 @@ export class PostsController {
   }
   // 댓글 수정
   @Patch('/comment')
+  @UseGuards(AuthenticatedGuard)
   async updateComment(
     @Body() updateCommentDto: UpdateCommentDto,
     @Request() req,
   ) {
     const user = req.user;
-    if (!user) {
-      throw new BadRequestException('인증된 사용자가 아닙니다.');
-    }
+   
     const { comment_id, comment } = updateCommentDto;
     return await this.postsService.updateComment(
       user.user_id,
@@ -201,14 +193,13 @@ export class PostsController {
   }
   // 댓글 삭제
   @Delete('/comment/:id')
+  @UseGuards(AuthenticatedGuard)
   async deleteComment(
     @Param('comment_id', ParseIntPipe) comment_id: number,
     @Request() req,
   ) {
     const user = req.user;
-    if (!user) {
-      throw new BadRequestException('인증된 사용자가 아닙니다.');
-    }
+
 
     return await this.postsService.deleteComment(user.user_id, comment_id);
   }

@@ -29,7 +29,7 @@ Content-Type: application/json
 {
   "title": "New Post Title",
   "content": "This is the content of the new post.",
-  "category": "자유게시판",
+  "category": "자유게시판"
 }
 
 
