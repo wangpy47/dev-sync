@@ -6,32 +6,29 @@ import {
   ListItem,
   ListItemButton,
   ListItemText,
-  TextField,
-  InputAdornment,
 } from "@mui/material";
-import SearchIcon from "@mui/icons-material/Search";
-import Button from "@mui/material/Button";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import useFetchCategories from "../../hooks/useFetchCategories";
 import { Children, useEffect, useState } from "react";
-import { WritePost } from "./WritePost";
+import CommunityAction from "./CommunityAction";
 
-export const CommunityLayout = ({ children }: { children?: any }) => {
+export const CommunityLayout = () => {
   const navigate = useNavigate();
   const [category, setCategory] = useState("자유게시판");
   const { categories } = useFetchCategories();
 
-  useEffect(() => {
-    category === "자유게시판"
-      ? navigate("/community/general")
-      : category === "질문게시판"
-      ? navigate("/community/question")
-      : category === "공지사항"
-      ? navigate("/community/notice")
-      : category === "문의하기"
-      ? navigate("/inquiry")
-      : "/";
-  }, [category]);
+  const handleCategory = (category: string) => {
+    setCategory(category);
+    navigate(
+      category === "자유게시판"
+        ? "/community/general"
+        : category === "질문게시판"
+        ? "/community/question"
+        : category === "공지사항"
+        ? "/community/notice"
+        : "/inquiry"
+    );
+  };
 
   return (
     <div
@@ -46,7 +43,7 @@ export const CommunityLayout = ({ children }: { children?: any }) => {
           position: absolute; /* 고정 위치 */
           & .MuiDrawer-paper {
             width: 11em;
-            background: #f8f9fa;
+            background: #f0f3f6;
             border-right: 1px solid #ddd;
             margin-top: 70px;
           }
@@ -67,7 +64,7 @@ export const CommunityLayout = ({ children }: { children?: any }) => {
                     background: rgba(202, 201, 201, 0.252);
                   }
                 `}
-                onClick={() => setCategory(categories.category)}
+                onClick={() => handleCategory(categories.category)}
               >
                 <ListItemText primary={categories.category} />
               </ListItemButton>
@@ -79,64 +76,21 @@ export const CommunityLayout = ({ children }: { children?: any }) => {
       {/* 오른쪽 컨텐츠 영역 */}
       <div
         css={css`
-          flex-grow: 1;
-          margin-left: 180px; /* 사이드바 공간 확보 */
-          padding: 1rem;
+          margin-left: 180px; /*·사이드바 공간 확보 */
+          padding: 2rem;
+          width: 70%;
         `}
       >
-        {/* 검색 바 */}
-        <div
-          css={css`
-            display: flex;
-            margin-bottom: 1rem;
-          `}
-        >
-          <TextField
-            size="small"
-            variant="outlined"
-            sx={{
-              flex: 1,
-              backgroundColor: "white",
-            }}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <SearchIcon />
-                </InputAdornment>
-              ),
-            }}
-          />
-          <Button variant="contained" sx={{ marginLeft: "1rem" }}>
-            검색
-          </Button>
-        </div>
-        <div
-          css={css`
-            display: flex;
-            justify-content: flex-end;
-          `}
-        >
-          {(category === "자유게시판" || category === "질문게시판") && (
-            <Button
-              onClick={() =>
-                navigate("/writepost", { state: { from: category } })
-              }
-              variant="contained"
-            >
-              글쓰기
-            </Button>
-          )}
-        </div>
+        <CommunityAction category={category} />
         {/* 게시물 영역 */}
         <div
           css={css`
             height: 1000px;
-            background: white;
+            background: #fffefe;
             margin-top: 1rem;
           `}
         >
-          {/* <Outlet /> */}
-          {children}
+          <Outlet />
         </div>
       </div>
     </div>

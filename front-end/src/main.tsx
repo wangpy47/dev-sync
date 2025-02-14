@@ -12,6 +12,8 @@ import Contact from "./components/contact/Contact.tsx";
 import InquiryList from "./components/contact/InquiryList.tsx";
 import { WritePost } from "./components/community/WritePost.tsx";
 import { CommunityComponent } from "./components/community/CommunityComponent.tsx";
+import { ReadPost } from "./components/community/ReadPost.tsx";
+import { CommunityLayout } from "./components/community/CommunityLayout.tsx";
 
 const router = createBrowserRouter([
   {
@@ -36,11 +38,11 @@ const router = createBrowserRouter([
       },
       {
         path: "community",
-        // element: <CommunityPage />,
+        element: <CommunityLayout />,
         children: [
           {
             path: "question",
-            element: < CommunityComponent/>,
+            element: <CommunityComponent />,
           },
           {
             path: "notice",
@@ -48,7 +50,11 @@ const router = createBrowserRouter([
           },
           {
             path: "general",
-            element: <CommunityComponent/>,
+            element: <CommunityComponent />,
+          },
+          {
+            path: "post/:postId",
+            element: <ReadPost />,
           },
         ],
       },

@@ -47,36 +47,33 @@ export const WritePost = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [selectedCategory, setSelectedCategory] = useState(location.state.from);
-  const [content, setContent] = useState("");
   const [title, setTitle] = useState("");
 
   const handleContentSave = async () => {
     if (quill) {
-      console.log(quill);
-      const editorContent = quill.root.innerHTML; // HTML 형식으로 가져오기
-      setContent(editorContent); // state에 저장
-      console.log("저장된 내용:", editorContent); // 저장된 내용 확인
+      const editorContent = quill.root.innerHTML;
+      console.log("저장된 내용:", editorContent);
+      await handleSave(editorContent); // content를 바로 넘김
     }
-    await handleSave();
   };
 
-  const handleSave = async () => {
+  const handleSave = async (contentData: string) => {
     const response = await fetch("http://localhost:3000/posts", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
       },
-      credentials: "include", // 세션 쿠키 포함
+      credentials: "include",
 
       body: JSON.stringify({
         title: title,
-        content: "<p>하잉 </p>",
+        content: contentData, // 여기서 바로 받은 데이터 사용
         category: selectedCategory,
       }),
     });
 
-    console.log(title, content, selectedCategory, response);
+    console.log(title, contentData, selectedCategory, response);
     if (response.ok) {
       const result = await response.json();
       console.log(result);
