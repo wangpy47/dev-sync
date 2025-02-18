@@ -1,6 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
 import {
+  Button,
   Drawer,
   List,
   ListItem,
@@ -11,6 +12,9 @@ import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import useFetchCategories from "../../hooks/useFetchCategories";
 import { Children, useEffect, useState } from "react";
 import CommunityAction from "./CommunityAction";
+import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
+import ThumbUpAltOutlinedIcon from "@mui/icons-material/ThumbUpAltOutlined";
+import ThumbDownOffAltIcon from "@mui/icons-material/ThumbDownOffAlt";
 
 export const CommunityLayout = () => {
   const navigate = useNavigate();
@@ -78,19 +82,49 @@ export const CommunityLayout = () => {
         css={css`
           margin-left: 180px; /*·사이드바 공간 확보 */
           padding: 2rem;
-          width: 70%;
+          width: 65%;
         `}
       >
         <CommunityAction category={category} />
         {/* 게시물 영역 */}
         <div
           css={css`
-            height: 1000px;
-            background: #fffefe;
             margin-top: 1rem;
           `}
         >
           <Outlet />
+        </div>
+      </div>
+      <div
+        css={css`
+          width: 80px;
+          // border: 2px solid red;
+          position: fixed;
+          top: 25%;
+          right: max(8%, 20px); /* 최소 20px 이상 유지하면서 화면 비율 조정 */
+          @media (max-width: 1024px) {
+            right: 10px; /* 작은 화면에서는 오른쪽 끝에 붙임 */
+          }
+        `}
+      >
+        <div>
+          <Button variant="outlined" sx={{ width: "100%" }}>
+            <KeyboardBackspaceIcon />
+          </Button>
+        </div>
+        <div
+          css={css`
+            margin: 0.4rem 0rem;
+          `}
+        >
+          <Button variant="outlined" sx={{ width: "100%" }}>
+            <ThumbUpAltOutlinedIcon />
+          </Button>
+        </div>
+        <div>
+          <Button variant="outlined" sx={{ width: "100%" }}>
+            <ThumbDownOffAltIcon />
+          </Button>
         </div>
       </div>
     </div>

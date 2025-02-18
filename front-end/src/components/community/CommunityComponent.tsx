@@ -65,7 +65,9 @@ export const CommunityComponent = () => {
           <>
             <ListItem
               key={post.post_id}
-              onClick={() => navigate(`/community/post/${post.post_id}`)}
+              onClick={() =>
+                navigate(`/community/post/${post.post_id}`, { state: post })
+              }
             >
               <ListItemText
                 primary={post.title}

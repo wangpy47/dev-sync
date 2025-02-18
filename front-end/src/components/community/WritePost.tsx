@@ -58,6 +58,7 @@ export const WritePost = () => {
   };
 
   const handleSave = async (contentData: string) => {
+    console.log(typeof contentData);
     const response = await fetch("http://localhost:3000/posts", {
       method: "POST",
       headers: {
