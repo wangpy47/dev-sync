@@ -10,10 +10,12 @@ import { Post } from './entities/post.entity';
 import { Category } from './entities/category.entity';
 import { Like } from './entities/like.entity';
 import { Comment } from './entities/comment.entity';
+import { UploadService } from 'src/upload/upload.service';
+
 
 @Module({
   imports: [TypeOrmModule.forFeature([Post, Category, User, Like, Comment]), UserModule],
   controllers: [PostsController],
-  providers: [PostsService, CategoryService],
+  providers: [PostsService, CategoryService, UploadService],
 })
 export class PostsModule {}

@@ -11,7 +11,9 @@ import {
   Post,
   Query,
   Request,
+  UploadedFiles,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import { GetPostsByCategoryDto } from './dto/category/get-posts-by-category.dto';
@@ -22,6 +24,7 @@ import { UpdatePostDto } from './dto/post/update-post.dto';
 import { AddCommentDto } from './dto/comment/add-comment.dto';
 import { UpdateCommentDto } from './dto/comment/update-comment.dto';
 import { AuthenticatedGuard } from 'src/auth/auth.guard';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
 
 @Controller('posts')
 export class PostsController {
@@ -64,25 +67,48 @@ export class PostsController {
     return await this.postsService.getTopPosts(n);
   }
 
+  @Post('/upload')
+  @UseGuards(AuthenticatedGuard)
+  @UseInterceptors(FileFieldsInterceptor([{ name: 'files', maxCount: 10 }])) // 여러 개 파일 업로드 가능
+  async uploadPostFiles(
+    @UploadedFiles() files: { files?: Express.Multer.File[] },
+     @Request() req
+  ) {
+    try {
+    
+    const user = req.user;
+      // 게시글 생성 및 파일 업로드
+      const result = await this.postsService.uploadPostFiles(user.user_id, files.files || []);
+
+      return { 
+        message: "게시글이 성공적으로 생성되었습니다.",
+        postId: result.postId,
+        fileUrls: result.fileUrls 
+      };
+    } catch (error) {
+      throw new BadRequestException(error instanceof Error ? error.message : "게시글 생성 실패");
+    }
+  }
+
   // 게시글 생성
   @Post()
   @UseGuards(AuthenticatedGuard)
   async createPost(@Body() createPostDto: CreatePostDto, @Request() req) {
     const user = req.user;
 
-    const { title, content, category } = createPostDto;
+    const { title, content, category, post_id } = createPostDto;
     const category_data = await this.postsService.getCategoryByName(category);
     if (!category_data) {
       throw new NotFoundException(`카테고리 '${name}'을(를) 찾을 수 없습니다.`);
     }
 
     try {
-      console.log(title, content, category);
       return await this.postsService.createPost(
+        user.user_id,
+        post_id,
         title,
         content,
         category,
-        user.user_id,
       );
     } catch (error) {
       if (error instanceof Error) {

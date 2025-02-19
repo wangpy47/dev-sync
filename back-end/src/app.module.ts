@@ -13,6 +13,7 @@ import { Post } from './posts/entities/post.entity';
 import { Category } from './posts/entities/category.entity';
 import { Like } from './posts/entities/like.entity';
 import { Comment } from './posts/entities/comment.entity';
+import { UploadModule } from './upload/upload.module';
 
 
 @Module({
@@ -30,6 +31,7 @@ import { Comment } from './posts/entities/comment.entity';
     ResumeModule,
     ContactModule,
     PostsModule,
+    UploadModule,
   ],
   controllers: [AppController],
   providers: [AppService],
