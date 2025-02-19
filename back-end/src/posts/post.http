@@ -31,6 +31,7 @@ POST http://localhost:3000/posts
 Content-Type: application/json
 
 {
+  "post_id": 1,
   "title": "New Post Title",
   "content": "This is the content of the new post.",
   "category": "자유게시판"
