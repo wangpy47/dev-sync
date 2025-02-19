@@ -21,6 +21,10 @@ GET http://localhost:3000/posts/users/cool102476@naver.com
 GET http://localhost:3000/posts/top?n=5
 
 
+###upload file and get file url
+POST http://localhost:3000/posts/upload
+Content-Type: multipart/form-data
+
 //o
 ### Create a Post
 POST http://localhost:3000/posts

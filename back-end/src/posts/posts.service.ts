@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
+import { Not, Repository } from 'typeorm';
 import { User } from 'src/user/user.entity';
 import { GetPostsByCategoryDto } from './dto/category/get-posts-by-category.dto';
 import { Post } from './entities/post.entity';
@@ -13,6 +13,8 @@ import { Category } from './entities/category.entity';
 import { Like } from './entities/like.entity';
 import { Comment } from './entities/comment.entity';
 import { UserService } from 'src/user/user.service';
+import { UploadService } from 'src/upload/upload.service';
+import { extname } from 'path';
 
 @Injectable()
 export class PostsService {
@@ -24,13 +26,16 @@ export class PostsService {
     @InjectRepository(Like) private likeRepository: Repository<Like>,
     @InjectRepository(Comment) private commentRepository: Repository<Comment>,
     private readonly userService: UserService,
+    private readonly uploadService: UploadService,
   ) {}
 
   //-----------------------------------category----------------------------------------------------
 
   // 모든 카테고리 조회
   async getCategories() {
-    return await this.categoryRepository.find();
+    return await this.categoryRepository.find({
+      where: { category: Not('default') },
+    });
   }
 
   // 카테고리 이름으로 단일 카테고리 조회
@@ -92,15 +97,8 @@ export class PostsService {
     });
   }
 
-  // 게시글 생성
-  async createPost(
-    title: string,
-    content: string,
-    category_name: string,
-    user_id: number,
-  ) {
-    const category = await this.getCategoryByName(category_name);
-
+  //게시글 파일 업로드드
+  async uploadPostFiles(user_id: number, files: Express.Multer.File[]) {
     const user = await this.userRepository.findOne({ where: { user_id } });
     if (!user) {
       throw new NotFoundException(
@@ -108,14 +106,74 @@ export class PostsService {
       );
     }
 
-    const newPost = this.postRepository.create({
-      title,
-      content,
-      category,
-      user,
+    const defaultCategory = await this.categoryRepository.findOne({
+      where: { category: 'default' },
     });
 
-    return await this.postRepository.save(newPost);
+    if (!defaultCategory) {
+      throw new NotFoundException(`기본 카테고리를 찾을 수 없습니다.`);
+    }
+
+    const newPost = this.postRepository.create({
+      title: 'Untitled',
+      content: '',
+      user: user,
+      category: defaultCategory,
+    });
+    const savedPost = await this.postRepository.save(newPost);
+    const postId = savedPost.post_id.toString();
+
+    const uploadPath = `./uploads/${postId}`;
+    const fileUrls = {};
+
+    for (const file of files) {
+      const filename = `${Date.now()}-${Math.round(Math.random() * 1e9)}${extname(file.originalname)}`;
+      const fileUrl = await this.uploadService.uploadFile(
+        file,
+        uploadPath,
+        filename,
+      );
+
+      fileUrls[filename] = fileUrl;
+    }
+
+    return { postId: postId, fileUrls: fileUrls };
+  }
+
+  // 게시글 생성
+  async createPost(
+    user_id: number,
+    post_id: number,
+    title: string,
+    content: string,
+    category_name: string,
+  ) {
+    const user = await this.userRepository.findOne({ where: { user_id } });
+    if (!user) {
+      throw new NotFoundException(
+        `ID가 ${user_id}인 사용자를 찾을 수 없습니다.`,
+      );
+    }
+
+    const category = await this.getCategoryByName(category_name);
+    if (!category) {
+      throw new NotFoundException(
+        `카테고리 '${category_name}'을(를) 찾을 수 없습니다.`,
+      );
+    }
+
+    const post = await this.postRepository.findOne({ where: { post_id } });
+    if (!post) {
+      throw new NotFoundException(
+        `ID가 ${post_id}인 게시글을 찾을 수 없습니다.`,
+      );
+    }
+
+    post.title = title;
+    post.content = content;
+    post.category = category;
+
+    return await this.postRepository.save(post);
   }
 
   // 게시글 삭제
@@ -285,29 +343,26 @@ export class PostsService {
     if (!user) throw new Error('해당 유저가 존재하지 않음');
 
     const target = await this.commentRepository.findOne({
-      where: { comment_id, user_id: { user_id } }, 
+      where: { comment_id, user_id: { user_id } },
     });
 
-    if (!target) throw new Error('해당 댓글을 찾을 수 없거나 삭제할 권한이 없습니다.');
+    if (!target)
+      throw new Error('해당 댓글을 찾을 수 없거나 삭제할 권한이 없습니다.');
 
     return await this.commentRepository.remove(target);
   }
 
   //댓글 수정
-  async updateComment(
-    user_id: number,
-    comment_id: number,
-    comment: string,
-  ) {
+  async updateComment(user_id: number, comment_id: number, comment: string) {
     const user = await this.userService.getUserById(user_id);
     if (!user) throw new Error('해당 유저가 존재하지 않음');
 
-    
     const target = await this.commentRepository.findOne({
-      where: { comment_id, user_id: { user_id } }, 
+      where: { comment_id, user_id: { user_id } },
     });
 
-    if (!target) throw new Error('해당 댓글을 찾을 수 없거나 수정할 권한이 없습니다.');
+    if (!target)
+      throw new Error('해당 댓글을 찾을 수 없거나 수정할 권한이 없습니다.');
     else {
       target.comment = comment;
     }

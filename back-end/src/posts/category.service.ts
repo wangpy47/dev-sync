@@ -22,6 +22,7 @@ export class CategoryService implements OnModuleInit {
       { ㅍcategory: '정보게시판' },
       { category: '공지사항' },
       { category: '문의하기' },
+      { category: 'default'}
     ];
 
     for (const category of defaultCategories) {
