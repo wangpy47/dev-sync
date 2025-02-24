@@ -81,7 +81,7 @@ export class PostsController {
       const result = await this.postsService.uploadPostFiles(user.user_id, files.files || []);
 
       return { 
-        message: "게시글이 성공적으로 생성되었습니다.",
+        message: "파일이 성공적으로 업로드 되었습니다.",
         postId: result.postId,
         fileUrls: result.fileUrls 
       };

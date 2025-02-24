@@ -134,7 +134,7 @@ export class PostsService {
         filename,
       );
 
-      fileUrls[filename] = fileUrl;
+      fileUrls[file.originalname] = fileUrl;
     }
 
     return { postId: postId, fileUrls: fileUrls };
