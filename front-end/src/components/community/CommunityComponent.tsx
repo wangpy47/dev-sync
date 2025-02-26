@@ -43,7 +43,7 @@ export const CommunityComponent = () => {
           console.log(data);
           const cleanedData = data.map((post: any) => ({
             ...post,
-            content: post.content.replace(/<[^>]*>/g, ""),
+            content: post.content,
           }));
           console.log(cleanedData);
           setPostList(cleanedData);
@@ -52,7 +52,14 @@ export const CommunityComponent = () => {
     }
   }, [category]);
 
-  console.log(postList);
+  const removeTag = (html: string) => {
+    // <img> 태그를 (이미지)로 대체
+    let text = html.replace(/<img[^>]*>/g, "(이미지)");
+    // 나머지 HTML 태그 제거
+    text = text.replace(/<[^>]+>/g, "");
+
+    return text;
+  };
 
   return (
     <>
@@ -71,7 +78,7 @@ export const CommunityComponent = () => {
             >
               <ListItemText
                 primary={post.title}
-                secondary={post.content || ""}
+                secondary={removeTag(post.content) || ""}
                 primaryTypographyProps={{
                   sx: {
                     fontSize: "1rem", // 제목 글씨 크기 조정
