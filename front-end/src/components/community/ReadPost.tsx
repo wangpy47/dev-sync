@@ -2,13 +2,15 @@
 import { Button, css, Divider, TextField, Typography } from "@mui/material";
 import { useLocation } from "react-router-dom";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
+import DOMPurify from "dompurify";
 
 export const ReadPost = () => {
   const location = useLocation();
   const post = location.state; // `navigate`에서 전달된 데이터
   const [date, time] = post.createdAt.split("T");
   const formmatTime = time.substring(0, 5);
-  console.log(date, formmatTime);
+  //xss 방지를 위한 데이터 처리
+  const sanitizedContent = DOMPurify.sanitize(post.content);
 
   return (
     <div
@@ -74,10 +76,15 @@ export const ReadPost = () => {
           css={css`
             padding-bottom: 60px;
             min-height: fit-content;
+            img {
+              max-width: 30%; // 부모 요소 너비에 맞게 조정
+              height: auto; // 비율 유지하며 크기 조정
+              display: block; // 레이아웃 깨짐 방지
+              margin: 0 auto; // 중앙 정렬
+            }
           `}
-        >
-          {post.content}
-        </div>
+          dangerouslySetInnerHTML={{ __html: sanitizedContent }}
+        />
       </div>
       <div>
         <Divider />
