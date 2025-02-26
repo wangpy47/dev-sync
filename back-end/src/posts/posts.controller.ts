@@ -36,7 +36,7 @@ export class PostsController {
   //모든 카테고리 조회
   @Get('/categories')
   async getCateGories() {
-    return this.postsService.getCategories();
+    return await this.postsService.getCategories();
   }
 
   // 모든 게시글 조회
