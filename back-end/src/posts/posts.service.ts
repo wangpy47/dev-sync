@@ -296,7 +296,7 @@ export class PostsService {
 
   //----------------------comment----------------------------------
 
-  //전체 댓글 조회
+  //특정 페이지 댓글 조회
   async getComment(post_id: number, page: number) {
     return await this.commentRepository.find({
       where: { post_id: { post_id } },
@@ -305,6 +305,14 @@ export class PostsService {
       take: page * 20,
     });
   }
+
+  //전체 댓글의 개수 조회회
+  async getCommentCount(post_id: number): Promise<number> {
+    return await this.commentRepository.count({
+      where: { post_id: { post_id } },
+    });
+  }
+
 
   //댓글 추가
   async addComment(
