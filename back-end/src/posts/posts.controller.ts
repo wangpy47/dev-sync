@@ -177,7 +177,10 @@ export class PostsController {
     @Param('post_id') post_id: number,
     @Query('page') page: number = 1, // 기본값 1
   ) {
-    return await this.postsService.getComment(post_id, page);
+    const comments = await this.postsService.getComment(post_id, page);
+    const totalCount = await this.postsService.getCommentCount(post_id);
+    
+    return { totalCount, comments };
   }
 
   // 댓글 생성
