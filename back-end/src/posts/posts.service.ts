@@ -298,12 +298,21 @@ export class PostsService {
 
   //특정 페이지 댓글 조회
   async getComment(post_id: number, page: number) {
-    return await this.commentRepository.find({
+    const comments = await this.commentRepository.find({
       where: { post_id: { post_id } },
+      relations: ['user_id'],
       order: { createdAt: 'DESC' },
       skip: (page - 1) * 20,
-      take: page * 20,
+      take: 20, // 페이지당 20개
     });
+
+    // 필요 데이터만 포함한 새 객체 배열 생성
+    return comments.map((comment) => ({
+      comment_id: comment.comment_id,
+      comment: comment.comment,
+      createdAt: comment.createdAt,
+      user_name: comment.user_id?.name, // user_id 객체에서 name만 추출
+    }));
   }
 
   //전체 댓글의 개수 조회회
@@ -312,7 +321,6 @@ export class PostsService {
       where: { post_id: { post_id } },
     });
   }
-
 
   //댓글 추가
   async addComment(
