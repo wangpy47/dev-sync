@@ -1,5 +1,5 @@
 import { User } from "src/user/user.entity";
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Post } from "./post.entity";
 
 @Entity()
@@ -11,9 +11,11 @@ export class Comment{
     comment:string;
 
     @ManyToOne(()=>User, {nullable:false, onDelete:'CASCADE'})
+    @JoinColumn({name:'user_id'})
     user_id:User;
 
     @ManyToOne(()=>Post, {nullable:false, onDelete:'CASCADE'})
+    @JoinColumn({name:'post_id'})
     post_id:Post;
 
     @ManyToOne(()=>Comment, {nullable:true, onDelete:'CASCADE'})
