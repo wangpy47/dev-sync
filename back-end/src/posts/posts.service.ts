@@ -298,7 +298,7 @@ export class PostsService {
 
   async getComment(post_id: number, page: number) {
     const comments = await this.commentRepository.find({
-        where: { post_id: { post_id } },
+        where: { post: { post_id } },
         relations: ['user_id', 'parent'], 
         order: { createdAt: 'DESC' },
         skip: (page - 1) * 20,
@@ -312,7 +312,7 @@ export class PostsService {
         user_id: comment.user_id?.user_id, 
         user_name: comment.user_id?.name, 
         profile_image: comment.user_id?.profile_image, 
-        parent: comment.parent.comment_id
+        parent: comment.parent?.comment_id ?? null,
     }));
 }
 
@@ -320,7 +320,7 @@ export class PostsService {
   //전체 댓글의 개수 조회회
   async getCommentCount(post_id: number): Promise<number> {
     return await this.commentRepository.count({
-      where: { post_id: { post_id } },
+      where: { post: { post_id } },
     });
   }
 
@@ -347,7 +347,7 @@ export class PostsService {
 
     const newComment = this.commentRepository.create({
       user_id: user,
-      post_id: post,
+      post: post,
       parent: parentComment,
       comment,
     });
