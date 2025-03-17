@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import ChatBubbleOutlineOutlinedIcon from "@mui/icons-material/ChatBubbleOutlineOutlined";
-import ThumbUpAltOutlinedIcon from "@mui/icons-material/ThumbUpAltOutlined";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 
 export const CommunityComponent = () => {
   const navigate = useNavigate();
@@ -60,6 +60,39 @@ export const CommunityComponent = () => {
 
     return text;
   };
+  const increaseViewCount = async (postId: number) => {
+    try {
+      const response = await fetch(
+        `http://localhost:3000/posts/${postId}/view`,
+        {
+          method: "PATCH",
+          credentials: "include",
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("조회수 증가 실패");
+      }
+    } catch (error) {
+      console.error("API 호출 에러:", error);
+    }
+  };
+
+  const handleListClick = async (post: {
+    post_id: number;
+    title: string;
+    content: string;
+    viewCount: number;
+  }) => {
+    console.log(post);
+    await increaseViewCount(post.post_id);
+
+    const updatedPost = {
+      ...post,
+      viewCount: post.viewCount + 1,
+    };
+    navigate(`/community/post/${post.post_id}`, { state: updatedPost });
+  };
 
   return (
     <>
@@ -73,7 +106,8 @@ export const CommunityComponent = () => {
             <ListItem
               key={post.post_id}
               onClick={() =>
-                navigate(`/community/post/${post.post_id}`, { state: post })
+                // navigate(`/community/post/${post.post_id}`, { state: post })
+                handleListClick(post)
               }
             >
               <ListItemText
@@ -117,7 +151,7 @@ export const CommunityComponent = () => {
                 </Typography>
                 <ChatBubbleOutlineOutlinedIcon sx={{ fontSize: "13px" }} />
                 <Typography sx={{ fontSize: "13px" }}>{50}</Typography>
-                <ThumbUpAltOutlinedIcon sx={{ fontSize: "13px" }} />
+                <FavoriteBorderIcon sx={{ fontSize: "13px" }} />
                 <Typography sx={{ fontSize: "13px" }}>{10}</Typography>
               </Box>
             </ListItem>

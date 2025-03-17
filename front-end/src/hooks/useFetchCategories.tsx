@@ -8,7 +8,9 @@ const useFetchCategories = () => {
 
   const fetchCategories = async () => {
     try {
-      const response = await fetch(`http://localhost:3000/posts/categories`);
+      const response = await fetch(`http://localhost:3000/posts/categories`, {
+        credentials: "include", // 세션 쿠키 포함
+      });
       if (!response.ok) throw new Error("데이터를 불러오지 못했습니다.");
       const data = await response.json();
       setCategories(data);

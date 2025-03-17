@@ -70,10 +70,6 @@ export const WritePost = () => {
   const [title, setTitle] = useState("");
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
 
-  useEffect(() => {
-    console.log("유즈이펙트", uploadedFiles);
-  }, [uploadedFiles]);
-
   const uniqueFileName = (name: string, existingFiles: File[]): string => {
     let baseName = name;
     let extension = "";
