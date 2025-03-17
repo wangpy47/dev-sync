@@ -16,7 +16,7 @@ export class Comment{
 
     @ManyToOne(()=>Post, {nullable:false, onDelete:'CASCADE'})
     @JoinColumn({name:'post_id'})
-    post_id:Post;
+    post:Post;
 
     @ManyToOne(()=>Comment, {nullable:true, onDelete:'CASCADE'})
     parent:Comment;
