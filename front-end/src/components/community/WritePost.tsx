@@ -5,8 +5,8 @@ import {
   Button,
   Select,
   MenuItem,
-  Divider,
   Box,
+  CircularProgress,
 } from "@mui/material";
 import useFetchCategories from "../../hooks/useFetchCategories";
 import { useEffect, useState } from "react";
@@ -23,13 +23,14 @@ declare global {
   }
 }
 
-// window에 Quill 등록
+// // window에 Quill 등록
 if (typeof window !== "undefined") {
   window.Quill = Quill;
+  Quill.register("modules/imageResize", ImageResize); // Quill 초기화 전에 모듈 등록
 }
 
 // 반드시 Quill 등록 전에 모듈을 먼저 등록해야 함
-Quill.register("modules/imageResize", ImageResize);
+// Quill.register("modules/imageResize", ImageResize);
 
 const titleStyle = css`
   text-align: center;
@@ -66,7 +67,9 @@ export const WritePost = () => {
   const { categories } = useFetchCategories();
   const navigate = useNavigate();
   const location = useLocation();
-  const [selectedCategory, setSelectedCategory] = useState(location.state.from);
+  const [selectedCategory, setSelectedCategory] = useState(
+    location.state?.from || ""
+  );
   const [title, setTitle] = useState("");
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
 
@@ -89,7 +92,6 @@ export const WritePost = () => {
     console.log(newName, existingFiles);
     // 중복된 파일명이 존재하면 숫자를 붙여서 유니크한 이름 생성
     while (existingFiles.some((file) => file.name === newName)) {
-      console.log("while", newName);
       newName = `${baseName}(${counter})${extension}`;
       counter++;
     }
@@ -107,18 +109,15 @@ export const WritePost = () => {
       const file = input.files[0];
 
       // 중복된 파일명 처리
-      console.log(file.name, uploadedFiles);
       const fileName = uniqueFileName(file.name, uploadedFiles);
       const uniqueFile = new File([file], fileName, { type: file.type });
-      console.log(uniqueFile);
-
       // 파일 미리보기 삽입
       const reader = new FileReader();
       reader.onloadend = () => {
         const imageUrl = reader.result as string;
-        const range = quill.getSelection(true);
+        const range = quill?.getSelection(true);
         const customImageTag = `<img src="${imageUrl}" alt="${uniqueFile.name}"/>`;
-        quill.clipboard.dangerouslyPasteHTML(range.index, customImageTag);
+        quill?.clipboard.dangerouslyPasteHTML(range?.index, customImageTag);
 
         // 파일 상태 업데이트
         setUploadedFiles((prevFiles) => [...prevFiles, file]);
@@ -137,7 +136,6 @@ export const WritePost = () => {
         img.style.height = "auto";
         img.style.display = "block";
         img.style.margin = "10px auto";
-        console.log(img);
       });
       quill.on("text-change", () => {
         const editorContent = quill.root.innerHTML;
@@ -175,11 +173,10 @@ export const WritePost = () => {
   }, [quill, handleContentLoad]);
 
   const handleContentSave = async () => {
-    if (quill && uploadedFiles.length > 0) {
+    if (quill) {
       const formData = new FormData();
       uploadedFiles.forEach((file) => {
         formData.append("files", file);
-        console.log(file);
       });
 
       try {
@@ -192,7 +189,6 @@ export const WritePost = () => {
         if (!response.ok) throw new Error("이미지 업로드 실패");
 
         const result = await response.json();
-        console.log(result);
         const uploadedUrls = result.fileUrls;
         const postId = result.postId;
 
@@ -210,7 +206,6 @@ export const WritePost = () => {
               "$1$2" // src 속성 제거, 나머지는 그대로 유지
             );
 
-            console.log(editorContent);
             // 2️⃣ 새로운 URL 삽입
             const insertUrlRegex = new RegExp(
               `<img([^>]*alt="${file.name}"[^>]*)>`,
@@ -226,7 +221,6 @@ export const WritePost = () => {
 
         // 최종 업데이트된 HTML을 적용 (quill 에디터에 다시 삽입)
         quill.root.innerHTML = editorContent;
-        console.log(postId);
         handleSave(quill.root.innerHTML, postId);
       } catch (error) {
         console.error("이미지 업로드 중 오류 발생:", error);
@@ -235,7 +229,6 @@ export const WritePost = () => {
   };
 
   const handleSave = async (contentData: string, postId: string) => {
-    console.log(typeof contentData);
     const response = await fetch("http://localhost:3000/posts", {
       method: "POST",
       headers: {
@@ -252,15 +245,32 @@ export const WritePost = () => {
       }),
     });
 
-    console.log(title, contentData, selectedCategory, response);
     if (response.ok) {
       const result = await response.json();
-      console.log(result);
+      const updatedPost = {
+        ...result,
+        viewCount: result.viewCount + 1,
+      };
+      navigate(`/community/post/${result.post_id}`, { state: updatedPost });
+      console.log("이미지 업로드 성공");
     } else {
       const error = await response.json();
       console.error("Update failed:", error, response);
     }
   };
+
+  const changeCategory = (e: any) => {
+    setSelectedCategory(e.target.value);
+  };
+
+  useEffect(() => {
+    if (
+      categories.length > 0 &&
+      !categories.some((c) => c.category === selectedCategory)
+    ) {
+      setSelectedCategory(categories[0].category);
+    }
+  }, [categories]);
 
   return (
     <div
@@ -269,21 +279,27 @@ export const WritePost = () => {
       `}
     >
       <h2 css={titleStyle}>✏️ 글쓰기</h2>
-      <Select
-        value={selectedCategory}
-        onChange={(e) => setSelectedCategory(e.target.value)}
-        css={selectStyle}
-        fullWidth
-      >
-        {categories
-          .filter((i) => i.category !== "문의하기" && i.category !== "공지사항")
-          .map((i) => (
-            <MenuItem key={i.category_id} value={i.category}>
-              {i.category}
-            </MenuItem>
-          ))}
-      </Select>
 
+      {categories.length === 0 ? (
+        <CircularProgress />
+      ) : (
+        <Select
+          value={selectedCategory}
+          onChange={changeCategory}
+          css={selectStyle}
+          fullWidth
+        >
+          {categories
+            .filter(
+              (i) => i.category == "자유게시판" || i.category == "질문게시판"
+            )
+            .map((i, idx) => (
+              <MenuItem key={idx} value={i.category}>
+                {i.category}
+              </MenuItem>
+            ))}
+        </Select>
+      )}
       {/* 제목 입력 */}
       <TextField
         label="제목"

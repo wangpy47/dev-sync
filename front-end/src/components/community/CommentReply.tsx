@@ -6,13 +6,20 @@ import { useSendComment } from "../../hooks/useSendComment";
 import { useEvent } from "../../hooks/useEvent";
 import { useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
+import { useGetCommentList } from "../../hooks/useGetCommentList";
 
 export const CommentReply = ({
-  replying,
   parentId,
+  setPage,
+  setComments,
+  setTotalPages,
+  setReplying,
 }: {
-  replying: boolean;
+  setPage: any;
   parentId: number;
+  setComments: any;
+  setTotalPages: any;
+  setReplying: any;
 }) => {
   const location = useLocation();
   const userId = useSelector((state: any) => state.login.loginInfo.user_id);
@@ -20,7 +27,9 @@ export const CommentReply = ({
   const textRef = useRef<HTMLInputElement | null>(null);
 
   const replyComment = useEvent(async (value: any) => {
-    useSendComment(value, parentId, userId, postId);
+    await useSendComment(value, parentId, userId, postId);
+    setPage(1);
+    useGetCommentList(1, postId, setComments, setTotalPages);
   });
 
   const onChangeTextField = () => {
@@ -28,10 +37,11 @@ export const CommentReply = ({
       const textValue = textRef?.current?.value?.trim();
       if (textValue) {
         replyComment(textRef?.current?.value);
+        setReplying(false);
       }
     }
   };
-  console.log(replying);
+
   return (
     <div
       css={css`
@@ -79,7 +89,14 @@ export const CommentReply = ({
         <Button variant="contained" onClick={onChangeTextField}>
           입력
         </Button>
-        <Button variant="outlined">취소</Button>
+        <Button
+          variant="outlined"
+          onClick={() => {
+            setReplying(false);
+          }}
+        >
+          취소
+        </Button>
       </div>
       <Divider />
     </div>
