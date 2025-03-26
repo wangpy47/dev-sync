@@ -4,41 +4,26 @@ import { useLocation, useNavigate } from "react-router-dom";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import DOMPurify from "dompurify";
 import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
-import ThumbUpAltOutlinedIcon from "@mui/icons-material/ThumbUpAltOutlined";
 import { useGetLikeCount } from "../../hooks/useGetLikeCount";
 import { useToggleLike } from "../../hooks/useToggleLike";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import FavoriteIcon from "@mui/icons-material/Favorite";
 import { CommentPost } from "./CommentPost";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export const ReadPost = () => {
   const location = useLocation();
-  const nagivate = useNavigate();
+  const navigate = useNavigate();
   const post = location.state; // `navigate`에서 전달된 데이터
+  if (!post) return null; // post가 없으면 렌더링 막기
   const [date, time] = post.createdAt.split("T");
   const formmatTime = time.substring(0, 5);
   //xss 방지를 위한 데이터 처리
   const sanitizedContent = DOMPurify.sanitize(post.content);
+  const [likeCount, setLikeCount] = useState<number>(0);
+  const [liked, setLiked] = useState(false);
 
-  const getLike = async () => {
-    const data = await useToggleLike(post.post_id);
-    console.log(data);
-    like();
-  };
-
-  const handleButton = (i: number) => {
-    if (i === 0) {
-      nagivate(-1);
-    } else if (i === 1) {
-      getLike();
-    }
-  };
-
-  // useEffect(() => {
-  //   getLike();
-  // }, []);
-
-  const like = async () => {
+  const checkLikeStatus = async () => {
     try {
       const response = await fetch(
         `http://localhost:3000/posts/${post.post_id}/likes/status`,
@@ -47,17 +32,39 @@ export const ReadPost = () => {
           credentials: "include",
         }
       );
-      if (!response.ok) {
-        throw new Error("실패");
-      }
+      if (!response.ok) throw new Error("Failed to check like status");
+      // const text = await response.text();
+      // console.log(text);
       const value = await response.json();
       const like = value?.like_id ? true : false;
-      console.log(like);
+      return like;
     } catch (error) {
-      return null;
+      console.error(error);
     }
   };
 
+  const count = async () => {
+    const data = await useGetLikeCount(post.post_id);
+    setLikeCount(data);
+  };
+
+  //렌더링시 라이크 갯수
+  useEffect(() => {
+    count();
+  }, []);
+
+  const handleLikeCheck = async () => {
+    const check = await checkLikeStatus();
+  };
+
+  const handleButton = async () => {
+    if (liked) {
+      handleLikeCheck();
+    }
+    setLiked(!liked);
+    await useToggleLike(post.post_id);
+    count();
+  };
   return (
     <div
       css={css`
@@ -141,52 +148,42 @@ export const ReadPost = () => {
           position: fixed;
           top: 25%;
           right: max(6%, 20px);
-
           display: flex;
-          flex-direction: column; /* 기본 세로 정렬 */
+          flex-direction: column;
           gap: 0.4rem;
-          @media (max-width: 768px) {
-            width: 100%; /* 가로 길이 꽉 채우기 */
-            position: static; /* 고정 해제 */
-            justify-content: center; /* 중앙 배치 */
-            flex-direction: row; /* 가로 정렬 */
-            margin-top: 1.5rem; /* 콘텐츠랑 간격 띄우기 */
-          }
         `}
       >
-        {["KeyboardBackspaceIcon", "FavoriteBorderIcon"].map((Icon, index) => (
-          <Button
-            onClick={() => handleButton(index)}
-            key={index}
-            variant="outlined"
-            sx={{
-              width: "100%",
-              borderColor: "#d3d3d3", // ✅ 아웃라인 컬러 변경
-              margin: "2px",
-              boxShadow: "0px 0px 5px rgba(230, 230, 230, 0.8)",
-              padding: "5 0rem",
-              color: "#588eda",
-              "& svg": {
-                fontSize: "20px",
-              },
-              ...(index === 1 && { gap: "0.3rem" }), // 좋아요 버튼만 간격 조정
-              "@media (max-width: 768px)": {
-                width: "60px", // 모바일에서 버튼 크기 축소
-                height: "30px",
-                margin: "0rem 1rem",
-                "& svg": {
-                  fontSize: "15px",
-                },
-                minWidth: "auto", // 버튼 기본 크기 무시
-              },
-            }}
-          >
-            {index === 0 ? <KeyboardBackspaceIcon /> : <FavoriteBorderIcon />}
-            {index === 1 && <span>10</span>} {/* 숫자 표시 */}
-          </Button>
-        ))}
+        <Button
+          onClick={() => navigate(-1)}
+          variant="outlined"
+          sx={{
+            width: "100%",
+            margin: "2px",
+            padding: "5 0rem",
+            color: "#588eda",
+            boxShadow: "0px 0px 5px rgba(230, 230, 230, 0.8)",
+          }}
+        >
+          <KeyboardBackspaceIcon />
+        </Button>
+        <Button
+          onClick={handleButton}
+          variant="outlined"
+          sx={{
+            width: "100%",
+            margin: "2px",
+            padding: "5 0rem",
+            color: "#588eda",
+            gap: "5px",
+            boxShadow: "0px 0px 5px rgba(230, 230, 230, 0.8)",
+          }}
+        >
+          <FavoriteBorderIcon />
+          <span>{likeCount}</span>
+        </Button>
       </div>
       <CommentPost />
+      {/* </div> */}
     </div>
   );
 };

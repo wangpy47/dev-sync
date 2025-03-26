@@ -11,9 +11,9 @@ export const useToggleLike = async (postId: number) => {
     if (!response.ok) {
       throw new Error("좋아요 토글 클릭 실패");
     }
-    console.log(response);
-    const count = await response.json();
-    console.log(count);
+    // console.log(response);
+    const data = await response.json();
+    console.log("좋아요 토글 클릭", data);
   } catch (error) {
     return null;
   }
