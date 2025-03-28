@@ -221,7 +221,7 @@ export class PostsController {
     );
   }
   // 댓글 삭제
-  @Delete('/comment/:id')
+  @Delete('/comment/:comment_id')
   @UseGuards(AuthenticatedGuard)
   async deleteComment(
     @Param('comment_id', ParseIntPipe) comment_id: number,

@@ -2,7 +2,7 @@
 import { css } from "@emotion/react";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
-import { useEffect } from "react";
+import { StrictMode, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { login, logout } from "./redux/redux";
 import { Outlet } from "react-router-dom";
@@ -60,15 +60,17 @@ function App() {
   }, []);
 
   return (
-    <div css={layoutStyle}>
-      <Header />
-      <main css={contentWrapperStyle}>
-        <div css={innerContentStyle}>
-          <Outlet />
-        </div>
-      </main>
-      <Footer />
-    </div>
+    <StrictMode>
+      <div css={layoutStyle}>
+        <Header />
+        <main css={contentWrapperStyle}>
+          <div css={innerContentStyle}>
+            <Outlet />
+          </div>
+        </main>
+        <Footer />
+      </div>
+    </StrictMode>
   );
 }
 

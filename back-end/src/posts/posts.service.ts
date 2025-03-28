@@ -347,23 +347,33 @@ export class PostsService {
 
   //----------------------comment----------------------------------
 
-  //특정 페이지 댓글 조회
   async getComment(post_id: number, page: number) {
-    return await this.commentRepository.find({
-      where: { post_id: { post_id } },
-      order: { createdAt: 'DESC' },
-      skip: (page - 1) * 20,
-      take: page * 20,
+    const comments = await this.commentRepository.find({
+        where: { post: { post_id } },
+        relations: ['user_id', 'parent'], 
+        order: { createdAt: 'DESC' },
+        skip: (page - 1) * 20,
+        take: 20, 
     });
-  }
+
+    return comments.map((comment) => ({
+        comment_id: comment.comment_id,
+        comment: comment.comment,
+        createdAt: comment.createdAt,
+        user_id: comment.user_id?.user_id, 
+        user_name: comment.user_id?.name, 
+        profile_image: comment.user_id?.profile_image, 
+        parent: comment.parent?.comment_id ?? null,
+    }));
+}
+
 
   //전체 댓글의 개수 조회회
   async getCommentCount(post_id: number): Promise<number> {
     return await this.commentRepository.count({
-      where: { post_id: { post_id } },
+      where: { post: { post_id } },
     });
   }
-
 
   //댓글 추가
   async addComment(
@@ -388,7 +398,7 @@ export class PostsService {
 
     const newComment = this.commentRepository.create({
       user_id: user,
-      post_id: post,
+      post: post,
       parent: parentComment,
       comment,
     });

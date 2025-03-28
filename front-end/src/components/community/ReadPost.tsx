@@ -1,17 +1,70 @@
 /** @jsxImportSource @emotion/react */
 import { Button, css, Divider, TextField, Typography } from "@mui/material";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import DOMPurify from "dompurify";
+import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
+import { useGetLikeCount } from "../../hooks/useGetLikeCount";
+import { useToggleLike } from "../../hooks/useToggleLike";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import { CommentPost } from "./CommentPost";
+import { useEffect, useState } from "react";
 
 export const ReadPost = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const post = location.state; // `navigate`에서 전달된 데이터
+  if (!post) return null; // post가 없으면 렌더링 막기
   const [date, time] = post.createdAt.split("T");
   const formmatTime = time.substring(0, 5);
   //xss 방지를 위한 데이터 처리
   const sanitizedContent = DOMPurify.sanitize(post.content);
+  const [likeCount, setLikeCount] = useState<number>(0);
+  const [liked, setLiked] = useState(false);
 
+  const checkLikeStatus = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:3000/posts/${post.post_id}/likes/status`,
+        {
+          method: "GET",
+          credentials: "include",
+        }
+      );
+      if (!response.ok) throw new Error("Failed to check like status");
+      // const text = await response.text();
+      // console.log(text);
+      const value = await response.json();
+      const like = value?.like_id ? true : false;
+      return like;
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const count = async () => {
+    const data = await useGetLikeCount(post.post_id);
+    setLikeCount(data);
+  };
+
+  //렌더링시 라이크 갯수
+  useEffect(() => {
+    count();
+  }, []);
+
+  const handleLikeCheck = async () => {
+    const check = await checkLikeStatus();
+  };
+
+  const handleButton = async () => {
+    if (liked) {
+      handleLikeCheck();
+    }
+    setLiked(!liked);
+    await useToggleLike(post.post_id);
+    count();
+  };
   return (
     <div
       css={css`
@@ -91,40 +144,46 @@ export const ReadPost = () => {
       </div>
       <div
         css={css`
-          min-height: fit-content;
-          padding: 2rem 0rem;
+          width: 85px;
+          position: fixed;
+          top: 25%;
+          right: max(6%, 20px);
           display: flex;
-          gap: 5px;
+          flex-direction: column;
+          gap: 0.4rem;
         `}
       >
-        <TextField
-          hiddenLabel
-          variant="outlined"
-          css={css`
-            width: 80%;
-            background-color: #ffffff;
-            font-size: 12px;
-          `}
-          multiline
-          maxRows={10}
-        />
         <Button
-          variant="contained"
-          css={css`
-            margin: 7px;
-          `}
+          onClick={() => navigate(-1)}
+          variant="outlined"
+          sx={{
+            width: "100%",
+            margin: "2px",
+            padding: "5 0rem",
+            color: "#588eda",
+            boxShadow: "0px 0px 5px rgba(230, 230, 230, 0.8)",
+          }}
         >
-          등록
+          <KeyboardBackspaceIcon />
         </Button>
         <Button
-          css={css`
-            margin: 7px 0px;
-          `}
+          onClick={handleButton}
           variant="outlined"
+          sx={{
+            width: "100%",
+            margin: "2px",
+            padding: "5 0rem",
+            color: "#588eda",
+            gap: "5px",
+            boxShadow: "0px 0px 5px rgba(230, 230, 230, 0.8)",
+          }}
         >
-          취소
+          <FavoriteBorderIcon />
+          <span>{likeCount}</span>
         </Button>
       </div>
+      <CommentPost />
+      {/* </div> */}
     </div>
   );
 };

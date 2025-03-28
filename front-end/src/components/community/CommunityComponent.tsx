@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import ChatBubbleOutlineOutlinedIcon from "@mui/icons-material/ChatBubbleOutlineOutlined";
-import ThumbUpAltOutlinedIcon from "@mui/icons-material/ThumbUpAltOutlined";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 
 export const CommunityComponent = () => {
   const navigate = useNavigate();
@@ -23,7 +23,6 @@ export const CommunityComponent = () => {
 
   if (location.pathname.startsWith("/community/")) {
     const path = location.pathname.replace("/community/", "");
-    console.log(path);
     category =
       path === "general"
         ? "자유게시판"
@@ -40,12 +39,15 @@ export const CommunityComponent = () => {
         .then((res) => res.json())
         .then((data) => {
           // HTML 태그 제거 후 상태 저장
-          console.log(data);
-          const cleanedData = data.map((post: any) => ({
-            ...post,
-            content: post.content,
-          }));
-          console.log(cleanedData);
+          const cleanedData = data
+            .map((post: any) => ({
+              ...post,
+              content: post.content,
+            }))
+            .sort(
+              (a: { post_id: number }, b: { post_id: number }) =>
+                b.post_id - a.post_id
+            );
           setPostList(cleanedData);
         })
         .catch((error) => console.error("Error fetching posts:", error));
@@ -60,6 +62,39 @@ export const CommunityComponent = () => {
 
     return text;
   };
+  const increaseViewCount = async (postId: number) => {
+    try {
+      const response = await fetch(
+        `http://localhost:3000/posts/${postId}/view`,
+        {
+          method: "PATCH",
+          credentials: "include",
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("조회수 증가 실패");
+      }
+    } catch (error) {
+      console.error("API 호출 에러:", error);
+    }
+  };
+
+  const handleListClick = async (post: {
+    post_id: number;
+    title: string;
+    content: string;
+    viewCount: number;
+  }) => {
+    // console.log(post);
+    await increaseViewCount(post.post_id);
+
+    const updatedPost = {
+      ...post,
+      viewCount: post.viewCount + 1,
+    };
+    navigate(`/community/post/${post.post_id}`, { state: updatedPost });
+  };
 
   return (
     <>
@@ -69,31 +104,26 @@ export const CommunityComponent = () => {
         }}
       >
         {postList.map((post) => (
-          <>
-            <ListItem
-              key={post.post_id}
-              onClick={() =>
-                navigate(`/community/post/${post.post_id}`, { state: post })
-              }
-            >
+          <div key={post.post_id}>
+            <ListItem onClick={() => handleListClick(post)}>
               <ListItemText
                 primary={post.title}
                 secondary={removeTag(post.content) || ""}
                 primaryTypographyProps={{
                   sx: {
-                    fontSize: "1rem", // 제목 글씨 크기 조정
+                    fontSize: "1rem",
                     fontWeight: "bold",
-                    whiteSpace: "nowrap", // 한 줄로 유지
-                    overflow: "hidden", // 넘치는 내용 숨김
-                    textOverflow: "ellipsis", // "..." 처리
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
                   },
                 }}
                 secondaryTypographyProps={{
                   sx: {
-                    fontSize: "0.8rem", // 내용 글씨 크기 조정
+                    fontSize: "0.8rem",
                     fontColor: "#454545",
-                    whiteSpace: "nowrap", // 한 줄로 유지
-                    overflow: "hidden", // 넘치는 내용 숨김
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
                     textOverflow: "ellipsis",
                     padding: "5px 0px 15px 0px",
                   },
@@ -107,7 +137,7 @@ export const CommunityComponent = () => {
                   display: "flex",
                   alignItems: "center",
                   gap: "6px",
-                  fontSize: "0.75rem", // 작은 글씨
+                  fontSize: "0.75rem",
                   color: "gray",
                 }}
               >
@@ -117,12 +147,12 @@ export const CommunityComponent = () => {
                 </Typography>
                 <ChatBubbleOutlineOutlinedIcon sx={{ fontSize: "13px" }} />
                 <Typography sx={{ fontSize: "13px" }}>{50}</Typography>
-                <ThumbUpAltOutlinedIcon sx={{ fontSize: "13px" }} />
+                <FavoriteBorderIcon sx={{ fontSize: "13px" }} />
                 <Typography sx={{ fontSize: "13px" }}>{10}</Typography>
               </Box>
             </ListItem>
-            <Divider component="li" sx={{ padding: "3px 0px" }} />
-          </>
+            <Divider />
+          </div>
         ))}
       </List>
     </>
