@@ -75,27 +75,78 @@ export class PostsService {
   //-----------------------------------post----------------------------------------------------
   // 모든 게시글 조회
   async getAllPosts() {
-    return await this.postRepository.find({ relations: ['user', 'category'] });
+    const posts = await this.postRepository.find({ relations: ['user', 'category'] });
+  
+    const processedPosts = posts.map(post => {
+      const { user } = post;
+      const slimUser = {
+        user_id: user.user_id,
+        email: user.email,
+        name: user.name,
+      };
+  
+      return {
+        ...post,
+        user: slimUser,
+      };
+    });
+  
+    return processedPosts;
   }
+  
 
   // 게시글 ID로 조회
   private async findPostById(post_id: number) {
-    const post = await this.postRepository.findOne({ where: { post_id } });
+    const post = await this.postRepository.findOne({
+      where: { post_id },
+      relations: ['user', 'category'],
+    });
+  
     if (!post) {
       throw new NotFoundException(
         `ID가 ${post_id}인 게시글을 찾을 수 없습니다.`,
       );
     }
-    return post;
+
+    const { user } = post;
+    const slimUser = {
+      user_id: user.user_id,
+      email: user.email,
+      name: user.name,
+    };
+    const result = {
+      ...post,
+      user: slimUser,
+    };
+  
+    return result;
   }
+  
 
   // 유저 아이디로 게시글 조회
   async getPostsByUserId(user_id: number) {
-    return await this.postRepository.find({
+    const posts = await this.postRepository.find({
       where: { user: { user_id } },
       relations: ['user', 'category'],
     });
+  
+    const processedPosts = posts.map(post => {
+      const { user } = post;
+      const slimUser = {
+        user_id: user.user_id,
+        email: user.email,
+        name: user.name,
+      };
+  
+      return {
+        ...post,
+        user: slimUser,
+      };
+    });
+  
+    return processedPosts;
   }
+  
 
   //게시글 파일 업로드드
   async uploadPostFiles(user_id: number, files: Express.Multer.File[]) {
