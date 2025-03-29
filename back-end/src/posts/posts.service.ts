@@ -96,30 +96,15 @@ export class PostsService {
   
 
   // 게시글 ID로 조회
+  // 게시글 ID로 조회
   private async findPostById(post_id: number) {
-    const post = await this.postRepository.findOne({
-      where: { post_id },
-      relations: ['user', 'category'],
-    });
-  
+    const post = await this.postRepository.findOne({ where: { post_id } });
     if (!post) {
       throw new NotFoundException(
         `ID가 ${post_id}인 게시글을 찾을 수 없습니다.`,
       );
     }
-
-    const { user } = post;
-    const slimUser = {
-      user_id: user.user_id,
-      email: user.email,
-      name: user.name,
-    };
-    const result = {
-      ...post,
-      user: slimUser,
-    };
-  
-    return result;
+    return post;
   }
   
 
