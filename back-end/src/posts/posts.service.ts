@@ -58,42 +58,68 @@ export class PostsService {
 
   // 특정 카테고리에 속한 게시글 조회
   async getPostsByCategory(getPostsByCategoryDto: GetPostsByCategoryDto) {
-    const { category } = getPostsByCategoryDto;
+    const category = await this.getCategoryByName(
+      getPostsByCategoryDto.category,
+    );
 
-    const category_data = await this.categoryRepository.findOne({
-      where: { category },
-      relations: ['posts'],
+    const posts = await this.postRepository.find({
+      where: {
+        category: {
+          category_id: category.category_id,
+        },
+      },
+      relations: ['user', 'category'],
+      order: {
+        createdAt: 'DESC', // 최신순 정렬 (선택 사항)
+      },
     });
-    if (!category_data) {
-      throw new NotFoundException(
-        `NAME이 ${category}인 카테고리를 찾을 수 없습니다.`,
-      );
-    }
-    return category_data.posts;
-  }
 
-  //-----------------------------------post----------------------------------------------------
-  // 모든 게시글 조회
-  async getAllPosts() {
-    const posts = await this.postRepository.find({ relations: ['user', 'category'] });
-  
-    const processedPosts = posts.map(post => {
+    const processedPosts = posts.map((post) => {
       const { user } = post;
       const slimUser = {
         user_id: user.user_id,
         email: user.email,
         name: user.name,
+        profile_image: user.profile_image,
       };
-  
+
+      console.log({
+        ...post,
+        user: slimUser,
+      });
       return {
         ...post,
         user: slimUser,
       };
     });
-  
+
     return processedPosts;
   }
-  
+
+  //-----------------------------------post----------------------------------------------------
+  // 모든 게시글 조회
+  async getAllPosts() {
+    const posts = await this.postRepository.find({
+      relations: ['user', 'category'],
+    });
+
+    const processedPosts = posts.map((post) => {
+      const { user } = post;
+      const slimUser = {
+        user_id: user.user_id,
+        email: user.email,
+        name: user.name,
+        profile_image: user.profile_image,
+      };
+
+      return {
+        ...post,
+        user: slimUser,
+      };
+    });
+
+    return processedPosts;
+  }
 
   // 게시글 ID로 조회
   // 게시글 ID로 조회
@@ -106,7 +132,6 @@ export class PostsService {
     }
     return post;
   }
-  
 
   // 유저 아이디로 게시글 조회
   async getPostsByUserId(user_id: number) {
@@ -114,24 +139,24 @@ export class PostsService {
       where: { user: { user_id } },
       relations: ['user', 'category'],
     });
-  
-    const processedPosts = posts.map(post => {
+
+    const processedPosts = posts.map((post) => {
       const { user } = post;
       const slimUser = {
         user_id: user.user_id,
         email: user.email,
         name: user.name,
+        profile_image: user.profile_image,
       };
-  
+
       return {
         ...post,
         user: slimUser,
       };
     });
-  
+
     return processedPosts;
   }
-  
 
   //게시글 파일 업로드드
   async uploadPostFiles(user_id: number, files: Express.Multer.File[]) {
@@ -334,24 +359,23 @@ export class PostsService {
 
   async getComment(post_id: number, page: number) {
     const comments = await this.commentRepository.find({
-        where: { post: { post_id } },
-        relations: ['user_id', 'parent'], 
-        order: { createdAt: 'DESC' },
-        skip: (page - 1) * 20,
-        take: 20, 
+      where: { post: { post_id } },
+      relations: ['user_id', 'parent'],
+      order: { createdAt: 'DESC' },
+      skip: (page - 1) * 20,
+      take: 20,
     });
 
     return comments.map((comment) => ({
-        comment_id: comment.comment_id,
-        comment: comment.comment,
-        createdAt: comment.createdAt,
-        user_id: comment.user_id?.user_id, 
-        user_name: comment.user_id?.name, 
-        profile_image: comment.user_id?.profile_image, 
-        parent: comment.parent?.comment_id ?? null,
+      comment_id: comment.comment_id,
+      comment: comment.comment,
+      createdAt: comment.createdAt,
+      user_id: comment.user_id?.user_id,
+      user_name: comment.user_id?.name,
+      profile_image: comment.user_id?.profile_image,
+      parent: comment.parent?.comment_id ?? null,
     }));
-}
-
+  }
 
   //전체 댓글의 개수 조회회
   async getCommentCount(post_id: number): Promise<number> {
