@@ -1,4 +1,4 @@
-export const useToggleLike = async (postId: number) => {
+export const ToggleLike = async (postId: number) => {
   try {
     const response = await fetch(
       `http://localhost:3000/posts/${postId}/like-toggle

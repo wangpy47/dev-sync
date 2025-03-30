@@ -1,8 +1,11 @@
+/** @jsxImportSource @emotion/react */
 import { useEffect, useState } from "react";
 import { CommunityLayout } from "./CommunityLayout";
 import { useLocation, useNavigate } from "react-router-dom";
+import { css } from "@emotion/react";
 import {
   Box,
+  Button,
   Divider,
   List,
   ListItem,
@@ -16,10 +19,20 @@ import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 export const CommunityComponent = () => {
   const navigate = useNavigate();
   const [postList, setPostList] = useState<
-    { post_id: number; title: string; content: string; viewCount: number }[]
+    {
+      post_id: number;
+      title: string;
+      content: string;
+      viewCount: number;
+      commentcount: number;
+      likecount: number;
+    }[]
   >([]);
   const location = useLocation();
   let category = "";
+  const [currentPage, setCurrentPage] = useState(1);
+  const postsPerPage = 20;
+  const totalPages = Math.ceil(postList.length / postsPerPage);
 
   if (location.pathname.startsWith("/community/")) {
     const path = location.pathname.replace("/community/", "");
@@ -96,6 +109,20 @@ export const CommunityComponent = () => {
     navigate(`/community/post/${post.post_id}`, { state: updatedPost });
   };
 
+  const handlePageChange = (newPage: number) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setCurrentPage(newPage);
+    }
+  };
+
+  // 현재 페이지에 맞는 게시물만 가져오기
+  const paginatedPosts = postList.slice(
+    (currentPage - 1) * postsPerPage,
+    currentPage * postsPerPage
+  );
+
+  console.log(paginatedPosts);
+
   return (
     <>
       <List
@@ -103,7 +130,7 @@ export const CommunityComponent = () => {
           bgcolor: "background.paper",
         }}
       >
-        {postList.map((post) => (
+        {paginatedPosts.map((post) => (
           <div key={post.post_id}>
             <ListItem onClick={() => handleListClick(post)}>
               <ListItemText
@@ -146,15 +173,65 @@ export const CommunityComponent = () => {
                   {post.viewCount ?? 0}
                 </Typography>
                 <ChatBubbleOutlineOutlinedIcon sx={{ fontSize: "13px" }} />
-                <Typography sx={{ fontSize: "13px" }}>{50}</Typography>
+                <Typography sx={{ fontSize: "13px" }}>
+                  {post.commentcount}
+                </Typography>
                 <FavoriteBorderIcon sx={{ fontSize: "13px" }} />
-                <Typography sx={{ fontSize: "13px" }}>{10}</Typography>
+                <Typography sx={{ fontSize: "13px" }}>
+                  {post.likecount}
+                </Typography>
               </Box>
             </ListItem>
             <Divider />
           </div>
         ))}
       </List>
+      <Box
+        sx={{ display: "flex", justifyContent: "center", gap: "10px", mt: 2 }}
+      >
+        {currentPage > 5 && (
+          <Button
+            size="small"
+            onClick={() => handlePageChange(currentPage - 5)}
+          >
+            이전
+          </Button>
+        )}
+
+        {Array.from(
+          {
+            length: Math.min(
+              5,
+              totalPages - Math.floor((currentPage - 1) / 5) * 5
+            ),
+          },
+          (_, i) => {
+            const pageNumber = Math.floor((currentPage - 1) / 5) * 5 + i + 1;
+            return (
+              <button
+                css={css`
+                  padding: 0;
+                  font-size: 14px;
+                  color: ${pageNumber === currentPage ? "#2d5999" : "black"};
+                `}
+                key={pageNumber}
+                onClick={() => handlePageChange(pageNumber)}
+              >
+                {pageNumber}
+              </button>
+            );
+          }
+        )}
+
+        {currentPage + 5 <= totalPages && (
+          <Button
+            size="small"
+            onClick={() => handlePageChange(currentPage + 5)}
+          >
+            다음
+          </Button>
+        )}
+      </Box>
     </>
   );
 };

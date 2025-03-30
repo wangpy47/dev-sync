@@ -1,4 +1,4 @@
-export const useGetLikeCount = async (postId: number) => {
+export const GetLikeCount = async (postId: number) => {
   try {
     const response = await fetch(
       `http://localhost:3000/posts/${postId}/likes/count`,

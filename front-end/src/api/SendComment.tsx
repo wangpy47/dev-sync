@@ -1,4 +1,4 @@
-export const useSendComment = async (
+export const SendComment = async (
   value: any,
   parent: number | null,
   userId: number,

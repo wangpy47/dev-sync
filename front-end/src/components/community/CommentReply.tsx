@@ -2,11 +2,11 @@
 import { Button, css, Divider, TextField } from "@mui/material";
 import SubdirectoryArrowRightIcon from "@mui/icons-material/SubdirectoryArrowRight";
 import { useRef } from "react";
-import { useSendComment } from "../../hooks/useSendComment";
+import { SendComment } from "../../api/SendComment";
 import { useEvent } from "../../hooks/useEvent";
 import { useSelector } from "react-redux";
 import { useLocation } from "react-router-dom";
-import { useGetCommentList } from "../../hooks/useGetCommentList";
+import { GetCommentList } from "../../api/GetCommentList";
 
 export const CommentReply = ({
   parentId,
@@ -27,9 +27,9 @@ export const CommentReply = ({
   const textRef = useRef<HTMLInputElement | null>(null);
 
   const replyComment = useEvent(async (value: any) => {
-    await useSendComment(value, parentId, userId, postId);
+    await SendComment(value, parentId, userId, postId);
     setPage(1);
-    useGetCommentList(1, postId, setComments, setTotalPages);
+    GetCommentList(1, postId, setComments, setTotalPages);
   });
 
   const onChangeTextField = () => {

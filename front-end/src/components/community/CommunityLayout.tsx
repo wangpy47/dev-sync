@@ -9,7 +9,7 @@ import {
   ListItemText,
 } from "@mui/material";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
-import useFetchCategories from "../../hooks/useFetchCategories";
+import useFetchCategories from "../../api/FetchCategories";
 import { useState } from "react";
 import CommunityAction from "./CommunityAction";
 
