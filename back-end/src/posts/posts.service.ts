@@ -74,8 +74,8 @@ export class PostsService {
       },
     });
 
-    const processedPosts = posts.map((post) => {
-      const { user } = post;
+    const processedPosts = await Promise.all(posts.map(async(post) => {
+      const { user, post_id } = post;
       const slimUser = {
         user_id: user.user_id,
         email: user.email,
@@ -83,15 +83,16 @@ export class PostsService {
         profile_image: user.profile_image,
       };
 
-      console.log({
-        ...post,
-        user: slimUser,
-      });
+      const likecount = await this.getLikeCount(post_id);
+      const commentcount = await this.getCommentCount(post_id);
+
       return {
         ...post,
         user: slimUser,
+        likecount: likecount,
+        commentcount: commentcount,
       };
-    });
+    }));
 
     return processedPosts;
   }
@@ -103,8 +104,8 @@ export class PostsService {
       relations: ['user', 'category'],
     });
 
-    const processedPosts = posts.map((post) => {
-      const { user } = post;
+    const processedPosts = await Promise.all(posts.map(async(post) => {
+      const { user, post_id } = post;
       const slimUser = {
         user_id: user.user_id,
         email: user.email,
@@ -112,16 +113,20 @@ export class PostsService {
         profile_image: user.profile_image,
       };
 
+      const likecount = await this.getLikeCount(post_id);
+      const commentcount = await this.getCommentCount(post_id);
+
       return {
         ...post,
         user: slimUser,
+        likecount: likecount,
+        commentcount: commentcount,
       };
-    });
+    }));
 
     return processedPosts;
   }
 
-  // 게시글 ID로 조회
   // 게시글 ID로 조회
   private async findPostById(post_id: number) {
     const post = await this.postRepository.findOne({ where: { post_id } });
@@ -140,8 +145,8 @@ export class PostsService {
       relations: ['user', 'category'],
     });
 
-    const processedPosts = posts.map((post) => {
-      const { user } = post;
+    const processedPosts = await Promise.all(posts.map(async(post) => {
+      const { user, post_id } = post;
       const slimUser = {
         user_id: user.user_id,
         email: user.email,
@@ -149,11 +154,16 @@ export class PostsService {
         profile_image: user.profile_image,
       };
 
+      const likecount = await this.getLikeCount(post_id);
+      const commentcount = await this.getCommentCount(post_id);
+
       return {
         ...post,
         user: slimUser,
+        likecount: likecount,
+        commentcount: commentcount,
       };
-    });
+    }));
 
     return processedPosts;
   }
