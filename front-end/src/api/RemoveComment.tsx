@@ -1,4 +1,4 @@
-export const useRemoveComment = async (commentId: string) => {
+export const RemoveComment = async (commentId: string) => {
   console.log(commentId);
   try {
     const response = await fetch(

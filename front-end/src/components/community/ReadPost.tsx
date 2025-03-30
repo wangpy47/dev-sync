@@ -4,12 +4,14 @@ import { useLocation, useNavigate } from "react-router-dom";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import DOMPurify from "dompurify";
 import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
-import { useGetLikeCount } from "../../hooks/useGetLikeCount";
-import { useToggleLike } from "../../hooks/useToggleLike";
+import { GetLikeCount } from "../../api/GetLikeCount";
+import { ToggleLike } from "../../api/ToggleLike";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-import FavoriteIcon from "@mui/icons-material/Favorite";
 import { CommentPost } from "./CommentPost";
 import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { OptionBar } from "./OptionBar";
+import { RemovePost } from "../../api/RemovePost";
 
 export const ReadPost = () => {
   const location = useLocation();
@@ -22,6 +24,8 @@ export const ReadPost = () => {
   const sanitizedContent = DOMPurify.sanitize(post.content);
   const [likeCount, setLikeCount] = useState<number>(0);
   const [liked, setLiked] = useState(false);
+  const userId = useSelector((state: any) => state.login.loginInfo.user_id);
+  const [open, setOpen] = useState(false);
 
   const checkLikeStatus = async () => {
     try {
@@ -44,7 +48,7 @@ export const ReadPost = () => {
   };
 
   const count = async () => {
-    const data = await useGetLikeCount(post.post_id);
+    const data = await GetLikeCount(post.post_id);
     setLikeCount(data);
   };
 
@@ -62,8 +66,15 @@ export const ReadPost = () => {
       handleLikeCheck();
     }
     setLiked(!liked);
-    await useToggleLike(post.post_id);
+    await ToggleLike(post.post_id);
     count();
+  };
+
+  console.log(post);
+
+  const handleDelete = () => {
+    setOpen(true);
+    // await RemovePost(post.post_id);
   };
   return (
     <div
@@ -85,12 +96,24 @@ export const ReadPost = () => {
         >
           <div
             css={css`
-              height: 10%;
-              font-size: 1.7rem;
-              font-weight: bold;
+              display: flex;
+              justify-content: space-between;
             `}
           >
-            {post.title}
+            <div
+              css={css`
+                height: 10%;
+                font-size: 1.7rem;
+                font-weight: bold;
+              `}
+            >
+              {post.title}
+            </div>
+            <div>
+              {post.user.user_id === userId && (
+                <OptionBar deleteClick={handleDelete} />
+              )}
+            </div>
           </div>
           <div
             css={css`
@@ -107,7 +130,7 @@ export const ReadPost = () => {
                 margin: 0px 8px;
               `}
             >
-              작성자
+              {post.user.name}
             </div>
             <div
               css={css`

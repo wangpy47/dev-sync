@@ -8,7 +8,7 @@ import {
   Box,
   CircularProgress,
 } from "@mui/material";
-import useFetchCategories from "../../hooks/useFetchCategories";
+import useFetchCategories from "../../api/FetchCategories";
 import { useEffect, useState } from "react";
 import { useQuill } from "react-quilljs";
 import "quill/dist/quill.snow.css";
@@ -30,7 +30,7 @@ if (typeof window !== "undefined") {
 }
 
 // 반드시 Quill 등록 전에 모듈을 먼저 등록해야 함
-// Quill.register("modules/imageResize", ImageResize);
+Quill.register("modules/imageResize", ImageResize);
 
 const titleStyle = css`
   text-align: center;
@@ -99,6 +99,7 @@ export const WritePost = () => {
   };
 
   const handleContentLoad = async () => {
+    console.log("aaaa");
     const input = document.createElement("input");
     input.setAttribute("type", "file");
     input.setAttribute("accept", "image/*");
@@ -107,6 +108,7 @@ export const WritePost = () => {
     input.onchange = async () => {
       if (!input.files || input.files.length === 0) return;
       const file = input.files[0];
+      console.log(file);
 
       // 중복된 파일명 처리
       const fileName = uniqueFileName(file.name, uploadedFiles);
@@ -178,8 +180,8 @@ export const WritePost = () => {
       uploadedFiles.forEach((file) => {
         formData.append("files", file);
       });
-
       try {
+        console.log(Array.from(formData.entries()));
         const response = await fetch("http://localhost:3000/posts/upload", {
           method: "POST",
           body: formData,

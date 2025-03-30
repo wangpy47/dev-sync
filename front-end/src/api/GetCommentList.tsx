@@ -1,4 +1,4 @@
-export const useGetCommentList = async (
+export const GetCommentList = async (
   page: number,
   postId: number,
   setComments: any,

@@ -1,17 +1,17 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
-import { Button, Divider, TextField, Avatar, Popover } from "@mui/material";
+import { Button, Divider, TextField, Avatar } from "@mui/material";
 import { useSelector } from "react-redux";
 import { memo, useEffect, useRef, useState } from "react";
 import { useEvent } from "../../hooks/useEvent";
 import { useLocation, useNavigate } from "react-router-dom";
-import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
-import { useRemoveComment } from "../../hooks/useRemoveComment";
+import { RemoveComment } from "../../api/RemoveComment";
 import { CommentReply } from "./CommentReply";
-import { useSendComment } from "../../hooks/useSendComment";
+import { SendComment } from "../../api/SendComment";
 import { CommentGroup } from "./CommentGroup";
 import SubdirectoryArrowRightIcon from "@mui/icons-material/SubdirectoryArrowRight";
-import { useGetCommentList } from "../../hooks/useGetCommentList";
+import { GetCommentList } from "../../api/GetCommentList";
+import { OptionBar } from "./OptionBar";
 
 const CommentLayout = memo(
   ({
@@ -30,29 +30,29 @@ const CommentLayout = memo(
     const userId = useSelector((state: any) => state.login.loginInfo.user_id);
     const location = useLocation();
     const postId = location.state.post_id; // `navigate`에서 전달된 데이터
-    const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+    // const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
     const [replying, setReplying] = useState({
       isReplying: false,
       parent_id: 0,
     });
 
-    const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-      setAnchorEl(event.currentTarget);
-    };
+    // const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    //   setAnchorEl(event.currentTarget);
+    // };
 
-    const handleClose = () => {
-      setAnchorEl(null);
-    };
+    // const handleClose = () => {
+    //   setAnchorEl(null);
+    // };
 
-    const open = Boolean(anchorEl);
-    const id = open ? "simple-popover" : undefined;
+    // const open = Boolean(anchorEl);
+    // const id = open ? "simple-popover" : undefined;
 
     const handleDeleteComment = async () => {
-      await useRemoveComment(comment.comment_id);
+      await RemoveComment(comment.comment_id);
       // setComments((prevComments: any[]) =>
       //   prevComments.filter((c) => c.comment_id !== comment.comment_id)
       // );
-      useGetCommentList(1, postId, setComments, setTotalPages);
+      GetCommentList(1, postId, setComments, setTotalPages);
     };
 
     return (
@@ -126,51 +126,7 @@ const CommentLayout = memo(
                 </div>
               </div>
               {comment.user_id === userId && (
-                <>
-                  <Button
-                    css={css`
-                      width: 24px;
-                      height: 24px;
-                      padding: 0;
-                      color: #484848;
-                    `}
-                    aria-describedby={id}
-                    onClick={handleClick}
-                  >
-                    <MoreHorizIcon />
-                  </Button>
-
-                  <Popover
-                    id={id}
-                    open={open}
-                    onClose={handleClose}
-                    anchorEl={anchorEl}
-                    anchorOrigin={{
-                      vertical: "bottom",
-                      horizontal: "left",
-                    }}
-                    transformOrigin={{
-                      vertical: "top", // popover의 위쪽이 버튼 아래쪽에 맞춰짐
-                      horizontal: "left", // popover의 왼쪽이 버튼 왼쪽에 맞춰짐
-                    }}
-                  >
-                    <div
-                      css={css`
-                    width: 4rem;
-                    height: 5.3rem;
-                    font-size: 0.9rem;
-                    },
-                  `}
-                    >
-                      <div>
-                        <button>수정</button>
-                      </div>
-                      <div>
-                        <button onClick={handleDeleteComment}>삭제</button>
-                      </div>
-                    </div>
-                  </Popover>
-                </>
+                <OptionBar deleteClick={handleDeleteComment} />
               )}
             </div>
             <div>{comment.comment}</div>
@@ -238,15 +194,15 @@ export const CommentPost = () => {
   const [totalPages, setTotalPages] = useState(0);
 
   useEffect(() => {
-    useGetCommentList(page, postId, setComments, setTotalPages);
+    GetCommentList(page, postId, setComments, setTotalPages);
   }, [page]);
 
   //댓글 입력시 이벤트 처리
   const eventComment = useEvent(async (value: any) => {
-    await useSendComment(value, null, userId, postId);
+    await SendComment(value, null, userId, postId);
     //댓글 추가후 첫페이지로 이동 및 댓글 가져오기
     setPage(1);
-    useGetCommentList(1, postId, setComments, setTotalPages);
+    GetCommentList(1, postId, setComments, setTotalPages);
   });
 
   const handleAddComment = () => {
@@ -347,6 +303,7 @@ export const CommentPost = () => {
               css={css`
                 padding: 0;
                 font-size: 14px;
+                color: ${index + 1 === page ? "#2d5999" : "black"};
               `}
               key={index + 1}
               onClick={() => setPage(index + 1)}

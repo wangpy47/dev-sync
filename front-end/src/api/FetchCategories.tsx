@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-const useFetchCategories = () => {
+const FetchCategories = () => {
   const [error, setError] = useState<string | null>(null);
   const [categories, setCategories] = useState<
     { category_id: number; category: string }[]
@@ -28,4 +28,4 @@ const useFetchCategories = () => {
   return { categories, error, refetch: fetchCategories };
 };
 
-export default useFetchCategories;
+export default FetchCategories;
