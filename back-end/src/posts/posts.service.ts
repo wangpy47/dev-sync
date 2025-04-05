@@ -133,14 +133,20 @@ export class PostsService {
 
   // 게시글 ID로 조회
   private async findPostById(post_id: number) {
-    const post = await this.postRepository.findOne({ where: { post_id } });
+    const post = await this.postRepository.findOne({
+      where: { post_id },
+      relations: ['user'],
+    });
+  
     if (!post) {
       throw new NotFoundException(
         `ID가 ${post_id}인 게시글을 찾을 수 없습니다.`,
       );
     }
+  
     return post;
   }
+  
 
   // 유저 아이디로 게시글 조회
   async getPostsByUserId(user_id: number) {
@@ -266,7 +272,7 @@ export class PostsService {
       ...updatedPost,
       user: slimUser,
       likecount,
-      comments,
+      ㅋcomments,
     };
   }
 
