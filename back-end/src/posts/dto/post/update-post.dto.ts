@@ -11,7 +11,7 @@ export class UpdatePostDto {
 
   @IsOptional()
   @IsString()
-  category?: string; // 카테고리 이름
+  category?: string; 
 
   @IsInt()
   @Min(1)
