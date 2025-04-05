@@ -74,25 +74,27 @@ export class PostsService {
       },
     });
 
-    const processedPosts = await Promise.all(posts.map(async(post) => {
-      const { user, post_id } = post;
-      const slimUser = {
-        user_id: user.user_id,
-        email: user.email,
-        name: user.name,
-        profile_image: user.profile_image,
-      };
+    const processedPosts = await Promise.all(
+      posts.map(async (post) => {
+        const { user, post_id } = post;
+        const slimUser = {
+          user_id: user.user_id,
+          email: user.email,
+          name: user.name,
+          profile_image: user.profile_image,
+        };
 
-      const likecount = await this.getLikeCount(post_id);
-      const commentcount = await this.getCommentCount(post_id);
+        const likecount = await this.getLikeCount(post_id);
+        const commentcount = await this.getCommentCount(post_id);
 
-      return {
-        ...post,
-        user: slimUser,
-        likecount: likecount,
-        commentcount: commentcount,
-      };
-    }));
+        return {
+          ...post,
+          user: slimUser,
+          likecount: likecount,
+          commentcount: commentcount,
+        };
+      }),
+    );
 
     return processedPosts;
   }
@@ -104,25 +106,27 @@ export class PostsService {
       relations: ['user', 'category'],
     });
 
-    const processedPosts = await Promise.all(posts.map(async(post) => {
-      const { user, post_id } = post;
-      const slimUser = {
-        user_id: user.user_id,
-        email: user.email,
-        name: user.name,
-        profile_image: user.profile_image,
-      };
+    const processedPosts = await Promise.all(
+      posts.map(async (post) => {
+        const { user, post_id } = post;
+        const slimUser = {
+          user_id: user.user_id,
+          email: user.email,
+          name: user.name,
+          profile_image: user.profile_image,
+        };
 
-      const likecount = await this.getLikeCount(post_id);
-      const commentcount = await this.getCommentCount(post_id);
+        const likecount = await this.getLikeCount(post_id);
+        const commentcount = await this.getCommentCount(post_id);
 
-      return {
-        ...post,
-        user: slimUser,
-        likecount: likecount,
-        commentcount: commentcount,
-      };
-    }));
+        return {
+          ...post,
+          user: slimUser,
+          likecount: likecount,
+          commentcount: commentcount,
+        };
+      }),
+    );
 
     return processedPosts;
   }
@@ -145,25 +149,27 @@ export class PostsService {
       relations: ['user', 'category'],
     });
 
-    const processedPosts = await Promise.all(posts.map(async(post) => {
-      const { user, post_id } = post;
-      const slimUser = {
-        user_id: user.user_id,
-        email: user.email,
-        name: user.name,
-        profile_image: user.profile_image,
-      };
+    const processedPosts = await Promise.all(
+      posts.map(async (post) => {
+        const { user, post_id } = post;
+        const slimUser = {
+          user_id: user.user_id,
+          email: user.email,
+          name: user.name,
+          profile_image: user.profile_image,
+        };
 
-      const likecount = await this.getLikeCount(post_id);
-      const commentcount = await this.getCommentCount(post_id);
+        const likecount = await this.getLikeCount(post_id);
+        const commentcount = await this.getCommentCount(post_id);
 
-      return {
-        ...post,
-        user: slimUser,
-        likecount: likecount,
-        commentcount: commentcount,
-      };
-    }));
+        return {
+          ...post,
+          user: slimUser,
+          likecount: likecount,
+          commentcount: commentcount,
+        };
+      }),
+    );
 
     return processedPosts;
   }
@@ -244,7 +250,24 @@ export class PostsService {
     post.content = content;
     post.category = category;
 
-    return await this.postRepository.save(post);
+    const updatedPost = await this.postRepository.save(post);
+
+    const likecount = await this.getLikeCount(post.post_id);
+    const comments = await this.getComment(post.post_id, 1);
+
+    const slimUser = {
+      user_id: user.user_id,
+      email: user.email,
+      name: user.name,
+      profile_image: user.profile_image,
+    };
+
+    return {
+      ...updatedPost,
+      user: slimUser,
+      likecount,
+      comments,
+    };
   }
 
   // 게시글 삭제
@@ -297,7 +320,24 @@ export class PostsService {
       post.category = category;
     }
 
-    return await this.postRepository.save(post);
+    const updatedPost = await this.postRepository.save(post);
+
+    const likecount = await this.getLikeCount(post.post_id);
+    const comments = await this.getComment(post.post_id, 1);
+    const user = await this.userRepository.findOne({ where: { user_id } });
+    const slimUser = {
+      user_id: user.user_id,
+      email: user.email,
+      name: user.name,
+      profile_image: user.profile_image,
+    };
+
+    return {
+      ...updatedPost,
+      user: slimUser,
+      likecount,
+      comments,
+    };
   }
 
   // 조회수 상위 n개 게시글 조회
