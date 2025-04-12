@@ -71,8 +71,8 @@ export class PostsController {
   //검색어로 게시글 조회
   @Get('search')
   async searchPosts(@Query() dto: GetSearchPostsDto) {
-    const { keyword, category } = dto;
-    return this.postsService.searchPosts(keyword, category);
+    const { keyword, category, type } = dto;
+    return this.postsService.searchPosts(keyword, category, type);
   }
 
   @Post('/upload')
