@@ -25,6 +25,7 @@ import { AddCommentDto } from './dto/comment/add-comment.dto';
 import { UpdateCommentDto } from './dto/comment/update-comment.dto';
 import { AuthenticatedGuard } from 'src/auth/auth.guard';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
+import { GetSearchPostsDto } from './dto/post/get-search-post.dto';
 
 @Controller('posts')
 export class PostsController {
@@ -67,26 +68,37 @@ export class PostsController {
     return await this.postsService.getTopPosts(n);
   }
 
+  //검색어로 게시글 조회
+  @Get('search')
+  async searchPosts(@Query() dto: GetSearchPostsDto) {
+    const { keyword, category } = dto;
+    return this.postsService.searchPosts(keyword, category);
+  }
+
   @Post('/upload')
   @UseGuards(AuthenticatedGuard)
   @UseInterceptors(FileFieldsInterceptor([{ name: 'files', maxCount: 10 }])) // 여러 개 파일 업로드 가능
   async uploadPostFiles(
     @UploadedFiles() files: { files?: Express.Multer.File[] },
-     @Request() req
+    @Request() req,
   ) {
     try {
-    
-    const user = req.user;
+      const user = req.user;
       // 게시글 생성 및 파일 업로드
-      const result = await this.postsService.uploadPostFiles(user.user_id, files.files || []);
+      const result = await this.postsService.uploadPostFiles(
+        user.user_id,
+        files.files || [],
+      );
 
-      return { 
-        message: "파일이 성공적으로 업로드 되었습니다.",
+      return {
+        message: '파일이 성공적으로 업로드 되었습니다.',
         postId: result.postId,
-        fileUrls: result.fileUrls 
+        fileUrls: result.fileUrls,
       };
     } catch (error) {
-      throw new BadRequestException(error instanceof Error ? error.message : "게시글 생성 실패");
+      throw new BadRequestException(
+        error instanceof Error ? error.message : '게시글 생성 실패',
+      );
     }
   }
 
@@ -122,7 +134,6 @@ export class PostsController {
   @Delete('/:id')
   @UseGuards(AuthenticatedGuard)
   async deletePost(@Param('id', ParseIntPipe) id: number) {
-
     return await this.postsService.deletePost(id);
   }
 
@@ -156,7 +167,6 @@ export class PostsController {
   ) {
     const user = req.user;
 
-
     const like = await this.postsService.getLike(user.user_id, post_id);
     return like;
   }
@@ -166,7 +176,6 @@ export class PostsController {
   @UseGuards(AuthenticatedGuard)
   async toggleLike(@Param('id', ParseIntPipe) post_id: number, @Request() req) {
     const user = req.user;
-  
 
     return await this.postsService.toggleLike(user.user_id, post_id);
   }
@@ -179,7 +188,7 @@ export class PostsController {
   ) {
     const comments = await this.postsService.getComment(post_id, page);
     const totalCount = await this.postsService.getCommentCount(post_id);
-    
+
     return { totalCount, comments };
   }
 
@@ -212,7 +221,7 @@ export class PostsController {
     @Request() req,
   ) {
     const user = req.user;
-   
+
     const { comment_id, comment } = updateCommentDto;
     return await this.postsService.updateComment(
       user.user_id,
@@ -228,7 +237,6 @@ export class PostsController {
     @Request() req,
   ) {
     const user = req.user;
-
 
     return await this.postsService.deleteComment(user.user_id, comment_id);
   }

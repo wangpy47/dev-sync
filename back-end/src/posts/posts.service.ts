@@ -272,7 +272,7 @@ export class PostsService {
       ...updatedPost,
       user: slimUser,
       likecount,
-      ㅋcomments,
+      comments,
     };
   }
 
@@ -353,6 +353,49 @@ export class PostsService {
       take: n,
     });
   }
+
+
+  //검색어로 게시글 조회
+  async searchPosts(keyword:string, category:string) {
+  
+    const query = this.postRepository
+      .createQueryBuilder('post')
+      .leftJoinAndSelect('post.user', 'user')
+      .leftJoinAndSelect('post.category', 'category')
+      .where('post.title LIKE :keyword OR post.content LIKE :keyword', {
+        keyword: `%${keyword}%`,
+      });
+  
+    if (category) {
+      query.andWhere('category.category = :category', { category });
+    }
+  
+    const posts = await query.orderBy('post.createdAt', 'DESC').getMany();
+  
+    const processedPosts = await Promise.all(
+      posts.map(async (post) => {
+        const likecount = await this.getLikeCount(post.post_id);
+        const commentcount = await this.getCommentCount(post.post_id);
+  
+        const slimUser = {
+          user_id: post.user.user_id,
+          email: post.user.email,
+          name: post.user.name,
+          profile_image: post.user.profile_image,
+        };
+  
+        return {
+          ...post,
+          user: slimUser,
+          likecount,
+          commentcount,
+        };
+      }),
+    );
+  
+    return processedPosts;
+  }
+  
 
   //-----------------------------------like----------------------------------------------------
 
