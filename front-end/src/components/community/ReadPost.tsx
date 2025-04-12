@@ -8,10 +8,11 @@ import { GetLikeCount } from "../../api/GetLikeCount";
 import { ToggleLike } from "../../api/ToggleLike";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import { CommentPost } from "./CommentPost";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { useSelector } from "react-redux";
 import { OptionBar } from "./OptionBar";
-import { RemovePost } from "../../api/RemovePost";
+import { DeletePostDlalog } from "./DeletePostDialog";
+import FavoriteIcon from "@mui/icons-material/Favorite";
 
 export const ReadPost = () => {
   const location = useLocation();
@@ -37,15 +38,23 @@ export const ReadPost = () => {
         }
       );
       if (!response.ok) throw new Error("Failed to check like status");
-      // const text = await response.text();
-      // console.log(text);
-      const value = await response.json();
-      const like = value?.like_id ? true : false;
+
+      const value = await response.text();
+      const like = value === "" ? false : true;
       return like;
     } catch (error) {
       console.error(error);
+      return false;
     }
   };
+
+  useEffect(() => {
+    const checkLike = async () => {
+      const status = await checkLikeStatus();
+      status === true ? setLiked(true) : setLiked(false);
+    };
+    checkLike();
+  }, []);
 
   const count = async () => {
     const data = await GetLikeCount(post.post_id);
@@ -57,156 +66,164 @@ export const ReadPost = () => {
     count();
   }, []);
 
-  const handleLikeCheck = async () => {
-    const check = await checkLikeStatus();
-  };
-
   const handleButton = async () => {
-    if (liked) {
-      handleLikeCheck();
-    }
     setLiked(!liked);
     await ToggleLike(post.post_id);
     count();
   };
 
-  console.log(post);
-
   const handleDelete = () => {
     setOpen(true);
-    // await RemovePost(post.post_id);
   };
+
+  const handleEditPost = () => {
+    const updatedPost = {
+      ...post,
+      edit: true,
+      from: post.category.category,
+    };
+    navigate("/writepost", { state: updatedPost });
+  };
+
+  console.log("리드 포스트", post.content);
+
   return (
-    <div
-      css={css`
-        width: 100%;
-      `}
-    >
+    <>
       <div
         css={css`
-          background-color: #fdfdfd;
-          padding: 1.7rem 1.5rem;
-          border-radius: 10px;
+          width: 100%;
         `}
       >
         <div
           css={css`
-            margin-bottom: 2rem;
+            background-color: #fdfdfd;
+            padding: 1.7rem 1.5rem;
+            border-radius: 10px;
           `}
         >
           <div
             css={css`
-              display: flex;
-              justify-content: space-between;
+              margin-bottom: 2rem;
             `}
           >
             <div
               css={css`
-                height: 10%;
-                font-size: 1.7rem;
-                font-weight: bold;
+                display: flex;
+                justify-content: space-between;
               `}
             >
-              {post.title}
-            </div>
-            <div>
-              {post.user.user_id === userId && (
-                <OptionBar deleteClick={handleDelete} />
-              )}
-            </div>
-          </div>
-          <div
-            css={css`
-              display: flex;
-              color: #898989;
-              font-size: 14px;
-            `}
-          >
-            <div>
-              {date} {formmatTime}
-            </div>
-            <div
-              css={css`
-                margin: 0px 8px;
-              `}
-            >
-              {post.user.name}
+              <div
+                css={css`
+                  height: 10%;
+                  font-size: 1.7rem;
+                  font-weight: bold;
+                `}
+              >
+                {post.title}
+              </div>
+              <div>
+                {post?.user?.user_id === userId && (
+                  <OptionBar
+                    deleteClick={handleDelete}
+                    editClick={handleEditPost}
+                  />
+                )}
+              </div>
             </div>
             <div
               css={css`
                 display: flex;
-                align-items: center;
-                justify-content: center;
+                color: #898989;
+                font-size: 14px;
               `}
             >
-              <VisibilityOutlinedIcon
-                sx={{ fontSize: "13px", marginRight: "3px" }}
-              />
-              <Typography sx={{ fontSize: "13px" }}>
-                {post.viewCount ?? 0}
-              </Typography>
+              <div>
+                {date} {formmatTime}
+              </div>
+              <div
+                css={css`
+                  margin: 0px 8px;
+                `}
+              >
+                {post.user.name}
+              </div>
+              <div
+                css={css`
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                `}
+              >
+                <VisibilityOutlinedIcon
+                  sx={{ fontSize: "13px", marginRight: "3px" }}
+                />
+                <Typography sx={{ fontSize: "13px" }}>
+                  {post.viewCount ?? 0}
+                </Typography>
+              </div>
             </div>
           </div>
+          <div
+            css={css`
+              padding-bottom: 60px;
+              min-height: fit-content;
+              img {
+                max-width: 30%; // 부모 요소 너비에 맞게 조정
+                height: auto; // 비율 유지하며 크기 조정
+                display: block; // 레이아웃 깨짐 방지
+                margin: 0 auto; // 중앙 정렬
+              }
+            `}
+            dangerouslySetInnerHTML={{ __html: sanitizedContent }}
+          />
+        </div>
+        <div>
+          <Divider />
         </div>
         <div
           css={css`
-            padding-bottom: 60px;
-            min-height: fit-content;
-            img {
-              max-width: 30%; // 부모 요소 너비에 맞게 조정
-              height: auto; // 비율 유지하며 크기 조정
-              display: block; // 레이아웃 깨짐 방지
-              margin: 0 auto; // 중앙 정렬
-            }
+            width: 85px;
+            position: fixed;
+            top: 25%;
+            right: max(6%, 20px);
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
           `}
-          dangerouslySetInnerHTML={{ __html: sanitizedContent }}
-        />
-      </div>
-      <div>
-        <Divider />
-      </div>
-      <div
-        css={css`
-          width: 85px;
-          position: fixed;
-          top: 25%;
-          right: max(6%, 20px);
-          display: flex;
-          flex-direction: column;
-          gap: 0.4rem;
-        `}
-      >
-        <Button
-          onClick={() => navigate(-1)}
-          variant="outlined"
-          sx={{
-            width: "100%",
-            margin: "2px",
-            padding: "5 0rem",
-            color: "#588eda",
-            boxShadow: "0px 0px 5px rgba(230, 230, 230, 0.8)",
-          }}
         >
-          <KeyboardBackspaceIcon />
-        </Button>
-        <Button
-          onClick={handleButton}
-          variant="outlined"
-          sx={{
-            width: "100%",
-            margin: "2px",
-            padding: "5 0rem",
-            color: "#588eda",
-            gap: "5px",
-            boxShadow: "0px 0px 5px rgba(230, 230, 230, 0.8)",
-          }}
-        >
-          <FavoriteBorderIcon />
-          <span>{likeCount}</span>
-        </Button>
+          <Button
+            onClick={() => navigate(-1)}
+            variant="outlined"
+            sx={{
+              width: "100%",
+              margin: "2px",
+              padding: "5 0rem",
+              color: "#588eda",
+              boxShadow: "0px 0px 5px rgba(230, 230, 230, 0.8)",
+            }}
+          >
+            <KeyboardBackspaceIcon />
+          </Button>
+          <Button
+            onClick={handleButton}
+            variant="outlined"
+            sx={{
+              width: "100%",
+              margin: "2px",
+              padding: "5 0rem",
+              color: "#588eda",
+              gap: "5px",
+              boxShadow: "0px 0px 5px rgba(230, 230, 230, 0.8)",
+            }}
+          >
+            {liked === true ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+            <span>{likeCount}</span>
+          </Button>
+        </div>
+        <CommentPost />
+        {/* </div> */}
       </div>
-      <CommentPost />
-      {/* </div> */}
-    </div>
+      <DeletePostDlalog open={open} setOpen={setOpen} postId={post.post_id} />
+    </>
   );
 };
