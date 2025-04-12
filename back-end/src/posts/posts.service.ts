@@ -356,15 +356,23 @@ export class PostsService {
 
 
   //검색어로 게시글 조회
-  async searchPosts(keyword:string, category:string) {
-  
+  async searchPosts(keyword: string, category: string, type: string = 'all') {
     const query = this.postRepository
       .createQueryBuilder('post')
       .leftJoinAndSelect('post.user', 'user')
-      .leftJoinAndSelect('post.category', 'category')
-      .where('post.title LIKE :keyword OR post.content LIKE :keyword', {
+      .leftJoinAndSelect('post.category', 'category');
+  
+    // 🔍 조건 분기
+    if (type === 'title') {
+      query.where('post.title LIKE :keyword', { keyword: `%${keyword}%` });
+    } else if (type === 'content') {
+      query.where('post.content LIKE :keyword', { keyword: `%${keyword}%` });
+    } else {
+      // all or undefined
+      query.where('post.title LIKE :keyword OR post.content LIKE :keyword', {
         keyword: `%${keyword}%`,
       });
+    }
   
     if (category) {
       query.andWhere('category.category = :category', { category });

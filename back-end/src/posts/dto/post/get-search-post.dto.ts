@@ -1,10 +1,15 @@
 import { IsString, IsOptional } from 'class-validator';
 
 export class GetSearchPostsDto {
-  @IsString()
-  keyword: string;
-
-  @IsOptional()
-  @IsString()
-  category?: string;
-}
+    @IsString()
+    keyword: string;
+  
+    @IsOptional()
+    @IsString()
+    category?: string;
+  
+    @IsOptional()
+    @IsString()
+    type?: 'title' | 'content' | 'all';
+  }
+  
