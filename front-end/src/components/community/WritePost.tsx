@@ -15,6 +15,7 @@ import "quill/dist/quill.snow.css";
 import { useLocation, useNavigate } from "react-router-dom";
 import { ImageResize } from "quill-image-resize-module-ts";
 import Quill from "quill";
+import { EditContentSave } from "../../api/EditContentSave";
 
 // 타입 선언
 declare global {
@@ -28,9 +29,6 @@ if (typeof window !== "undefined") {
   window.Quill = Quill;
   Quill.register("modules/imageResize", ImageResize); // Quill 초기화 전에 모듈 등록
 }
-
-// 반드시 Quill 등록 전에 모듈을 먼저 등록해야 함
-Quill.register("modules/imageResize", ImageResize);
 
 const titleStyle = css`
   text-align: center;
@@ -67,29 +65,40 @@ export const WritePost = () => {
   const { categories } = useFetchCategories();
   const navigate = useNavigate();
   const location = useLocation();
+
   const [selectedCategory, setSelectedCategory] = useState(
     location.state?.from || ""
   );
   const [title, setTitle] = useState("");
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
 
-  const uniqueFileName = (name: string, existingFiles: File[]): string => {
-    let baseName = name;
-    let extension = "";
-
-    // 확장자 분리
-    const lastDotIndex = name.lastIndexOf(".");
-    if (lastDotIndex !== -1) {
-      baseName = name.slice(0, lastDotIndex);
-      extension = name.slice(lastDotIndex);
+  //편집클릭시 quill에 기존 내용 load
+  useEffect(() => {
+    if (quill && location?.state?.edit) {
+      quill.clipboard.dangerouslyPasteHTML(location.state.content);
+      setTitle(location.state.title);
     }
+  }, [quill, location?.state?.edit]);
 
-    // 숫자 패턴 제거
-    baseName = baseName.replace(/\(\d+\)$/, "");
+  const splitFileName = (
+    fileName: string
+  ): { baseName: string; extension: string } => {
+    const lastDotIndex = fileName.lastIndexOf(".");
+    if (lastDotIndex === -1) return { baseName: fileName, extension: "" };
+    return {
+      baseName: fileName.slice(0, lastDotIndex).replace(/\(\d+\)$/, ""),
+      extension: fileName.slice(lastDotIndex),
+    };
+  };
+
+  const uniqueFileName = (name: string, existingFiles: File[]): string => {
+    if (!name) return "file";
+
+    const { baseName, extension } = splitFileName(name);
 
     let newName = `${baseName}${extension}`;
     let counter = 1;
-    console.log(newName, existingFiles);
+
     // 중복된 파일명이 존재하면 숫자를 붙여서 유니크한 이름 생성
     while (existingFiles.some((file) => file.name === newName)) {
       newName = `${baseName}(${counter})${extension}`;
@@ -99,7 +108,6 @@ export const WritePost = () => {
   };
 
   const handleContentLoad = async () => {
-    console.log("aaaa");
     const input = document.createElement("input");
     input.setAttribute("type", "file");
     input.setAttribute("accept", "image/*");
@@ -108,11 +116,11 @@ export const WritePost = () => {
     input.onchange = async () => {
       if (!input.files || input.files.length === 0) return;
       const file = input.files[0];
-      console.log(file);
 
       // 중복된 파일명 처리
       const fileName = uniqueFileName(file.name, uploadedFiles);
       const uniqueFile = new File([file], fileName, { type: file.type });
+
       // 파일 미리보기 삽입
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -122,7 +130,7 @@ export const WritePost = () => {
         quill?.clipboard.dangerouslyPasteHTML(range?.index, customImageTag);
 
         // 파일 상태 업데이트
-        setUploadedFiles((prevFiles) => [...prevFiles, file]);
+        setUploadedFiles((prevFiles) => [...prevFiles, uniqueFile]);
       };
       reader.readAsDataURL(file);
     };
@@ -181,7 +189,6 @@ export const WritePost = () => {
         formData.append("files", file);
       });
       try {
-        console.log(Array.from(formData.entries()));
         const response = await fetch("http://localhost:3000/posts/upload", {
           method: "POST",
           body: formData,
@@ -192,45 +199,63 @@ export const WritePost = () => {
 
         const result = await response.json();
         const uploadedUrls = result.fileUrls;
-        const postId = result.postId;
+        const postId = Number(result.postId);
+
+        const escapeRegex = (str: string) =>
+          str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
         // 에디터에 업로드된 이미지 URL 반영
         let editorContent = quill.root.innerHTML;
         uploadedFiles.forEach((file) => {
           const uploadedUrl = uploadedUrls[file.name]; // 파일 이름으로 URL 찾기
-          if (uploadedUrl) {
-            // 모든 base64 형식의 src 제거
-            const removeBase64SrcRegex =
-              /(<img[^>]*?)\s*src="data:image[^"]+"([^>]*>)/g;
+          if (!uploadedUrl) return;
 
-            editorContent = editorContent.replace(
-              removeBase64SrcRegex,
-              "$1$2" // src 속성 제거, 나머지는 그대로 유지
-            );
+          // 모든 base64 형식의 src 제거
+          const removeBase64 = /(<img[^>]*?)\s*src="data:image[^"]+"([^>]*>)/g;
 
-            // 2️⃣ 새로운 URL 삽입
-            const insertUrlRegex = new RegExp(
-              `<img([^>]*alt="${file.name}"[^>]*)>`,
-              "g"
-            );
-
-            editorContent = editorContent.replace(
-              insertUrlRegex,
-              `<img$1 src="${uploadedUrl}">`
-            );
-          }
+          editorContent = editorContent.replace(
+            removeBase64,
+            "$1$2" // src 속성 제거, 나머지는 그대로 유지
+          );
+          // 2️⃣ 새로운 URL 삽입
+          const safeAlt = escapeRegex(file.name);
+          const insertUrlRegex = new RegExp(
+            `<img([^>]*alt="${safeAlt}"[^>]*)>`,
+            "g"
+          );
+          editorContent = editorContent.replace(
+            insertUrlRegex,
+            `<img$1 src="${uploadedUrl}">`
+          );
         });
 
-        // 최종 업데이트된 HTML을 적용 (quill 에디터에 다시 삽입)
-        quill.root.innerHTML = editorContent;
-        handleSave(quill.root.innerHTML, postId);
+        if (location?.state?.edit) {
+          quill.root.innerHTML = editorContent;
+
+          const result = await EditContentSave({
+            title: title,
+            content: quill.root.innerHTML,
+            postId: location.state.post_id,
+            category: selectedCategory,
+          });
+          const updatedPost = {
+            ...result,
+            viewCount: result.viewCount + 1,
+          };
+          navigate(`/community/post/${result.post_id}`, { state: updatedPost });
+        } else {
+          // 최종 업데이트된 HTML을 적용 (quill 에디터에 다시 삽입)
+
+          quill.root.innerHTML = editorContent;
+          handleSave(quill.root.innerHTML, postId);
+        }
       } catch (error) {
         console.error("이미지 업로드 중 오류 발생:", error);
       }
     }
   };
 
-  const handleSave = async (contentData: string, postId: string) => {
+  const handleSave = async (contentData: string, postId: number) => {
     const response = await fetch("http://localhost:3000/posts", {
       method: "POST",
       headers: {
@@ -240,7 +265,7 @@ export const WritePost = () => {
       credentials: "include",
 
       body: JSON.stringify({
-        post_id: Number(postId),
+        post_id: postId,
         title: title,
         content: contentData, // 여기서 바로 받은 데이터 사용
         category: selectedCategory,
@@ -333,7 +358,7 @@ export const WritePost = () => {
           취소
         </Button>
         <Button variant="contained" color="primary" onClick={handleContentSave}>
-          등록
+          {location?.state?.edit ? "수정" : "등록"}
         </Button>
       </Box>
     </div>

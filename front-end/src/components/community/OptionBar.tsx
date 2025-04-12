@@ -3,12 +3,18 @@ import { css } from "@emotion/react";
 import { Button, Popover } from "@mui/material";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import { useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 
 export const OptionBar = ({
   deleteClick,
+  editClick,
 }: {
-  deleteClick: () => Promise<void>;
+  deleteClick: (() => void) | (() => Promise<void>);
+  editClick: (() => void) | (() => Promise<void>);
 }) => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const post = location.state; // `navigate`에서 전달된 데이터
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -59,14 +65,18 @@ export const OptionBar = ({
                       `}
         >
           <div>
-            <button>수정</button>
+            <button
+              onClick={() => {
+                editClick();
+              }}
+            >
+              수정
+            </button>
           </div>
           <div>
             <button
               onClick={() => {
-                {
-                  deleteClick();
-                }
+                deleteClick();
               }}
             >
               삭제

@@ -121,8 +121,6 @@ export const CommunityComponent = () => {
     currentPage * postsPerPage
   );
 
-  console.log(paginatedPosts);
-
   return (
     <>
       <List

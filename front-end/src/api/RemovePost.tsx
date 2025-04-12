@@ -1,4 +1,4 @@
-export const RemovePost = async (postId: string) => {
+export const RemovePost = async (postId: number) => {
   console.log(postId);
   try {
     const response = await fetch(`http://localhost:3000/posts/${postId}`, {

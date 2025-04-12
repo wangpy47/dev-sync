@@ -12,6 +12,7 @@ import { CommentGroup } from "./CommentGroup";
 import SubdirectoryArrowRightIcon from "@mui/icons-material/SubdirectoryArrowRight";
 import { GetCommentList } from "../../api/GetCommentList";
 import { OptionBar } from "./OptionBar";
+import { EditComment } from "../../api/EditComment";
 
 const CommentLayout = memo(
   ({
@@ -20,41 +21,49 @@ const CommentLayout = memo(
     comments,
     setPage,
     setTotalPages,
+    editTargetId,
+    setEditTargetId,
   }: {
     setPage: any;
     comment: any;
     comments: any[];
     setTotalPages: any;
     setComments: React.Dispatch<React.SetStateAction<any[]>>;
+    setEditTargetId: React.Dispatch<React.SetStateAction<number | null>>;
+    editTargetId: number | null;
   }) => {
     const userId = useSelector((state: any) => state.login.loginInfo.user_id);
     const location = useLocation();
     const postId = location.state.post_id; // `navigate`에서 전달된 데이터
-    // const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
+    const textRef = useRef<HTMLInputElement | null>(null);
     const [replying, setReplying] = useState({
       isReplying: false,
       parent_id: 0,
     });
 
-    // const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    //   setAnchorEl(event.currentTarget);
-    // };
-
-    // const handleClose = () => {
-    //   setAnchorEl(null);
-    // };
-
-    // const open = Boolean(anchorEl);
-    // const id = open ? "simple-popover" : undefined;
-
     const handleDeleteComment = async () => {
       await RemoveComment(comment.comment_id);
-      // setComments((prevComments: any[]) =>
-      //   prevComments.filter((c) => c.comment_id !== comment.comment_id)
-      // );
+
       GetCommentList(1, postId, setComments, setTotalPages);
     };
 
+    console.log(location);
+    const handleEdit = () => {
+      setEditTargetId(comment.comment_id);
+    };
+
+    const isEditing = editTargetId === comment.comment_id;
+
+    const handleEditSave = async () => {
+      if (textRef.current != undefined) {
+        console.log(textRef.current.value);
+        await EditComment(textRef?.current?.value, comment.comment_id);
+        await setEditTargetId(null);
+        await GetCommentList(1, postId, setComments, setTotalPages);
+      }
+    };
+
+    console.log(comment);
     return (
       <>
         <div
@@ -126,31 +135,80 @@ const CommentLayout = memo(
                 </div>
               </div>
               {comment.user_id === userId && (
-                <OptionBar deleteClick={handleDeleteComment} />
+                <OptionBar
+                  deleteClick={handleDeleteComment}
+                  editClick={handleEdit}
+                />
               )}
             </div>
-            <div>{comment.comment}</div>
-            <div
-              css={css`
-                margin-top: 1rem;
-              `}
-            >
-              <button
-                css={css`
-                  border: 1px solid #d9d9d9;
-                  font-size: 12px;
-                  color: #2f2f2f;
-                `}
-                onClick={() => {
-                  setReplying({
-                    isReplying: !replying.isReplying,
-                    parent_id: comment.comment_id,
-                  });
-                }}
-              >
-                답글
-              </button>
-            </div>
+            {/* <div>{comment.comment}</div> */}
+            {isEditing ? (
+              <div>
+                <TextField
+                  inputRef={textRef}
+                  defaultValue={comment.comment}
+                  fullWidth
+                  multiline
+                  css={css`
+                    margin-top: 0.5rem;
+                  `}
+                />
+                <div
+                  css={css`
+                    margin-top: 0.5rem;
+                  `}
+                >
+                  <Button
+                    variant="outlined"
+                    size="small"
+                    onClick={() => setEditTargetId(null)}
+                  >
+                    취소
+                  </Button>
+                  <Button
+                    variant="contained"
+                    size="small"
+                    css={css`
+                      margin-left: 0.5rem;
+                    `}
+                    onClick={handleEditSave}
+                  >
+                    저장
+                  </Button>
+                </div>
+              </div>
+            ) : (
+              <>
+                <div
+                  css={css`
+                    white-space: pre-line;
+                  `}
+                >
+                  {comment.comment}
+                </div>
+                <div
+                  css={css`
+                    margin-top: 1rem;
+                  `}
+                >
+                  <button
+                    css={css`
+                      border: 1px solid #d9d9d9;
+                      font-size: 12px;
+                      color: #2f2f2f;
+                    `}
+                    onClick={() => {
+                      setReplying({
+                        isReplying: !replying.isReplying,
+                        parent_id: comment.comment_id,
+                      });
+                    }}
+                  >
+                    답글
+                  </button>
+                </div>
+              </>
+            )}
           </div>
         </div>
         <Divider />
@@ -175,6 +233,8 @@ const CommentLayout = memo(
                 comments={comments}
                 setComments={setComments}
                 setTotalPages={setTotalPages}
+                editTargetId={editTargetId}
+                setEditTargetId={setEditTargetId}
               />
             ))}
           </div>
@@ -192,7 +252,7 @@ export const CommentPost = () => {
   const [comments, setComments] = useState<any[]>([]);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
-
+  const [editTargetId, setEditTargetId] = useState<number | null>(null);
   useEffect(() => {
     GetCommentList(page, postId, setComments, setTotalPages);
   }, [page]);
@@ -201,8 +261,8 @@ export const CommentPost = () => {
   const eventComment = useEvent(async (value: any) => {
     await SendComment(value, null, userId, postId);
     //댓글 추가후 첫페이지로 이동 및 댓글 가져오기
-    setPage(1);
-    GetCommentList(1, postId, setComments, setTotalPages);
+    await GetCommentList(1, postId, setComments, setTotalPages);
+    await setPage(1);
   });
 
   const handleAddComment = () => {
@@ -287,6 +347,8 @@ export const CommentPost = () => {
           setComments={setComments}
           setPage={setPage}
           setTotalPages={setTotalPages}
+          editTargetId={editTargetId}
+          setEditTargetId={setEditTargetId}
         />
       ))}
       {totalPages > 1 && (
