@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
 import { Button, Divider, TextField, Avatar } from "@mui/material";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { memo, useEffect, useRef, useState } from "react";
 import { useEvent } from "../../hooks/useEvent";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -13,6 +13,7 @@ import SubdirectoryArrowRightIcon from "@mui/icons-material/SubdirectoryArrowRig
 import { GetCommentList } from "../../api/GetCommentList";
 import { OptionBar } from "./OptionBar";
 import { EditComment } from "../../api/EditComment";
+import { openLoginForm } from "../../redux/redux";
 
 const CommentLayout = memo(
   ({
@@ -36,6 +37,8 @@ const CommentLayout = memo(
     const location = useLocation();
     const postId = location.state.post_id; // `navigate`에서 전달된 데이터
     const textRef = useRef<HTMLInputElement | null>(null);
+    const isLogin = useSelector((state: any) => state.login.loggedIn);
+    const dispatch = useDispatch();
     const [replying, setReplying] = useState({
       isReplying: false,
       parent_id: 0,
@@ -58,12 +61,22 @@ const CommentLayout = memo(
       if (textRef.current != undefined) {
         console.log(textRef.current.value);
         await EditComment(textRef?.current?.value, comment.comment_id);
-        await setEditTargetId(null);
+        setEditTargetId(null);
         await GetCommentList(1, postId, setComments, setTotalPages);
       }
     };
 
-    console.log(comment);
+    const handleReply = () => {
+      if (!isLogin) {
+        dispatch(openLoginForm()); // 로그인되지 않았다면 로그인 폼 열기
+      } else {
+        setReplying({
+          isReplying: !replying.isReplying,
+          parent_id: comment.comment_id,
+        });
+      }
+    };
+
     return (
       <>
         <div
@@ -196,13 +209,9 @@ const CommentLayout = memo(
                       border: 1px solid #d9d9d9;
                       font-size: 12px;
                       color: #2f2f2f;
+                      background-color: #ffffff;
                     `}
-                    onClick={() => {
-                      setReplying({
-                        isReplying: !replying.isReplying,
-                        parent_id: comment.comment_id,
-                      });
-                    }}
+                    onClick={handleReply}
                   >
                     답글
                   </button>
@@ -253,6 +262,9 @@ export const CommentPost = () => {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
   const [editTargetId, setEditTargetId] = useState<number | null>(null);
+  const dispatch = useDispatch();
+  const isLogin = useSelector((state: any) => state.login.loggedIn);
+
   useEffect(() => {
     GetCommentList(page, postId, setComments, setTotalPages);
   }, [page]);
@@ -262,16 +274,20 @@ export const CommentPost = () => {
     await SendComment(value, null, userId, postId);
     //댓글 추가후 첫페이지로 이동 및 댓글 가져오기
     await GetCommentList(1, postId, setComments, setTotalPages);
-    await setPage(1);
+    setPage(1);
   });
 
   const handleAddComment = () => {
-    if (textRef.current) {
-      const textValue = textRef?.current?.value?.trim(); // 앞뒤 공백 제거
-      if (textValue) {
-        eventComment(textRef?.current?.value);
-        //텍스트 필드 값 지우기
-        textRef.current!.value = "";
+    if (!isLogin) {
+      dispatch(openLoginForm()); // 로그인되지 않았다면 로그인 폼 열기
+    } else {
+      if (textRef.current) {
+        const textValue = textRef?.current?.value?.trim(); // 앞뒤 공백 제거
+        if (textValue) {
+          eventComment(textRef?.current?.value);
+          //텍스트 필드 값 지우기
+          textRef.current!.value = "";
+        }
       }
     }
   };
@@ -351,7 +367,7 @@ export const CommentPost = () => {
           setEditTargetId={setEditTargetId}
         />
       ))}
-      {totalPages > 1 && (
+      {totalPages > 0 && (
         <div
           css={css`
             margin-top: 1rem;
@@ -365,6 +381,7 @@ export const CommentPost = () => {
               css={css`
                 padding: 0;
                 font-size: 14px;
+                background-color: #f7f7f8;
                 color: ${index + 1 === page ? "#2d5999" : "black"};
               `}
               key={index + 1}

@@ -66,6 +66,10 @@ export const OptionBar = ({
         >
           <div>
             <button
+              css={css`
+                background-color: #ffffff;
+                color: #000000;
+              `}
               onClick={() => {
                 editClick();
               }}
@@ -75,6 +79,10 @@ export const OptionBar = ({
           </div>
           <div>
             <button
+              css={css`
+                background-color: #ffffff;
+                color: #000000;
+              `}
               onClick={() => {
                 deleteClick();
               }}

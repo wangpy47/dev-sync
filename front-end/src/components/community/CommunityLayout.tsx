@@ -12,11 +12,25 @@ import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import useFetchCategories from "../../api/FetchCategories";
 import { useState } from "react";
 import CommunityAction from "./CommunityAction";
+type PostType = {
+  post_id: number;
+  title: string;
+  content: string;
+  viewCount: number;
+  commentcount: number;
+  likecount: number;
+};
+
+type CommunityContextType = {
+  postData: PostType[];
+  setPostData: React.Dispatch<React.SetStateAction<PostType[]>>;
+};
 
 export const CommunityLayout = () => {
   const navigate = useNavigate();
   const [category, setCategory] = useState("자유게시판");
   const { categories } = useFetchCategories();
+  const [postList, setPostList] = useState<CommunityContextType[]>([]);
 
   const handleCategory = (category: string) => {
     setCategory(category);
@@ -44,7 +58,7 @@ export const CommunityLayout = () => {
           position: absolute; /* 고정 위치 */
           & .MuiDrawer-paper {
             width: 11em;
-            background: #f0f3f6;
+            background-color: #f7f7f8;
             border-right: 1px solid #ddd;
             margin-top: 70px;
           }
@@ -82,14 +96,14 @@ export const CommunityLayout = () => {
           width: 65%;
         `}
       >
-        <CommunityAction category={category} />
+        <CommunityAction category={category} setPostList={setPostList} />
         {/* 게시물 영역 */}
         <div
           css={css`
             margin-top: 1rem;
           `}
         >
-          <Outlet />
+          <Outlet context={{ setPostList, postList }} />
         </div>
       </div>
     </div>
