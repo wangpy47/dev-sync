@@ -1,20 +1,26 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { TextField, InputAdornment, Button, Divider } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-import { useState } from "react";
+import { useState, type SetStateAction } from "react";
 import { MenuItem, Select } from "@mui/material";
+import { useDispatch, useSelector } from "react-redux";
+import { openLoginForm } from "../../redux/redux";
 
 interface CommunityActionsProps {
   category: string;
+  setPostList: any;
 }
 
-const CommunityAction = ({ category }: CommunityActionsProps) => {
+const CommunityAction = ({ category, setPostList }: CommunityActionsProps) => {
   const location = useLocation();
   const navigate = useNavigate();
   const [keyword, setKeyword] = useState("");
   const [searchType, setSearchType] = useState<"title" | "content" | "all">(
     "all"
   );
+  const isLogin = useSelector((state: any) => state.login.loggedIn);
+  const dispatch = useDispatch();
+
   // 게시물 페이지에서는 안 보이게 설정
   const isPostPage = location.pathname.startsWith("/community/post/");
 
@@ -24,9 +30,10 @@ const CommunityAction = ({ category }: CommunityActionsProps) => {
     if (!keyword.trim()) return;
 
     const response = await fetch(
-      `http://localhost:3000/posts/search?keyword=${encodeURIComponent(keyword)}&category=${encodeURIComponent(category)}&type=${searchType}`
+      `http://localhost:3000/posts/search?keyword=${encodeURIComponent(
+        keyword
+      )}&category=${encodeURIComponent(category)}&type=${searchType}`
     );
-    
 
     if (!response.ok) {
       console.error("검색 실패");
@@ -34,7 +41,16 @@ const CommunityAction = ({ category }: CommunityActionsProps) => {
     }
 
     const result = await response.json();
-    console.log(result);
+    // console.log(result);
+    setPostList(result);
+  };
+
+  const handleWrite = () => {
+    if (!isLogin) {
+      dispatch(openLoginForm()); // 로그인되지 않았다면 로그인 폼 열기
+    } else {
+      navigate("/writepost", { state: { from: category } });
+    }
   };
 
   return (
@@ -87,12 +103,7 @@ const CommunityAction = ({ category }: CommunityActionsProps) => {
             marginBottom: "1rem",
           }}
         >
-          <Button
-            onClick={() =>
-              navigate("/writepost", { state: { from: category } })
-            }
-            variant="contained"
-          >
+          <Button onClick={handleWrite} variant="contained">
             글쓰기
           </Button>
         </div>

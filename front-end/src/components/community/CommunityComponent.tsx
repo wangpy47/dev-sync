@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import { useEffect, useState } from "react";
 import { CommunityLayout } from "./CommunityLayout";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useOutletContext } from "react-router-dom";
 import { css } from "@emotion/react";
 import {
   Box,
@@ -16,9 +16,24 @@ import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import ChatBubbleOutlineOutlinedIcon from "@mui/icons-material/ChatBubbleOutlineOutlined";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 
+type PostType = {
+  post_id: number;
+  title: string;
+  content: string;
+  viewCount: number;
+  commentcount: number;
+  likecount: number;
+};
+
+type CommunityContextType = {
+  postList: PostType[];
+  setPostList: React.Dispatch<React.SetStateAction<PostType[]>>;
+};
+
 export const CommunityComponent = () => {
+  const { postList, setPostList } = useOutletContext<CommunityContextType>();
   const navigate = useNavigate();
-  const [postList, setPostList] = useState<
+  const [postData, setPostData] = useState<
     {
       post_id: number;
       title: string;
@@ -184,8 +199,13 @@ export const CommunityComponent = () => {
           </div>
         ))}
       </List>
-      <Box
-        sx={{ display: "flex", justifyContent: "center", gap: "10px", mt: 2 }}
+      <div
+        css={css`
+          display: flex;
+          justify-content: center;
+          gap: 10px;
+          margin-top: 2;
+        `}
       >
         {currentPage > 5 && (
           <Button
@@ -210,7 +230,10 @@ export const CommunityComponent = () => {
                 css={css`
                   padding: 0;
                   font-size: 14px;
-                  color: ${pageNumber === currentPage ? "#2d5999" : "black"};
+                  background-color: #f7f7f8;
+                  color: ${pageNumber === currentPage
+                    ? "hsl(216, 55%, 39%)"
+                    : "black"};
                 `}
                 key={pageNumber}
                 onClick={() => handlePageChange(pageNumber)}
@@ -229,7 +252,7 @@ export const CommunityComponent = () => {
             다음
           </Button>
         )}
-      </Box>
+      </div>
     </>
   );
 };
