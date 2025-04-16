@@ -13,7 +13,6 @@ const layoutStyle = css`
   min-height: 100vh;
   width: 100vw;
   box-sizing: border-box;
-  // border: 5px solid red;
 `;
 
 const contentWrapperStyle = css`
