@@ -1,3 +1,5 @@
+/** @jsxImportSource @emotion/react */
+import { css } from "@emotion/react";
 import {
   AppBar,
   Box,
@@ -15,6 +17,7 @@ import { useDispatch, useSelector } from "react-redux";
 import ProfileButton from "./ProfileButton";
 import { Link, useNavigate } from "react-router-dom";
 import { openLoginForm } from "../redux/redux";
+import logo from "../assets/logo.png";
 
 const Header = () => {
   const isLogin = useSelector((state: any) => state.login.loggedIn);
@@ -57,64 +60,74 @@ const Header = () => {
           height: "70px",
         }}
       >
-        <Toolbar sx={{ minHeight: "70px", px: 2 }}>
-          {/* 모바일: 햄버거 메뉴 */}
-          <Box
-            sx={{ display: { xs: "flex", md: "none" }, alignItems: "center" }}
-          >
+        <Toolbar
+          sx={{
+            minHeight: "70px",
+            px: 2,
+            display: "flex",
+            alignItems: "center",
+            position: "relative", // 로고를 중앙 정렬하기 위한 기준
+          }}
+        >
+          {/* 모바일용 햄버거 메뉴 (왼쪽) */}
+          <Box sx={{ display: { xs: "flex", md: "none" }, zIndex: 2 }}>
             <IconButton onClick={handleMenuClick}>
               <MenuIcon sx={{ color: "#3369c7" }} />
             </IconButton>
           </Box>
 
-          {/* 로고 - 모바일은 중앙, PC는 왼쪽 */}
-          <Typography
-            variant="h6"
-            component={Link}
-            to="/"
+          {/* 로고 */}
+          <Box
             sx={{
               position: { xs: "absolute", md: "static" },
               left: { xs: "50%", md: "auto" },
               transform: { xs: "translateX(-50%)", md: "none" },
-              textDecoration: "none",
-              color: "#2361cb",
-              fontWeight: "bold",
-              mx: { xs: 0, md: 2 },
+              zIndex: 1,
             }}
           >
-            DevSync
-          </Typography>
+            <img
+              src={logo}
+              alt="로고"
+              css={css`
+                height: 70px;
+                cursor: pointer;
+              `}
+              onClick={() => navigate("/")}
+            />
+          </Box>
 
-          {/* PC: 메뉴 버튼 */}
-          <Box sx={{ display: { xs: "none", md: "flex" }, flexGrow: 1 }}>
+          {/* PC 메뉴 (중앙) */}
+          <Box
+            sx={{
+              display: { xs: "none", md: "flex" },
+              flexGrow: 1,
+              ml: 3,
+            }}
+          >
             <Button
               onClick={() => handleNavigate("/resume")}
-              sx={{ color: "#3369c7" }}
+              sx={{ color: "#3369c7", fontSize: "1.1rem" }}
             >
               이력서
             </Button>
             <Button
               onClick={() => navigate("/inquiry")}
-              sx={{ color: "#3369c7" }}
+              sx={{ color: "#3369c7", fontSize: "1.1rem" }}
             >
               문의
             </Button>
             <Button
               onClick={() => navigate("/community/general")}
-              sx={{ color: "#3369c7" }}
+              sx={{ color: "#3369c7", fontSize: "1.1rem" }}
             >
               커뮤니티
             </Button>
           </Box>
 
-          {/* 우측: 로그인 or 프로필 */}
+          {/* 로그인 or 프로필 (오른쪽) */}
           <Box sx={{ ml: "auto", display: "flex", alignItems: "center" }}>
             {!isLogin ? (
-              <Button
-                variant="contained"
-                size="small"
-                onClick={handleOpenLogin}
-              >
+              <Button variant="contained" onClick={handleOpenLogin}>
                 login
               </Button>
             ) : (

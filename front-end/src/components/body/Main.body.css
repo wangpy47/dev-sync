@@ -1,59 +1,105 @@
-body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background-color: #f9f9f9;
-    color: #333;
-  }
-  
-  .App {
-    text-align: center;
-  }
-  
-  .main-section {
-    height: 100vh;
-    background: linear-gradient(135deg, #4facfe, #00f2fe);
-    color: white;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-  }
-  
-  .main-title {
-    font-size: 4rem;
-    margin: 0;
-  }
-  
-  .main-subtitle {
-    font-size: 1.5rem;
-    margin-top: 1rem;
-  }
-  
-  .info-section {
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: #fff;
-    border-bottom: 1px solid #ddd;
-  }
-  
-  .info-box {
-    max-width: 600px;
-    padding: 20px;
-    background-color: #fefefe;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-  }
-  
-  h2 {
-    font-size: 2rem;
-    color: #333;
-  }
-  
-  p {
-    font-size: 1.2rem;
-    color: #555;
-  }
-  
+.main-container {
+  font-family: 'Inter', sans-serif;
+  background-color: #f8fafc;
+  color: #0f172a;
+}
+
+.hero {
+  display: flex;
+  height: 70vh;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5rem 4rem;
+  /* background: linear-gradient(to right, #0f59c0, rgb(97, 192, 255) ); */
+  background: linear-gradient(to right, #105ecb 0%, #61c0ff 65%, #e8f7ff 100%);
+  /* background: linear-gradient(to right, #0f59c0 0%, #3fa3f7 50%, #61c0ff 100%); */
+  /* background: linear-gradient(90deg, #0e56bb 0%, #61c0ff 60%, #e0f4ff 100%); */
+  color:#ffffff;
+}
+
+.hero-content {
+  width: 70%;
+  height: 100%;
+}
+
+.hero h1 {
+  font-size: 3rem;
+  font-weight: 800;
+  margin-bottom: 1rem;
+  line-height: 1.3;
+}
+
+.hero p {
+  font-size: 1.25rem;
+  margin-bottom: 2rem;
+  color: #e0f2fe;
+}
+
+.hero h1 span {
+  background: linear-gradient(to right, #7d7fff, #6cfff3); /* 배경 색상에 맞는 그라데이션 */
+  -webkit-background-clip: text;
+  color: transparent; /* 텍스트 색상 투명 */
+}
+
+.start-button {
+  /* background-color: #fff;
+  color: #2563eb; */
+color: #fff;
+background-color: #153d93;
+  border: none;
+  padding: 1rem 2rem;
+  font-size: 1.2rem;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.start-button:hover {
+  background-color: #e0f2fe;
+}
+
+.hero-image img {
+  max-width: 500px;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.info-section {
+  padding: 6rem 4rem;
+  background-color: #ffffff;
+}
+
+.info-box {
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.info-box h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.info-box p {
+  font-size: 1.125rem;
+  color: #334155;
+}
+
+.cta-section {
+  padding: 5rem 2rem;
+  text-align: center;
+  background-color: #e0f2fe;
+}
+
+.cta-section h2 {
+  font-size: 2rem;
+  margin-bottom: 2rem;
+  font-weight: 700;
+}
+
+.img-main {
+  width : 80%;
+  float: right;
+}
