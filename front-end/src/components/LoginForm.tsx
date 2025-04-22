@@ -12,7 +12,19 @@ const LoginForm = () => {
   };
 
   return (
-    <Dialog open={dialogOpen} onClose={() => dispatch(closeLoginForm())}>
+    <Dialog
+      PaperProps={{
+        sx: {
+          m: 4, // 여백 적용
+          p: 2, // 내부 패딩
+          borderRadius: 2,
+          maxWidth: 300, // 원하는 너비 제한
+          minWidth: 100,
+        },
+      }}
+      open={dialogOpen}
+      onClose={() => dispatch(closeLoginForm())}
+    >
       <DialogTitle
         sx={{
           fontWeight: "bold",
@@ -24,7 +36,7 @@ const LoginForm = () => {
           pb: 3,
         }}
       >
-        Login
+        로그인
       </DialogTitle>
       <IconButton
         size="small"
