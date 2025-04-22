@@ -11,30 +11,37 @@ const layoutStyle = css`
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  width: 100vw;
+  width: 100%;
   box-sizing: border-box;
 `;
 
 const contentWrapperStyle = css`
   flex-grow: 1;
-  margin: 0;
-  box-sizing: border-box; /* 패딩 포함 */
-  overflow-x: hidden; /* 가로 스크롤 숨기기 */
   margin-top: 70px;
-  width: 100vw;
+  width: 100%;
+  overflow-x: hidden;
+`;
+
+const containerStyle = css`
+  max-width: 1600px;
+  margin: 0 auto;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0 1rem;
 `;
 
 const innerContentStyle = css`
   min-height: 800px;
   background-color: #f7f7f8;
-  box-sizing: border-box; /* 패딩 포함 */
-  @media (max-width: 768px) {
-    padding: 1rem; /* 모바일 화면에서 padding 조정 */
-  }
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 2000px;
+  margin: 0 auto;
 `;
 
 function App() {
   const dispatch = useDispatch();
+
   useEffect(() => {
     fetch("http://localhost:3000/auth/status", {
       credentials: "include",
@@ -44,13 +51,12 @@ function App() {
         if (data === "Not authenticated") {
           dispatch(logout());
         } else {
-          // 유저가 여전히 로그인된 상태
           fetch(`http://localhost:3000/user/getUser`, {
-            credentials: "include", // 세션 쿠키를 포함
+            credentials: "include",
           })
             .then((response) => response.json())
             .then((userInfo) => {
-              console.log(userInfo, "app 초기"); // 유저 정보 출력
+              console.log(userInfo, "app 초기");
               dispatch(login(userInfo));
             })
             .catch((error) => console.error("Error:", error));
@@ -61,13 +67,19 @@ function App() {
   return (
     <StrictMode>
       <div css={layoutStyle}>
-        <Header />
+        <div css={containerStyle}>
+          <Header />
+        </div>
+
         <main css={contentWrapperStyle}>
           <div css={innerContentStyle}>
             <Outlet />
           </div>
         </main>
-        <Footer />
+
+        <div css={containerStyle}>
+          <Footer />
+        </div>
       </div>
     </StrictMode>
   );

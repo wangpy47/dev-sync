@@ -4,6 +4,9 @@ import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
 import "./Main.body.css";
 import homepage from "../../assets/homepage.png";
+import findImg1 from "../../assets/section2_1.jpg";
+import findImg2 from "../../assets/section2_2.jpg";
+import findImg3 from "../../assets/section2_3.jpg";
 
 const MainBody = () => {
   const [ref1, inView1] = useInView({ triggerOnce: true, threshold: 0.2 });
@@ -43,42 +46,58 @@ const MainBody = () => {
             지금 시작하기 →
           </motion.button>
         </div>
-        <motion.div
-        // className="hero-image"
-        // initial={{ opacity: 0, scale: 0.95 }}
-        // animate={{ opacity: 1, scale: 1 }}
-        // transition={{ duration: 1.2, delay: 0.4 }}
-        >
-          <img className="img-main" src={homepage} alt="포트폴리오 미리보기" />
-        </motion.div>
-      </section>
-
-      {/* Section 1 */}
-      <section ref={ref1} className="info-section">
-        <motion.div
-          className="info-box"
-          initial={{ opacity: 0, x: -50 }}
-          animate={inView1 ? { opacity: 1, x: 0 } : {}}
-          transition={{ duration: 1.2 }}
-        >
-          <h2>GitHub와 블로그만 있으면 충분합니다.</h2>
-          <p>AI가 자동으로 이력과 기술 스택, 프로젝트 요약을 정리해줍니다.</p>
+        <motion.div>
+          <motion.div className="img-main">
+            <img src={homepage} alt="포트폴리오 미리보기" />
+          </motion.div>
         </motion.div>
       </section>
 
       {/* Section 2 */}
-      <section ref={ref2} className="info-section">
-        <motion.div
-          className="info-box"
-          initial={{ opacity: 0, x: 50 }}
-          animate={inView2 ? { opacity: 1, x: 0 } : {}}
-          transition={{ duration: 1.2 }}
+      <section ref={ref2} className="target-users-section">
+        <motion.h2
+          initial={{ opacity: 0, y: -20 }}
+          animate={inView2 ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.6 }}
         >
-          <h2>당신만의 이야기로 꾸미세요.</h2>
-          <p>
-            생성된 포트폴리오를 직접 수정하고, 원하는 내용을 추가할 수 있습니다.
-          </p>
-        </motion.div>
+          이런 분들께 추천드려요!
+        </motion.h2>
+        <div className="cards">
+          <motion.div
+            className="user-card"
+            // whileHover={{ scale: 1.05 }}
+            initial={{ opacity: 0, y: 50 }}
+            animate={inView2 ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.6, delay: 0 }}
+          >
+            <img src={findImg3} className="card_img" />
+            <h3>이직러</h3>
+            <p>코딩은 자신 있지만, 이력서 작성이 막막하셨나요?</p>
+            <span>AI가 GitHub를 분석해 이력서를 빠르게 자동 생성합니다.</span>
+          </motion.div>
+          <motion.div
+            className="user-card"
+            initial={{ opacity: 0, y: 50 }}
+            animate={inView2 ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.6, delay: 0 }}
+          >
+            <img src={findImg1} className="card_img" />
+            <h3>졸업 예정자</h3>
+            <p>학교 프로젝트를 어떻게 정리해야 할지 모르겠다면?</p>
+            <span>포트폴리오용 정리된 프로젝트 요약을 제공합니다.</span>
+          </motion.div>
+          <motion.div
+            className="user-card"
+            initial={{ opacity: 0, y: 50 }}
+            animate={inView2 ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.6, delay: 0 }}
+          >
+            <img src={findImg2} className="card_img" />
+            <h3>주니어 개발자</h3>
+            <p>블로그는 많은데 이력서에 쓸 말이 없다면?</p>
+            <span>블로그 기반 성장기 자동 분석 & 정리!</span>
+          </motion.div>
+        </div>
       </section>
 
       {/* Section 3 */}

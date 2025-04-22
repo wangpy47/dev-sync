@@ -1,49 +1,50 @@
 .main-container {
   font-family: 'Inter', sans-serif;
   background-color: #f8fafc;
-  color: #0f172a;
 }
 
 .hero {
   display: flex;
-  height: 70vh;
-  justify-content: space-between;
   align-items: center;
-  padding: 5rem 4rem;
-  /* background: linear-gradient(to right, #0f59c0, rgb(97, 192, 255) ); */
-  background: linear-gradient(to right, #105ecb 0%, #61c0ff 65%, #e8f7ff 100%);
-  /* background: linear-gradient(to right, #0f59c0 0%, #3fa3f7 50%, #61c0ff 100%); */
-  /* background: linear-gradient(90deg, #0e56bb 0%, #61c0ff 60%, #e0f4ff 100%); */
+  background: linear-gradient(to right, #105ecb 20%, #61c0ff 65%, #fffafa 100%);
   color:#ffffff;
+  height: auto;
+  /* border: 2px solid rgb(143, 90, 90); */
 }
 
 .hero-content {
-  width: 70%;
-  height: 100%;
+ /* margin-left : 5%; */
+ flex: 1 1 auto;
+ width: clamp(400px, 60vw, 1000px);
+ padding : 2.5%  0 3.5% 5%;
+ /* border: 2px solid rgb(165, 45, 202); */
 }
 
+
 .hero h1 {
-  font-size: 3rem;
+  font-size:  clamp(1.6rem , 3vw , 5rem);
   font-weight: 800;
   margin-bottom: 1rem;
   line-height: 1.3;
+  margin : 0;
+  /* border: 2px solid rgb(165, 45, 202); */
+
 }
 
 .hero p {
-  font-size: 1.25rem;
-  margin-bottom: 2rem;
+  font-size: 1.3rem;
+  /* margin-bottom: 2rem; */
+  /* border: 2px solid rgb(194, 58, 236); */
   color: #e0f2fe;
 }
 
 .hero h1 span {
-  background: linear-gradient(to right, #7d7fff, #6cfff3); /* 배경 색상에 맞는 그라데이션 */
+  background: linear-gradient(to right, #7d7fff, #6cfff3 ); /* 배경 색상에 맞는 그라데이션 */
   -webkit-background-clip: text;
   color: transparent; /* 텍스트 색상 투명 */
 }
 
 .start-button {
-  /* background-color: #fff;
-  color: #2563eb; */
 color: #fff;
 background-color: #153d93;
   border: none;
@@ -59,11 +60,19 @@ background-color: #153d93;
   background-color: #e0f2fe;
 }
 
-.hero-image img {
-  max-width: 500px;
-  border-radius: 12px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+.img-main img {
+  width : 100%;
 }
+
+.img-main{
+  margin-right :8%;
+  flex: 1 1 auto;
+  width: clamp(300px, 40vw, 800px);
+}
+
+
+
+
 
 .info-section {
   padding: 6rem 4rem;
@@ -99,7 +108,113 @@ background-color: #153d93;
   font-weight: 700;
 }
 
-.img-main {
-  width : 80%;
-  float: right;
+
+@media (max-width: 768px) {
+
+  html, body {
+    height: 100%;
+    margin: 0;
+  }
+
+  .main-container{
+    height: 100svh; 
+  }
+
+  .hero {
+    flex :1;
+    flex-direction: column;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    width:100%;
+    height : 90svh;
+    background: linear-gradient(to bottom, #105ecb 20%, #61c0ff 60%, #fff7f7 100%);
+  }
+
+  .hero-content {
+    flex-grow: 1;
+    padding: 1.5rem;
+    margin : 0;
+    height : 50vh;
+  }
+
+  .start-button {
+    margin-top :3rem ;
+  }
+
+  .hero h1 {
+    font-size: 2rem ; 
+    padding-top : 3rem;
+  }
+  .hero p{
+    font-size: 1.1rem;
+  }
+  .img-main { 
+    margin: 0 auto;
+    width:  80%;
+  }
+  
+
+}
+
+
+/* ----------------- section 2 ---------------------  */
+
+.target-users-section {
+  padding: 6rem 4rem;
+  background-color: #ffffff;
+  text-align: center;
+}
+
+.target-users-section h2 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 3rem;
+  color: #0f172a;
+}
+
+.cards {
+  display: flex;
+  gap: 4rem;
+  justify-content: center;
+  flex-wrap: wrap; /* 모바일 대응 */
+}
+
+.user-card {
+  flex: 1 1 250px;
+  max-width: 350px;
+  background-color: #ffffff;
+  /* border: 2px solid #c2d6ef; */
+  border: 3px solid #cfe5ff; /* 은은한 파란 테두리 */
+  border-radius: 16px;
+  padding: 2rem;
+  /* box-shadow: 1px 4px 4px rgba(136, 162, 182, 0.685); */
+  box-shadow: 0 8px 20px rgba(33, 111, 219, 0.1); /* 파란색 계열의 그림자 */
+  transition: box-shadow 0.3s ease;
+  text-align: left;
+}
+
+
+.user-card h3 {
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: #2b4a7b;
+}
+
+
+.user-card p {
+  font-size: 1rem;
+  color: #475569;
+  margin-bottom: 0.75rem;
+}
+
+.user-card span {
+  font-size: 0.95rem;
+  color: #5b7497;
+}
+
+.card_img {
+  width:  110%;
+  height: 60%;
 }
