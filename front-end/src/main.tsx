@@ -14,6 +14,7 @@ import { WritePost } from "./components/community/WritePost.tsx";
 import { CommunityComponent } from "./components/community/CommunityComponent.tsx";
 import { ReadPost } from "./components/community/ReadPost.tsx";
 import { CommunityLayout } from "./components/community/CommunityLayout.tsx";
+import { GitPatchPage } from "./components/GitPatchPage.tsx";
 
 const router = createBrowserRouter([
   {
@@ -66,13 +67,11 @@ const router = createBrowserRouter([
   },
   {
     path: "/resume",
+    element: <GitPatchPage />,
+  },
+  {
+    path: "/resume/edit",
     element: <EditResume />,
-    children: [
-      {
-        path: "edit",
-        element: <GitResume />,
-      },
-    ],
   },
 ]);
 
