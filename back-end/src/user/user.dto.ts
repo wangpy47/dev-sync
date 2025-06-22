@@ -7,8 +7,7 @@ import {
   IsString,
   Matches,
 } from 'class-validator';
-import { Transform } from 'class-transformer';  
-
+import { Transform } from 'class-transformer';
 
 export class CreateUserDto {
   @IsEmail()
@@ -28,11 +27,11 @@ export class UpdateUserDto {
   @IsString()
   name: string;
 
-  @Transform(({ value }) => new Date(value)) 
+  @Transform(({ value }) => new Date(value))
   @IsDate()
   birthDate?: Date;
 
- @IsNumber()
+  @IsNumber()
   phone_number?: number;
 
   @IsString()
@@ -58,6 +57,4 @@ export class UpdateUserDto {
   @IsString()
   @IsOptional()
   profile_image?: string;
-  
 }
-

@@ -1,6 +1,7 @@
 import { User } from "src/user/user.entity";
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Category } from "./category.entity";
+import { Comment } from "./comment.entity";
 
 
 
@@ -30,4 +31,7 @@ export class Post {
 
   @Column({ type: 'int', default: 0 })
   viewCount: number;
+
+  @OneToMany(()=>Comment, (comment)=>comment.post)
+  comments:Comment[]
 }

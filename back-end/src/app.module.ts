@@ -14,6 +14,13 @@ import { Post } from './posts/entities/post.entity';
 import { Category } from './posts/entities/category.entity';
 import { Like } from './posts/entities/like.entity';
 import { Comment } from './posts/entities/comment.entity';
+import { CommonModule } from './common/common.module';
+import { BaseModel } from './common/entity/base.entity';
+import { IntroductionModel } from './resume/entities/introduction.entity';
+import { ProjectModel } from './resume/entities/project.entity';
+import { SkillModel } from './resume/entities/skill.entity';
+import { ResumeModel } from './resume/entities/resume.entity';
+import { ProjectOutcomeModel } from './resume/entities/project-outcome.entity';
 
 
 
@@ -27,7 +34,7 @@ import { Comment } from './posts/entities/comment.entity';
       username: process.env.DB_USERNAME, 
       password: process.env.DB_PASSWORD, 
       database: process.env.DB_DATABASE, 
-      entities: [User, Post, Category, Like, Comment],
+      entities: [User, Post, Category, Like, Comment, BaseModel,IntroductionModel, ProjectModel, SkillModel, ResumeModel, ProjectOutcomeModel],
       autoLoadEntities: true,
       synchronize: process.env.DB_SYNC === 'true', 
     }),
@@ -37,6 +44,7 @@ import { Comment } from './posts/entities/comment.entity';
     ContactModule,
     PostsModule,
     UploadModule,
+    CommonModule,
   ],
   controllers: [AppController],
   providers: [AppService],
