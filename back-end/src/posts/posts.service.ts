@@ -362,7 +362,6 @@ export class PostsService {
       .leftJoinAndSelect('post.user', 'user')
       .leftJoinAndSelect('post.category', 'category');
   
-    // 🔍 조건 분기
     if (type === 'title') {
       query.where('post.title LIKE :keyword', { keyword: `%${keyword}%` });
     } else if (type === 'content') {

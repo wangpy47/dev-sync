@@ -13,18 +13,18 @@ export class ResumeGenerationService {
 
   async generateResume(profileData: string): Promise<string> {
 
-    // 간결하고 직관적인 영어 프롬프트로 작성
     const prompt = `
 Using the following GitHub profile data, generate a structured JSON object for a developer portfolio. 
 
 ### JSON Structure:
 {
   "introduction": {
+    "headline": "",// A short headline-style sentence to introduce yourself at the top of the resume. Summarize your identity as a developer in one impactful phrase (e.g., "끈기 있게 성장하는 백엔드 개발자입니다", "사용자 경험을 생각하는 프론트엔드 개발자입니다").
     "description": "" // Developer's self-introduction in Korean (400-500 characters), focusing on their experience, core skills, and career goals.
   },
   "skills": {
     "strengths": [], // List of key technical skills (e.g., React, Node.js, SQL).
-    "knowledgeable": [] // List of secondary or familiar skills (e.g., Docker, TailwindCSS).
+    "familiar": [] // List of secondary or familiar skills (e.g., Docker, TailwindCSS).
   },
   "projects": [
     {
@@ -32,7 +32,7 @@ Using the following GitHub profile data, generate a structured JSON object for a
       "description": "", // Brief description of the project in Korean.
       "outcomes": [
         {
-          "title": "", // A short title in Korean summarizing the task or achievement (e.g., "구글 인증 구현").
+          "task": "", // A short title in Korean summarizing the task or achievement (e.g., "구글 인증 구현").
           "result": "" // Detailed explanation in Korean. Describe:
           // - The specific action or task performed based on the commit message (e.g., "구글 인증 기능을 구현했습니다").
           // - The tools/technologies used, if applicable (e.g., "TypeScript와 Google API를 활용").

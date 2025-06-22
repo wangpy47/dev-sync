@@ -1,4 +1,5 @@
 import { Post } from 'src/posts/entities/post.entity';
+import { ResumeModel } from 'src/resume/entities/resume.entity';
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
@@ -43,4 +44,8 @@ export class User {
    
   @OneToMany(() => Post, (post) => post.user)
   posts: Post[];
+
+
+  @OneToMany(()=> ResumeModel, (resume)=> resume.author)
+  resumes: ResumeModel[];
 }
