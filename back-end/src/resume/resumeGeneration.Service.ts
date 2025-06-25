@@ -12,7 +12,6 @@ export class ResumeGenerationService {
   }
 
   async generateResume(profileData: string): Promise<string> {
-
     const prompt = `
 Using the following GitHub profile data, generate a structured JSON object for a developer portfolio. 
 
@@ -65,12 +64,6 @@ Using the following GitHub profile data, generate a structured JSON object for a
 GitHub Profile Data:
 ${profileData}
 `;
-
-
-
-
-
-
 
     try {
       const response = await this.openai.chat.completions.create({

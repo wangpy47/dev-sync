@@ -29,7 +29,7 @@ export class ResumeController {
       const resume =
         await this.resumeGenerationService.generateResume(limitedProfileData);
       return JSON.parse(resume);
-    } catch (error) {
+    } catch {
       throw new HttpException(
         'Failed to generate resume',
         HttpStatus.INTERNAL_SERVER_ERROR,
@@ -38,54 +38,16 @@ export class ResumeController {
   }
 
   // 사용자 레포지토리 정보 가져오기 엔드포인트
-  @Get('get-user-repo')
+  @Get('github/repos')
   async getAuthStatus(@Request() req) {
     if (req.isAuthenticated()) {
-      const userinfo = [];
-
-      const user = await this.userService.getUser(req.user.email);
-      console.log(user);
-      const username = user.githubUrl.split('/').pop();
-
-      // 모든 레포지토리 가져오기
-      const repositories =
-        await this.resumeService.getUserRepositories(username);
-
-      // 레포지토리를 크기순으로 내림차순 정렬 후 최대 7개 선택
-      const topRepositories = repositories
-        .sort((a, b) => b.size - a.size)
-        .slice(0, 7);
-
-      // 상위 7개의 레포지토리에 대해 정보 수집
-      for (const repository of topRepositories) {
-        const repoInfo = {
-          name: repository.name,
-          description: repository.description,
-          language: repository.language,
-          size: repository.size,
-          stargazers_count: repository.stargazers_count,
-          forks_count: repository.forks_count,
-          html_url: repository.html_url,
-          readme_content:
-            !repository.description &&
-            (await this.resumeService.getReadmeContent(
-              username,
-              repository.name,
-            )),
-        };
-
-        const additionalData =
-          await this.resumeService.getAdditionalRepositoryData(
-            username,
-            repository.name,
-          );
-        userinfo.push({ ...repoInfo, ...additionalData });
-      }
-
-      console.log(userinfo);
-      return userinfo;
+      return await this.resumeService.getGitHubData(
+        req.user.name,
+        req.user.email,
+      );
     } else {
       return 'Not authenticated';
     }
   }
+
 }
