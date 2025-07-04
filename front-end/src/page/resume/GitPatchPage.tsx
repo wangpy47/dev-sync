@@ -145,7 +145,6 @@ export const GitPatchPage = () => {
       .join("\n");
 
     try {
-      console.log(typeof profileData);
       const response = await fetch("http://localhost:3000/resume/generate", {
         method: "POST",
         headers: {

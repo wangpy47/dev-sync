@@ -1,11 +1,12 @@
 /** @jsxImportSource @emotion/react */
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
-import { MainCanvas } from "../../components/resume/MainCanvas.tsx";
-import { GitResume } from "../../components/resume/GitResume.tsx";
+import { ResumePreviewPanel } from "../../components/resume/ResumePreviewPanel.tsx";
+import { ResumeEditorPanel } from "../../components/resume/ResumeEditorPanel";
 import { useLocation } from "react-router-dom";
 import { css } from "@emotion/react";
 import { ResumeOptionBar } from "../../components/resume/ResumeOptionBar.tsx";
+import { nanoid } from "@reduxjs/toolkit";
 
 const containerStyle = css`
   display: flex;
@@ -213,11 +214,20 @@ export const EditResumePage = () => {
 
   // 섹션 추가 함수 예시 (custom 타입)
   const addSection = () => {
-    // const newSection = {
-    //   type: "custom",
-    //   data: { title: "새 섹션", content: "" },
-    // };
-    // setSections((prev) => [...prev, newSection]);
+    setSections((prev) => {
+      const id = nanoid(10); // 예: "f13da"
+      return {
+        order: [...prev.order, id],
+        entities: {
+          ...prev.entities,
+          [id]: {
+            type: "custom",
+            title: "새 섹션",
+            content: "",
+          },
+        },
+      };
+    });
   };
 
   console.log(gitInfo);
@@ -225,7 +235,7 @@ export const EditResumePage = () => {
     <div css={containerStyle}>
       <div css={leftPanelStyle}>
         <ResumeOptionBar />
-        <GitResume
+        <ResumeEditorPanel
           sections={sections}
           updateSectionData={updateSectionData}
           moveSection={moveSection}
@@ -233,7 +243,7 @@ export const EditResumePage = () => {
         />
       </div>
       <div css={rightPanelStyle}>
-        {gitInfo && <MainCanvas sections={sections} />}
+        {gitInfo && <ResumePreviewPanel sections={sections} />}
       </div>
     </div>
   );

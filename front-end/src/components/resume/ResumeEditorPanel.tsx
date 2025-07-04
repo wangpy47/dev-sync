@@ -139,7 +139,7 @@ interface GitResumeProps {
   addSection: () => void;
 }
 
-export const GitResume = ({
+export const ResumeEditorPanel = ({
   sections,
   updateSectionData,
   moveSection,
@@ -418,13 +418,47 @@ export const GitResume = ({
             });
 
           case "custom":
+            console.log(section);
             return (
-              <div key={id}>
+              <div key={id} css={contentStyle}>
                 {isEditing[id] ? (
                   <>
-                    <CustomSection section={section} isEditing={true} id={id} />
+                    <TextField
+                      css={css`
+                        font-weight: bold;
+                        margin-bottom: 1rem;
+                        input {
+                          font-size: 1.3rem;
+                        }
+                      `}
+                      value={section.title}
+                    />
+                    <div
+                      style={{
+                        gap: "10px",
+                        marginBottom: "1.5rem",
+                        width: "100%",
+                      }}
+                    >
+                      <TextField
+                        fullWidth
+                        multiline
+                        rows={4}
+                        value={section.content}
+                      />
+                    </div>
+                    <EditSaveButton isEditing={true} editId={id} />
                   </>
-                ) : null}
+                ) : (
+                  <>
+                    <Typography css={titleStyle} variant="h5">
+                      {section.title}
+                    </Typography>
+
+                    <Typography>{section.content}</Typography>
+                    <EditSaveButton isEditing={false} editId={id} />
+                  </>
+                )}
               </div>
             );
 

@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import * as styles from "../../components/contact/Inquiry.styles";
+import { useSelector } from "react-redux";
 
 // 저장된 문의 데이터 (조회 시 사용)
 export interface Inquiry {
@@ -17,11 +18,11 @@ export const InquiryPage = () => {
   const [inquiries, setInquiries] = useState<Inquiry[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const navigate = useNavigate();
-
   useEffect(() => {
-    fetchInquiries();
+    // fetchInquiries();
   }, []);
   // 문의사항 조회
+
   const fetchInquiries = async () => {
     setLoading(true); // 버튼 비활성화 시작
     try {
@@ -47,7 +48,7 @@ export const InquiryPage = () => {
       <div css={styles.card}>
         <h2 css={styles.title}>내 문의 </h2>
         <div css={styles.inputGroup}>
-          <button onClick={() => navigate("/contact")} disabled={loading}>
+          <button onClick={() => navigate("/inquiry/new")} disabled={loading}>
             문의 하기
           </button>
           <button onClick={fetchInquiries} disabled={loading}>
