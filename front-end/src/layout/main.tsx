@@ -31,12 +31,10 @@ const router = createBrowserRouter([
       {
         path: "inquiry",
         element: <InquiryPage />,
-        children: [
-          {
-            path: "write",
-            element: <InquiryFormPage />,
-          },
-        ],
+      },
+      {
+        path: "inquiry/new",
+        element: <InquiryFormPage />,
       },
       {
         path: "community",

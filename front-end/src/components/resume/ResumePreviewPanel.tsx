@@ -52,7 +52,7 @@ interface ResumeData {
   entities: Record<string, SectionEntity>;
 }
 
-export const MainCanvas = ({ sections }: { sections: ResumeData }) => {
+export const ResumePreviewPanel = ({ sections }: { sections: ResumeData }) => {
   const userData = useSelector((state: any) => state.login.loginInfo);
   let projectCount = 0;
   let projectRendered = false;

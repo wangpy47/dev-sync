@@ -49,7 +49,7 @@ const CommunityAction = ({ category, setPostList }: CommunityActionsProps) => {
     if (!isLogin) {
       dispatch(openLoginForm()); // 로그인되지 않았다면 로그인 폼 열기
     } else {
-      navigate("/writepost", { state: { from: category } });
+      navigate("/post/new", { state: { from: category } });
     }
   };
 

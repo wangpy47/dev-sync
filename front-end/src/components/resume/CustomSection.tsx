@@ -16,10 +16,12 @@ const titleStyle = css`
 
 const CustomSection = ({ section, isEditing, id }) => {
   return (
-    <div css={contentStyle}>
+    <div key={id} css={contentStyle}>
       <div css={titleStyle}>
         {/* <Typography variant="h5"> </Typography> */}
-        <TextField label="타이틀 입력" fullWidth variant="standard"></TextField>
+        <TextField label="타이틀 입력" fullWidth variant="standard">
+          {section.title}
+        </TextField>
       </div>
       <div>
         <div
@@ -30,7 +32,9 @@ const CustomSection = ({ section, isEditing, id }) => {
             width: "100%",
           }}
         >
-          <TextField label="내용 입력" fullWidth multiline rows={4}></TextField>
+          <TextField label="내용 입력" fullWidth multiline rows={4}>
+            {section.content}
+          </TextField>
         </div>
       </div>
     </div>
