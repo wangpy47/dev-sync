@@ -1,12 +1,35 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import axios from 'axios';
 import { UserService } from 'src/user/user.service';
+import { InjectRepository } from '@nestjs/typeorm';
+import { ResumeModel } from './entities/resume.entity';
+import { Repository } from 'typeorm';
+import { IntroductionModel } from './entities/introduction.entity';
+import { SaveIntroductionDto } from './dto/save-introduction.dto';
+import { SaveSkillDto } from './dto/save-skill.dto';
+import { SkillModel } from './entities/skill.entity';
 
 @Injectable()
 export class ResumeService {
   // GitHub API를 통해 레포지토리 리스트 가져오기
 
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    @InjectRepository(ResumeModel)
+    private readonly resumeRepository: Repository<ResumeModel>,
+    @InjectRepository(IntroductionModel)
+    private readonly introductionRepository: Repository<IntroductionModel>,
+    @InjectRepository(SkillModel)
+    private readonly skillRepository: Repository<SkillModel>,
+  ) {}
+
+  // GITHUB 인증 헤더 생성 함수
+  private getAuthHeaders() {
+    return {
+      Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
+      Accept: 'application/vnd.github.v3+json',
+    };
+  }
 
   async getGitHubData(name: string, email: string) {
     const userinfo = [];
@@ -48,7 +71,7 @@ export class ResumeService {
     if (userinfo.length === 0) {
       throw new Error('No repositories found for the user');
     }
-    
+
     return userinfo;
   }
 
@@ -204,11 +227,95 @@ export class ResumeService {
     return pp;
   }
 
-  // 인증 헤더 생성 함수
-  private getAuthHeaders() {
-    return {
-      Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
-      Accept: 'application/vnd.github.v3+json',
-    };
+  async getOrFail(id: number): Promise<ResumeModel> {
+    const resume = await this.resumeRepository.findOne({ where: { id } });
+    if (!resume) {
+      throw new NotFoundException(`Resume with ID ${id} not found.`);
+    }
+    return resume;
+  }
+
+  async getIntroduction(resumeId: number) {
+    const introduction = await this.introductionRepository.findOne({
+      where: { resume: { id: resumeId } },
+    });
+
+    if (!introduction) {
+      throw new NotFoundException(
+        `Introduction for resume ${resumeId} not found`,
+      );
+    }
+
+    return introduction;
+  }
+
+  async upsertIntroduction(resumeId: number, dto: SaveIntroductionDto) {
+    const resume = await this.getOrFail(resumeId);
+
+    let introduction = await this.introductionRepository.findOne({
+      where: { resume: { id: resume.id } },
+    });
+
+    if (!introduction) {
+      introduction = this.introductionRepository.create({
+        resume,
+      });
+    }
+
+    introduction.headline = dto.headline;
+    introduction.description = dto.description;
+
+    return this.introductionRepository.save(introduction);
+  }
+
+  async removeIntroduction(resumeId: number) {
+    const resume = await this.getOrFail(resumeId);
+
+    const introduction = await this.introductionRepository.findOne({
+      where: { resume: { id: resume.id } },
+    });
+
+    if (!introduction) {
+      throw new NotFoundException(
+        `Introduction for resume ID ${resumeId} not found.`,
+      );
+    }
+
+    return this.introductionRepository.remove(introduction);
+  }
+
+  async clearSkills(resumeId: number): Promise<void> {
+    const resume = await this.getOrFail(resumeId);
+
+    await this.resumeRepository
+      .createQueryBuilder()
+      .relation(ResumeModel, 'str_skills')
+      .of(resume)
+      .remove(resume.str_skills);
+
+    await this.resumeRepository
+      .createQueryBuilder()
+      .relation(ResumeModel, 'fam_skills')
+      .of(resume)
+      .remove(resume.fam_skills);
+  }
+
+  async saveSkills(resumeId: number, dto: SaveSkillDto): Promise<ResumeModel> {
+    await this.clearSkills(resumeId);
+
+    const resume = await this.getOrFail(resumeId);
+
+    const strSkills = dto.str_skills?.length
+      ? await this.skillRepository.findByIds(dto.str_skills)
+      : [];
+
+    const famSkills = dto.fam_skills?.length
+      ? await this.skillRepository.findByIds(dto.fam_skills)
+      : [];
+
+    resume.str_skills = strSkills;
+    resume.fam_skills = famSkills;
+
+    return this.resumeRepository.save(resume);
   }
 }
