@@ -1,18 +1,57 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { ContactService } from './contact.service';
-import { ContactMailDto } from './contact.dto';
+import { CreateContactDto } from './dto/create-contact.dto';
+import { UpdateContactDto } from './dto/update-contact.dto';
 
 @Controller('contact')
 export class ContactController {
-constructor(
-    private readonly contactService: ContactService
-  ) {}
-
+  constructor(private readonly contactService: ContactService) {}
 
   @Post('contact-submit')
-  async submitInquiry(@Body() contact: ContactMailDto): Promise<string> {
-    console.log(contact)
+  async submitInquiry(@Body() contact: CreateContactDto): Promise<string> {
     return this.contactService.sendInquiryEmail(contact);
   }
 
+  @Get('list')
+  async getContactList() {
+    return this.contactService.getContactList();
+  }
+
+  @Get('list/by-email')
+  async getContactListByEmail(@Query('email') email: string) {
+    return this.contactService.getContactListByEmail(email);
+  }
+
+  @Get(':id')
+  async getContactById(
+    @Param('id') id: number,
+    @Query('password') password?: string,
+  ) {
+    return this.contactService.getContactById(id, password);
+  }
+
+  @Patch(':id')
+  async updateContact(
+    @Param('id') id: number,
+    @Body() dto: UpdateContactDto,
+  ) {
+    return this.contactService.updateContact(id, dto);
+  }
+
+  @Delete(':id')
+  async deleteContact(
+    @Param('id') id: number,
+    @Query('password') password?: string,
+  ) {
+    return this.contactService.deleteContact(id, password);
+  }
 }

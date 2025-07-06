@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { ClassSerializerInterceptor, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
@@ -21,6 +21,8 @@ import { ProjectModel } from './resume/entities/project.entity';
 import { SkillModel } from './resume/entities/skill.entity';
 import { ResumeModel } from './resume/entities/resume.entity';
 import { ProjectOutcomeModel } from './resume/entities/project-outcome.entity';
+import { ContactModel } from './contact/entity/contact.entity';
+import { APP_INTERCEPTOR } from '@nestjs/core';
 
 
 
@@ -34,7 +36,7 @@ import { ProjectOutcomeModel } from './resume/entities/project-outcome.entity';
       username: process.env.DB_USERNAME, 
       password: process.env.DB_PASSWORD, 
       database: process.env.DB_DATABASE, 
-      entities: [User, Post, Category, Like, Comment, BaseModel,IntroductionModel, ProjectModel, SkillModel, ResumeModel, ProjectOutcomeModel],
+      entities: [User, Post, Category, Like, Comment, BaseModel,IntroductionModel, ProjectModel, SkillModel, ResumeModel, ProjectOutcomeModel, ContactModel],
       autoLoadEntities: true,
       synchronize: process.env.DB_SYNC === 'true', 
     }),
@@ -47,6 +49,9 @@ import { ProjectOutcomeModel } from './resume/entities/project-outcome.entity';
     CommonModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService,{
+      provide: APP_INTERCEPTOR,
+      useClass: ClassSerializerInterceptor,
+    },],
 })
 export class AppModule {}
