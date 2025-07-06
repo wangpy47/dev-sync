@@ -1,29 +1,50 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import * as nodemailer from 'nodemailer';
-import { ContactMailDto } from './contact.dto';
+import * as bcrypt from 'bcrypt';
+import { InjectRepository } from '@nestjs/typeorm';
+import { ContactModel } from './entity/contact.entity';
+import { Repository } from 'typeorm';
+import { CreateContactDto } from './dto/create-contact.dto';
+import { UpdateContactDto } from './dto/update-contact.dto';
 
 @Injectable()
 export class ContactService {
-  async sendInquiryEmail(inquiry: ContactMailDto): Promise<string> {
+  constructor(
+    @InjectRepository(ContactModel)
+    private readonly contactRepository: Repository<ContactModel>,
+  ) {}
+
+  async sendInquiryEmail(dto: CreateContactDto): Promise<string> {
     // SMTP Transporter 설정
+
+    const newContact = this.createContact(dto);
+
+    if (!newContact) {
+      throw new Error('Failed to create contact record');
+    }
+
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
-        user: process.env.ADMIN_EMAIL_MK, 
-        pass: process.env.ADMIN_APP_PASS_MK, 
+        user: process.env.ADMIN_EMAIL_MK,
+        pass: process.env.ADMIN_APP_PASS_MK,
       },
     });
 
     // 이메일 옵션
     const mailOptions = {
       from: `"Contact Manager System" <${process.env.ADMIN_EMAIL_MK}>`,
-      to: process.env.ADMIN_EMAIL_MK, 
-      subject: `New Inquiry from ${inquiry.name}: ${inquiry.subject}`, 
+      to: process.env.ADMIN_EMAIL_MK,
+      subject: `New Inquiry from ${dto.name}: ${dto.title}`,
       text: `
-        Name: ${inquiry.name}
-        Email: ${inquiry.email}
-        Subject: ${inquiry.subject}
-        Message: ${inquiry.message}
+        Name: ${dto.name}
+        Email: ${dto.email}
+        Subject: ${dto.title}
+        Message: ${dto.content}
       `,
     };
 
@@ -36,5 +57,117 @@ export class ContactService {
       console.error('Failed to send email:', error.message || error);
       throw new Error(`Failed to send email: ${error.message}`);
     }
+  }
+
+  async createContact(dto: CreateContactDto) {
+    const hashPwd = await bcrypt.hash(
+      dto.password,
+      parseInt(process.env.HASH_ROUNDS),
+    );
+
+    const contact = this.contactRepository.create({
+      ...dto,
+      password: hashPwd,
+    });
+    return await this.contactRepository.save(contact);
+  }
+
+  async getContacts() {
+    return await this.contactRepository.find({ order: { createdAt: 'DESC' } });
+  }
+
+  async getContactList() {
+    const contacts = await this.contactRepository.find({
+      select: ['id', 'name', 'title', 'createdAt', 'password'],
+      order: { createdAt: 'DESC' },
+    });
+
+    return contacts.map((c) => ({
+      id: c.id,
+      name: c.name,
+      title: c.title,
+      createdAt: c.createdAt,
+      isPrivate: !!c.password,
+    }));
+  }
+
+  async getContactListByEmail(user_email: string) {
+    const contacts = await this.contactRepository.find({
+      where: { email: user_email },
+      select: ['id', 'name', 'title', 'createdAt', 'password'],
+      order: { createdAt: 'DESC' },
+    });
+
+    if (!contacts.length) {
+      throw new NotFoundException('해당 이메일로 작성된 문의글이 없습니다.');
+    }
+
+    return contacts.map((c) => ({
+      id: c.id,
+      name: c.name,
+      title: c.title,
+      createdAt: c.createdAt,
+      isPrivate: !!c.password,
+    }));
+  }
+
+  async getContactById(id: number, password?: string) {
+    const contact = await this.contactRepository.findOne({ where: { id } });
+
+    if (!contact) {
+      throw new NotFoundException('해당 문의글을 찾을 수 없습니다.');
+    }
+
+    const isPrivate = !!contact.password;
+
+    if (isPrivate) {
+      if (!password) throw new UnauthorizedException('비밀번호가 필요합니다.');
+
+      const isMatch = await bcrypt.compare(password, contact.password);
+      if (!isMatch)
+        throw new UnauthorizedException('비밀번호가 일치하지 않습니다.');
+    }
+
+    return contact;
+  }
+
+  async updateContact(id: number, dto: UpdateContactDto) {
+    const contact = await this.contactRepository.findOne({ where: { id } });
+
+    if (!contact) {
+      throw new NotFoundException('문의글을 찾을 수 없습니다.');
+    }
+
+    const isPrivate = !!contact.password;
+
+    if (isPrivate) {
+      const isMatch = await bcrypt.compare(dto.password, contact.password);
+      if (!isMatch)
+        throw new UnauthorizedException('비밀번호가 일치하지 않습니다.');
+    }
+
+    const updated = this.contactRepository.merge(contact, dto);
+    return await this.contactRepository.save(updated);
+  }
+
+  async deleteContact(id: number, password?: string) {
+    const contact = await this.contactRepository.findOne({ where: { id } });
+
+    if (!contact) {
+      throw new NotFoundException('문의글을 찾을 수 없습니다.');
+    }
+
+    const isPrivate = !!contact.password;
+
+    if (isPrivate) {
+      if (!password) throw new UnauthorizedException('비밀번호가 필요합니다.');
+
+      const isMatch = await bcrypt.compare(password, contact.password);
+      if (!isMatch)
+        throw new UnauthorizedException('비밀번호가 일치하지 않습니다.');
+    }
+
+    await this.contactRepository.delete(id);
+    return { message: '문의글이 삭제되었습니다.' };
   }
 }
