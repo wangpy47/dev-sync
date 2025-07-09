@@ -3,7 +3,11 @@ import { css } from "@emotion/react";
 import { Button } from "@mui/material";
 import logo from "../../assets/logo2.png";
 
-export const ResumeOptionBar = () => {
+export const ResumeOptionBar = ({
+  onDownloadPdf,
+}: {
+  onDownloadPdf: () => void;
+}) => {
   return (
     <div
       css={css`
@@ -50,7 +54,7 @@ export const ResumeOptionBar = () => {
       >
         <Button>저장하기</Button>
         <Button>순서 변경</Button>
-        <Button>PDF 출력</Button>
+        <Button onClick={onDownloadPdf}>PDF 출력</Button>
       </div>
     </div>
   );

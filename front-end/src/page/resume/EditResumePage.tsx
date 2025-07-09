@@ -1,5 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
 import { ResumePreviewPanel } from "../../components/resume/ResumePreviewPanel.tsx";
 import { ResumeEditorPanel } from "../../components/resume/ResumeEditorPanel";
@@ -7,7 +7,30 @@ import { useLocation } from "react-router-dom";
 import { css } from "@emotion/react";
 import { ResumeOptionBar } from "../../components/resume/ResumeOptionBar.tsx";
 import { nanoid } from "@reduxjs/toolkit";
-
+import html2pdf from "html2pdf.js";
+import {
+  Fab,
+  Fade,
+  IconButton,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemText,
+  Paper,
+  Popover,
+  Popper,
+  Typography,
+} from "@mui/material";
+import SortIcon from "@mui/icons-material/Sort";
+import {
+  DragDropContext,
+  Droppable,
+  Draggable,
+  DropResult,
+} from "@hello-pangea/dnd";
+import { SectionOrderManager } from "../../components/resume/SectionOrderManager.tsx";
+import type { ResumeData } from "../../types/resume.type.ts";
+import FormatListNumberedIcon from "@mui/icons-material/FormatListNumbered";
 const containerStyle = css`
   display: flex;
   flex-direction: row;
@@ -90,59 +113,60 @@ const rightPanelStyle = css`
   }
 `;
 
-interface BasicInfoSection {
-  type: "basicInfo";
-  name: string;
-  email: string;
-  githubUrl: string;
-  phoneNumber: number;
-}
+// interface BasicInfoSection {
+//   type: "basicInfo";
+//   name: string;
+//   email: string;
+//   githubUrl: string;
+//   phoneNumber: number;
+// }
 
-interface SkillsSection {
-  type: "skills";
-  familiar: string[];
-  strengths: string[];
-}
+// interface SkillsSection {
+//   type: "skills";
+//   familiar: string[];
+//   strengths: string[];
+// }
 
-interface ProjectsSection {
-  type: "projects";
-  items: {
-    name: string;
-    role: string;
-    description: string;
-    outcomes: { task: string; result: string }[];
-  }[];
-}
+// interface ProjectsSection {
+//   type: "projects";
+//   items: {
+//     name: string;
+//     role: string;
+//     description: string;
+//     outcomes: { task: string; result: string }[];
+//   }[];
+// }
 
-interface IntroductionSection {
-  type: "introduction";
-  headline: string;
-  description: string;
-}
+// interface IntroductionSection {
+//   type: "introduction";
+//   headline: string;
+//   description: string;
+// }
 
-interface CustomSection {
-  type: "custom";
-  title: string;
-  content: string;
-}
+// interface CustomSection {
+//   type: "custom";
+//   title: string;
+//   content: string;
+// }
 
-// 🔹 유니언 타입으로 묶기
-type SectionEntity =
-  | BasicInfoSection
-  | SkillsSection
-  | ProjectsSection
-  | IntroductionSection
-  | CustomSection;
+// // 🔹 유니언 타입으로 묶기
+// type SectionEntity =
+//   | BasicInfoSection
+//   | SkillsSection
+//   | ProjectsSection
+//   | IntroductionSection
+//   | CustomSection;
 
-interface ResumeData {
-  order: string[];
-  entities: Record<string, SectionEntity>;
-}
+// interface ResumeData {
+//   order: string[];
+//   entities: Record<string, SectionEntity>;
+// }
 
 export const EditResumePage = () => {
   const userData = useSelector((state: any) => state.login.loginInfo);
   const location = useLocation();
   const gitInfo = location.state;
+  const printRef = useRef<HTMLDivElement>(null);
   console.log("-----userData", userData);
   console.log("-----gitInfo", gitInfo);
 
@@ -190,27 +214,10 @@ export const EditResumePage = () => {
   const [sections, setSections] = useState(createSections);
 
   // 섹션 데이터 업데이트 함수
-  const updateSectionData = (type: string, newData: any) => {
-    // setSections((prev) =>
-    //   prev.map((section) =>
-    //     section.type === type ? { ...section, data: newData } : section
-    //   )
-    // );
-  };
+  const updateSectionData = (type: string, newData: any) => {};
 
   // 섹션 순서 변경 함수 (위/아래 이동)
-  const moveSection = (index, direction) => {
-    // setSections((prev) => {
-    //   const newSections = [...prev];
-    //   const swapIndex = direction === "up" ? index - 1 : index + 1;
-    //   if (swapIndex < 0 || swapIndex >= newSections.length) return prev;
-    //   [newSections[index], newSections[swapIndex]] = [
-    //     newSections[swapIndex],
-    //     newSections[index],
-    //   ];
-    //   return newSections;
-    // });
-  };
+  const moveSection = (index, direction) => {};
 
   // 섹션 추가 함수 예시 (custom 타입)
   const addSection = () => {
@@ -223,27 +230,98 @@ export const EditResumePage = () => {
           [id]: {
             type: "custom",
             title: "새 섹션",
-            content: "",
+            content: "내용을 입력하세요.",
           },
         },
       };
     });
   };
 
-  console.log(gitInfo);
+  const handleDownloadPdf = () => {
+    if (!printRef.current) return;
+
+    const element = printRef.current;
+
+    const opt = {
+      margin: 10, // mm
+      filename: "resume.pdf",
+      image: { type: "jpeg", quality: 0.98 },
+      html2canvas: {
+        scale: 2,
+        logging: true,
+        dpi: 192,
+        letterRendering: true,
+      },
+      jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+    };
+
+    html2pdf()
+      .set(opt)
+      .from(element)
+      .save()
+      .catch((err: any) => console.error(err));
+  };
+
+  // console.log(gitInfo);
+
+  const [open, setOpen] = useState(false);
+  const anchorRef = useRef(null);
+
+  console.log(anchorRef.current);
+  // console.log(createSections.order);
+
   return (
     <div css={containerStyle}>
       <div css={leftPanelStyle}>
-        <ResumeOptionBar />
+        <ResumeOptionBar onDownloadPdf={handleDownloadPdf} />
         <ResumeEditorPanel
           sections={sections}
           updateSectionData={updateSectionData}
           moveSection={moveSection}
           addSection={addSection}
         />
+        <Fab
+          ref={anchorRef}
+          size="small"
+          color="info"
+          aria-label="add"
+          css={css`
+            position: fixed;
+            left: 15px;
+            bottom: 20px;
+            z-index: 100;
+          `}
+          onClick={() => setOpen((prev) => !prev)}
+        >
+          <FormatListNumberedIcon />
+        </Fab>
+
+        <Popover
+          open={open}
+          anchorEl={anchorRef.current}
+          onClose={() => setOpen(false)}
+          anchorOrigin={{
+            vertical: "top",
+            horizontal: "left",
+          }}
+          transformOrigin={{
+            vertical: "bottom",
+            horizontal: "left",
+          }}
+        >
+          {open && (
+            <SectionOrderManager
+              sections={sections}
+              onReorder={(newOrder: string[]) =>
+                setSections((prev) => ({ ...prev, order: newOrder }))
+              }
+              onClose={() => setOpen(false)}
+            />
+          )}
+        </Popover>
       </div>
       <div css={rightPanelStyle}>
-        {gitInfo && <ResumePreviewPanel sections={sections} />}
+        {gitInfo && <ResumePreviewPanel sections={sections} ref={printRef} />}
       </div>
     </div>
   );

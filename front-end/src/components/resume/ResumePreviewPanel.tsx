@@ -1,58 +1,61 @@
-import { useEffect, useRef, useState } from "react";
+import { forwardRef, useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { modernStyle } from "../../styles/modernTheme";
-import { itemStyle } from "../gitRepoList/GitRepoList.styles";
+import html2pdf from "html2pdf.js";
 // 🔹 각 개별 섹션의 구조
-interface BasicInfoSection {
-  type: "basicInfo";
-  name: string;
-  email: string;
-  githubUrl: string;
-  phoneNumber: number;
-}
+// interface BasicInfoSection {
+//   type: "basicInfo";
+//   name: string;
+//   email: string;
+//   githubUrl: string;
+//   phoneNumber: number;
+// }
 
-interface SkillsSection {
-  type: "skills";
-  familiar: string[];
-  strengths: string[];
-}
+// interface SkillsSection {
+//   type: "skills";
+//   familiar: string[];
+//   strengths: string[];
+// }
 
-interface ProjectsSection {
-  type: "projects";
-  items: {
-    name: string;
-    role: string;
-    description: string;
-    outcomes: { task: string; result: string }[];
-  }[];
-}
+// interface ProjectsSection {
+//   type: "projects";
+//   items: {
+//     name: string;
+//     role: string;
+//     description: string;
+//     outcomes: { task: string; result: string }[];
+//   }[];
+// }
 
-interface IntroductionSection {
-  type: "introduction";
-  headline: string;
-  description: string;
-}
+// interface IntroductionSection {
+//   type: "introduction";
+//   headline: string;
+//   description: string;
+// }
 
-interface CustomSection {
-  type: "custom";
-  title: string;
-  content: string;
-}
+// interface CustomSection {
+//   type: "custom";
+//   title: string;
+//   content: string;
+// }
 
-// 🔹 유니언 타입으로 묶기
-type SectionEntity =
-  | BasicInfoSection
-  | SkillsSection
-  | ProjectsSection
-  | IntroductionSection
-  | CustomSection;
+// // 🔹 유니언 타입으로 묶기
+// type SectionEntity =
+//   | BasicInfoSection
+//   | SkillsSection
+//   | ProjectsSection
+//   | IntroductionSection
+//   | CustomSection;
 
-interface ResumeData {
-  order: string[];
-  entities: Record<string, SectionEntity>;
-}
+// interface ResumeData {
+//   order: string[];
+//   entities: Record<string, SectionEntity>;
+// }
 
-export const ResumePreviewPanel = ({ sections }: { sections: ResumeData }) => {
+export const ResumePreviewPanel = forwardRef<
+  HTMLDivElement,
+  { sections: ResumeData }
+>(({ sections }, ref) => {
   const userData = useSelector((state: any) => state.login.loginInfo);
   let projectCount = 0;
   let projectRendered = false;
@@ -60,7 +63,7 @@ export const ResumePreviewPanel = ({ sections }: { sections: ResumeData }) => {
   console.log("userData", userData);
   const { order, entities } = sections;
   return (
-    <div style={modernStyle.previewContainer}>
+    <div ref={ref} style={modernStyle.previewContainer}>
       {order.map((id) => {
         const section = entities[id];
         switch (section.type) {
@@ -157,4 +160,4 @@ export const ResumePreviewPanel = ({ sections }: { sections: ResumeData }) => {
       })}
     </div>
   );
-};
+});

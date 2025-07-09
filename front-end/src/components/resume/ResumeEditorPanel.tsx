@@ -9,6 +9,7 @@ import {
   Select,
   MenuItem,
   Chip,
+  Fab,
 } from "@mui/material";
 import CustomSection from "./CustomSection";
 interface SectionData {
@@ -418,7 +419,6 @@ export const ResumeEditorPanel = ({
             });
 
           case "custom":
-            console.log(section);
             return (
               <div key={id} css={contentStyle}>
                 {isEditing[id] ? (
