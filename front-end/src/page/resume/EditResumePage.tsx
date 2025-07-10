@@ -8,26 +8,8 @@ import { css } from "@emotion/react";
 import { ResumeOptionBar } from "../../components/resume/ResumeOptionBar.tsx";
 import { nanoid } from "@reduxjs/toolkit";
 import html2pdf from "html2pdf.js";
-import {
-  Fab,
-  Fade,
-  IconButton,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemText,
-  Paper,
-  Popover,
-  Popper,
-  Typography,
-} from "@mui/material";
-import SortIcon from "@mui/icons-material/Sort";
-import {
-  DragDropContext,
-  Droppable,
-  Draggable,
-  DropResult,
-} from "@hello-pangea/dnd";
+import { Fab, Popover } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
 import { SectionOrderManager } from "../../components/resume/SectionOrderManager.tsx";
 import type { ResumeData } from "../../types/resume.type.ts";
 import FormatListNumberedIcon from "@mui/icons-material/FormatListNumbered";
@@ -113,55 +95,6 @@ const rightPanelStyle = css`
   }
 `;
 
-// interface BasicInfoSection {
-//   type: "basicInfo";
-//   name: string;
-//   email: string;
-//   githubUrl: string;
-//   phoneNumber: number;
-// }
-
-// interface SkillsSection {
-//   type: "skills";
-//   familiar: string[];
-//   strengths: string[];
-// }
-
-// interface ProjectsSection {
-//   type: "projects";
-//   items: {
-//     name: string;
-//     role: string;
-//     description: string;
-//     outcomes: { task: string; result: string }[];
-//   }[];
-// }
-
-// interface IntroductionSection {
-//   type: "introduction";
-//   headline: string;
-//   description: string;
-// }
-
-// interface CustomSection {
-//   type: "custom";
-//   title: string;
-//   content: string;
-// }
-
-// // 🔹 유니언 타입으로 묶기
-// type SectionEntity =
-//   | BasicInfoSection
-//   | SkillsSection
-//   | ProjectsSection
-//   | IntroductionSection
-//   | CustomSection;
-
-// interface ResumeData {
-//   order: string[];
-//   entities: Record<string, SectionEntity>;
-// }
-
 export const EditResumePage = () => {
   const userData = useSelector((state: any) => state.login.loginInfo);
   const location = useLocation();
@@ -216,8 +149,8 @@ export const EditResumePage = () => {
   // 섹션 데이터 업데이트 함수
   const updateSectionData = (type: string, newData: any) => {};
 
-  // 섹션 순서 변경 함수 (위/아래 이동)
-  const moveSection = (index, direction) => {};
+  // 섹션 삭제 함수 (위/아래 이동)
+  const removeSection = (index, direction) => {};
 
   // 섹션 추가 함수 예시 (custom 타입)
   const addSection = () => {
@@ -277,7 +210,7 @@ export const EditResumePage = () => {
         <ResumeEditorPanel
           sections={sections}
           updateSectionData={updateSectionData}
-          moveSection={moveSection}
+          removeSection={removeSection}
           addSection={addSection}
         />
         <Fab
@@ -293,7 +226,7 @@ export const EditResumePage = () => {
           `}
           onClick={() => setOpen((prev) => !prev)}
         >
-          <FormatListNumberedIcon />
+          {open ? <CloseIcon /> : <FormatListNumberedIcon />}
         </Fab>
 
         <Popover
@@ -307,6 +240,9 @@ export const EditResumePage = () => {
           transformOrigin={{
             vertical: "bottom",
             horizontal: "left",
+          }}
+          sx={{
+            mt: -2,
           }}
         >
           {open && (

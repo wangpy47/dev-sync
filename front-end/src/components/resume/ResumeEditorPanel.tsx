@@ -11,21 +11,7 @@ import {
   Chip,
   Fab,
 } from "@mui/material";
-import CustomSection from "./CustomSection";
-interface SectionData {
-  name?: string;
-  email?: string;
-  githubUrl?: string;
-  content?: string;
-  title?: string;
-  // 필요에 따라 더 추가
-}
-
-interface Section {
-  id: Key;
-  type: string;
-  data: SectionData;
-}
+import type { ResumeData } from "../../types/resume.type";
 
 const containerStyle = css`
   height: 100vh;
@@ -83,59 +69,9 @@ const skillListStyle = css`
   gap: 8px;
 `;
 
-// 🔹 각 개별 섹션의 구조
-interface BasicInfoSection {
-  type: "basicInfo";
-  name: string;
-  email: string;
-  githubUrl: string;
-  phoneNumber: number;
-}
-
-interface SkillsSection {
-  type: "skills";
-  familiar: string[];
-  strengths: string[];
-}
-
-interface ProjectsSection {
-  type: "projects";
-  items: {
-    name: string;
-    role: string;
-    description: string;
-    outcomes: { task: string; result: string }[];
-  }[];
-}
-
-interface IntroductionSection {
-  type: "introduction";
-  headline: string;
-  description: string;
-}
-
-interface CustomSection {
-  type: "custom";
-  title: string;
-  content: string;
-}
-
-// 🔹 유니언 타입으로 묶기
-type SectionEntity =
-  | BasicInfoSection
-  | SkillsSection
-  | ProjectsSection
-  | IntroductionSection
-  | CustomSection;
-
-interface ResumeData {
-  order: string[];
-  entities: Record<string, SectionEntity>;
-}
-
 interface GitResumeProps {
   sections: ResumeData;
-  updateSectionData: (id: Key, newData: SectionData) => void;
+  // updateSectionData: (id: Key, newData: SectionData) => void;
   moveSection: (index: number, direction: "up" | "down") => void;
   addSection: () => void;
 }
@@ -143,12 +79,12 @@ interface GitResumeProps {
 export const ResumeEditorPanel = ({
   sections,
   updateSectionData,
-  moveSection,
+  removeSection,
   addSection,
 }: GitResumeProps) => {
   const [isEditing, setEditing] = useState<Record<string, boolean>>({});
   const [selectSkill, setSelectSkill] = useState<string>("knowledgeable");
-  let projectIdx = 0;
+
   const handleEdit = (i: string) => {
     console.log(i);
     setEditing((prev) => ({ ...prev, [i]: true }));
@@ -170,8 +106,10 @@ export const ResumeEditorPanel = ({
       css={css`
         display: flex;
         margin-top: 2rem;
+        justify-content: space-between;
       `}
     >
+      {isEditing && <Button variant="outlined"> 삭제</Button>}
       <Button
         css={css`
           margin-left: auto;
