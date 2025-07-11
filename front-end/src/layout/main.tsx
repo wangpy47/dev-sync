@@ -12,8 +12,11 @@ import { InquiryPage } from "../page/inquiry/InquiryPage.tsx";
 import { WritePostPage } from "../page/community/WritePostPage.tsx";
 import { ReadPostPage } from "../page/community/ReadPostPage.tsx";
 import { CommunityLayout } from "../components/community/CommunityLayout.tsx";
-import { GitPatchPage } from "../page/resume/GitPatchPage";
+import { ResumeSetupLayout } from "./ResumeSetupLayout .tsx";
 import { CommunityListPage } from "../page/community/CommunityListPage.tsx";
+import { ResumeListPage } from "../page/resume/ResumeListPage.tsx";
+import { GitConnectPage } from "../page/resume/GitConnectPage.tsx";
+import { ResumeIntroPage } from "../page/resume/ResumeIntroPage.tsx";
 
 const router = createBrowserRouter([
   {
@@ -62,7 +65,18 @@ const router = createBrowserRouter([
   },
   {
     path: "/resume",
-    element: <GitPatchPage />,
+    element: <ResumeSetupLayout />,
+    children: [
+      {
+        index: true,
+        element: <ResumeIntroPage />,
+      },
+      {
+        path: "list",
+        element: <ResumeListPage />,
+      },
+      { path: "connect", element: <GitConnectPage /> },
+    ],
   },
   {
     path: "/resume/editor",

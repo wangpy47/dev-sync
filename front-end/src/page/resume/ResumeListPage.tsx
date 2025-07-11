@@ -20,7 +20,7 @@ type ResumeSummary = {
   skills: string[];
 };
 
-export const ResumeListExisting = () => {
+export const ResumeListPage = () => {
   const resumeList: ResumeSummary[] = [
     {
       id: "resume-001",

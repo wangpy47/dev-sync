@@ -12,6 +12,7 @@ import {
   ListItemButton,
   ListItemText,
   Fade,
+  Button,
 } from "@mui/material";
 import type { ResumeData } from "../../types/resume.type";
 import { useEffect, useRef, useState } from "react";
@@ -50,7 +51,7 @@ export const SectionOrderManager = ({
         elevation={6}
         sx={{
           width: 250,
-          height: 500,
+          height: 400,
           p: 2,
           bgcolor: "#ffffff",
           borderRadius: 2,
@@ -59,10 +60,10 @@ export const SectionOrderManager = ({
         }}
       >
         <Typography
-          variant="subtitle1"
           fontWeight={600}
           textAlign="center"
           mb={1}
+          color="#2f2f2f"
         >
           섹션 순서 변경
         </Typography>
@@ -134,10 +135,15 @@ export const SectionOrderManager = ({
         </DragDropContext>
 
         <div style={{ display: "flex", justifyContent: "space-between" }}>
-          <button onClick={() => setLocalOrder(initialOrderRef.current)}>
+          <Button
+            variant="outlined"
+            onClick={() => setLocalOrder(initialOrderRef.current)}
+          >
             취소
-          </button>
-          <button onClick={() => onReorder(localOrder)}>확인</button>
+          </Button>
+          <Button variant="contained" onClick={() => onReorder(localOrder)}>
+            확인
+          </Button>
         </div>
       </Paper>
     </Fade>
