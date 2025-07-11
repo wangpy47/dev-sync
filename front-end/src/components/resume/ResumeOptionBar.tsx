@@ -53,7 +53,6 @@ export const ResumeOptionBar = ({
         `}
       >
         <Button>저장하기</Button>
-        <Button>순서 변경</Button>
         <Button onClick={onDownloadPdf}>PDF 출력</Button>
       </div>
     </div>
