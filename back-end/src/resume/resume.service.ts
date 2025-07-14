@@ -8,11 +8,13 @@ import { IntroductionModel } from './entities/introduction.entity';
 import { SaveIntroductionDto } from './dto/save-introduction.dto';
 import { SaveSkillDto } from './dto/save-skill.dto';
 import { SkillModel } from './entities/skill.entity';
+import { ProfileModel } from './entities/profile.entity';
 
 @Injectable()
 export class ResumeService {
   // GitHub API를 통해 레포지토리 리스트 가져오기
 
+  
   constructor(
     private readonly userService: UserService,
     @InjectRepository(ResumeModel)
@@ -21,6 +23,9 @@ export class ResumeService {
     private readonly introductionRepository: Repository<IntroductionModel>,
     @InjectRepository(SkillModel)
     private readonly skillRepository: Repository<SkillModel>,
+
+    @InjectRepository(ProfileModel)
+    private readonly profileRepository: Repository<ProfileModel>,
   ) {}
 
   // GITHUB 인증 헤더 생성 함수
@@ -109,27 +114,23 @@ export class ResumeService {
         },
       );
 
-      // base64로 인코딩된 README 파일을 디코딩
       const content = Buffer.from(response.data.content, 'base64').toString(
         'utf-8',
       );
 
-      // 모든 HTML 태그를 \n으로 치환
       let cleanedText = content.replace(/<\/?[^>]+(>|$)/g, '\n');
 
-      // 이미지 태그 제거
+  
       cleanedText = cleanedText.replace(/!\[.*?\]\(.*?\)/g, '');
 
-      // '\n' + 같은 패턴 제거
       cleanedText = cleanedText.replace(/\\n\s*\+/g, '');
 
-      // 여러 개의 연속된 공백을 한 개로
       cleanedText = cleanedText.replace(/\s+/g, ' ');
 
-      // 중복된 줄바꿈을 하나로 통합
+
       cleanedText = cleanedText.replace(/\n+/g, '\n');
 
-      return cleanedText.trim(); // 최종적으로 텍스트 반환
+      return cleanedText.trim(); 
     } catch (error) {
       if (error.response && error.response.status === 404) {
         return 'README not available';
@@ -143,12 +144,12 @@ export class ResumeService {
     }
   }
 
-  // 커밋 메시지, 기여자 정보, 풀 리퀘스트, 릴리즈 정보 등 추가 로직들
+ 
   async getAdditionalRepositoryData(username: string, repositoryName: string) {
     const pp: any = {};
 
     try {
-      // 커밋 메시지 가져오기
+   
       const commitMessages = await axios.get(
         `https://api.github.com/repos/${username}/${repositoryName}/commits`,
         {
@@ -161,9 +162,9 @@ export class ResumeService {
         .filter((commit) => commit.author && commit.author.login === username) // username 필터링
         .map((commit) => {
           let message = commit.commit.message;
-          message = message.replace(/\n\s*\+/g, ''); // '\n' + 패턴 제거
-          message = message.replace(/\s+/g, ' '); // 여러 공백을 한 개로
-          message = message.replace(/\n+/g, '\n'); // 여러 줄바꿈을 한 줄로 통합
+          message = message.replace(/\n\s*\+/g, ''); 
+          message = message.replace(/\s+/g, ' '); 
+          message = message.replace(/\n+/g, '\n'); 
           return message.trim();
         })
         .filter((message, index, self) => {
@@ -177,7 +178,7 @@ export class ResumeService {
         })
         .filter((message) => {
           // 의미 없는 커밋 메시지 제거 (너무 짧은 메시지)
-          return message.length > 10; // 메시지가 10자 이하인 경우 제거
+          return message.length > 10; 
         });
 
       // 기여자 정보
@@ -227,7 +228,9 @@ export class ResumeService {
     return pp;
   }
 
-  async getOrFail(id: number): Promise<ResumeModel> {
+  //resume CRUD
+
+  async getResumeById(id: number): Promise<ResumeModel> {
     const resume = await this.resumeRepository.findOne({ where: { id } });
     if (!resume) {
       throw new NotFoundException(`Resume with ID ${id} not found.`);
@@ -250,7 +253,7 @@ export class ResumeService {
   }
 
   async upsertIntroduction(resumeId: number, dto: SaveIntroductionDto) {
-    const resume = await this.getOrFail(resumeId);
+    const resume = await this.getResumeById(resumeId);
 
     let introduction = await this.introductionRepository.findOne({
       where: { resume: { id: resume.id } },
@@ -269,7 +272,7 @@ export class ResumeService {
   }
 
   async removeIntroduction(resumeId: number) {
-    const resume = await this.getOrFail(resumeId);
+    const resume = await this.getResumeById(resumeId);
 
     const introduction = await this.introductionRepository.findOne({
       where: { resume: { id: resume.id } },
@@ -285,7 +288,7 @@ export class ResumeService {
   }
 
   async clearSkills(resumeId: number): Promise<void> {
-    const resume = await this.getOrFail(resumeId);
+    const resume = await this.getResumeById(resumeId);
 
     await this.resumeRepository
       .createQueryBuilder()
@@ -303,7 +306,7 @@ export class ResumeService {
   async saveSkills(resumeId: number, dto: SaveSkillDto): Promise<ResumeModel> {
     await this.clearSkills(resumeId);
 
-    const resume = await this.getOrFail(resumeId);
+    const resume = await this.getResumeById(resumeId);
 
     const strSkills = dto.str_skills?.length
       ? await this.skillRepository.findByIds(dto.str_skills)
@@ -318,4 +321,33 @@ export class ResumeService {
 
     return this.resumeRepository.save(resume);
   }
+
+  async getSkills(resumeId: number): Promise<{
+    str_skills: SkillModel[];
+    fam_skills: SkillModel[];
+  }> {
+    const resume = await this.getResumeById(resumeId);
+
+    if (!resume.str_skills || !resume.fam_skills) {
+      throw new NotFoundException(
+        `Skills for resume ID ${resumeId} not found.`,
+      );
+    }
+
+    return {
+      str_skills: resume.str_skills,
+      fam_skills: resume.fam_skills,
+    };
+  }
+
+
+  getResumesByUserId(userId: number): Promise<ResumeModel> {
+    return this.resumeRepository.findOne({
+      where: { author: { user_id: userId} },
+      relations: ['author', 'introduction', 'str_skills', 'fam_skills'],
+    });
+  }
+
+
 }
+

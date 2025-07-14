@@ -10,8 +10,9 @@ import { IsString } from 'class-validator';
 
 @Entity()
 export class IntroductionModel {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
+
 
   @Column()
   @IsString()
