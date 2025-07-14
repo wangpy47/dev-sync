@@ -1,6 +1,7 @@
 import { BaseModel } from 'src/common/entity/base.entity';
 import { User } from 'src/user/user.entity';
 import {
+  Column,
   Entity,
   JoinTable,
   ManyToMany,
@@ -12,10 +13,12 @@ import { IntroductionModel } from './introduction.entity';
 import { SkillModel } from './skill.entity';
 import { ProjectModel } from './project.entity';
 import { IsString } from 'class-validator';
+import { ProfileModel } from './profile.entity';
 
 @Entity()
 export class ResumeModel extends BaseModel {
   @IsString()
+  @Column()
   title: string;
 
   @ManyToOne(() => User, (user) => user.resumes, { onDelete: 'CASCADE' })
@@ -23,6 +26,9 @@ export class ResumeModel extends BaseModel {
 
   @OneToOne(() => IntroductionModel, (introduction) => introduction.resume)
   introduction: IntroductionModel;
+
+  @OneToOne(() => ProfileModel, (profile) => profile.resume)
+  profile: ProfileModel;
 
   @ManyToMany(() => SkillModel, (skill) => skill.strongResumes)
   @JoinTable({

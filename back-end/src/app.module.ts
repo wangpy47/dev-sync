@@ -23,6 +23,8 @@ import { ResumeModel } from './resume/entities/resume.entity';
 import { ProjectOutcomeModel } from './resume/entities/project-outcome.entity';
 import { ContactModel } from './contact/entity/contact.entity';
 import { APP_INTERCEPTOR } from '@nestjs/core';
+import { ENV_DB_DATABASE_KEY, ENV_DB_HOST_KEY, ENV_DB_PASSWORD_KEY, ENV_DB_PORT_KEY, ENV_DB_SYNC_KEY, ENV_DB_USERNAME_KEY } from './common/const/env-keys.const';
+import { ProfileModel } from './resume/entities/profile.entity';
 
 
 
@@ -31,14 +33,14 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
     ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: process.env.DB_HOST, 
-      port: parseInt(process.env.DB_PORT, 10) || 3306,
-      username: process.env.DB_USERNAME, 
-      password: process.env.DB_PASSWORD, 
-      database: process.env.DB_DATABASE, 
-      entities: [User, Post, Category, Like, Comment, BaseModel,IntroductionModel, ProjectModel, SkillModel, ResumeModel, ProjectOutcomeModel, ContactModel],
+      host: process.env[ENV_DB_HOST_KEY], 
+      port: parseInt(process.env[ENV_DB_PORT_KEY], 10) || 3306,
+      username: process.env[ENV_DB_USERNAME_KEY], 
+      password: process.env[ENV_DB_PASSWORD_KEY], 
+      database: process.env[ENV_DB_DATABASE_KEY], 
+      entities: [User, Post, Category, Like, Comment, BaseModel,IntroductionModel, ProjectModel, SkillModel, ResumeModel, ProjectOutcomeModel, ContactModel, ProfileModel],
       autoLoadEntities: true,
-      synchronize: process.env.DB_SYNC === 'true', 
+      synchronize: process.env[ENV_DB_SYNC_KEY] === 'true', 
     }),
     UserModule,
     AuthModule,
