@@ -16,9 +16,12 @@ export const ResumePreviewPanel = forwardRef<
   return (
     <div ref={ref} style={modernStyle.previewContainer}>
       {order.map((id) => {
-        const section = entities[id];
+        const section = entities.find((entity) => entity.id === id);
+        if (section === undefined) {
+          return;
+        }
         switch (section.type) {
-          case "basicInfo":
+          case "profile":
             return (
               <div
                 key={id}
@@ -35,10 +38,19 @@ export const ResumePreviewPanel = forwardRef<
                   {section.email || "이메일을 입력하세요"}
                 </p>
                 <p style={{ margin: 0, fontSize: 14, color: "#666" }}>
-                  {section.phoneNumber || "전화번호를 입력하세요"}
+                  {section.phone_number || "전화번호를 입력하세요"}
                 </p>
                 <p style={{ margin: 0, fontSize: 14, color: "#666" }}>
-                  {section.githubUrl || "깃허브 아이디를 입력하세요"}
+                  {section.github_url || "깃허브 아이디를 입력하세요"}
+                </p>
+                <p style={{ margin: 0, fontSize: 14, color: "#666" }}>
+                  {section.blog_url || "블로그 주소를 입력하세요"}
+                </p>
+                <p style={{ margin: 0, fontSize: 14, color: "#666" }}>
+                  {section.address || "집 주소를 입력하세요"}
+                </p>
+                <p style={{ margin: 0, fontSize: 14, color: "#666" }}>
+                  {section.education || "학력을 입력하세요"}
                 </p>
               </div>
             );
@@ -67,37 +79,37 @@ export const ResumePreviewPanel = forwardRef<
                 </ul>
               </section>
             );
-          case "projects":
-            projectCount++;
-            const titleRender = !projectRendered;
-            projectRendered = true;
-            return (
-              <section key={id} style={{ marginTop: 30 }}>
-                {titleRender && (
-                  <h3 style={modernStyle.sectionTitle}>프로젝트 경험</h3>
-                )}
+          // case "projects":
+          //   projectCount++;
+          //   const titleRender = !projectRendered;
+          //   projectRendered = true;
+          //   return (
+          //     <section key={id} style={{ marginTop: 30 }}>
+          //       {titleRender && (
+          //         <h3 style={modernStyle.sectionTitle}>프로젝트 경험</h3>
+          //       )}
 
-                {section.items.map((item, idx) => (
-                  <div key={idx}>
-                    <h4>{`프로젝트 ${projectCount}: ${item.name}`}</h4>
-                    <p>{item.description}</p>
-                    <p>
-                      <strong>역할:</strong> {item.role}
-                    </p>
-                    {item.outcomes.map(
-                      (outcome: { task: string; result: string }, j) => (
-                        <div key={j} style={{ paddingLeft: 10 }}>
-                          <p>
-                            <strong>{`성과 ${j + 1}: ${outcome.task}`}</strong>
-                          </p>
-                          <p>{outcome.result}</p>
-                        </div>
-                      )
-                    )}
-                  </div>
-                ))}
-              </section>
-            );
+          //       {section.items.map((item, idx) => (
+          //         <div key={idx}>
+          //           <h4>{`프로젝트 ${projectCount}: ${item.name}`}</h4>
+          //           <p>{item.description}</p>
+          //           <p>
+          //             <strong>역할:</strong> {item.role}
+          //           </p>
+          //           {item.outcomes.map(
+          //             (outcome: { task: string; result: string }, j) => (
+          //               <div key={j} style={{ paddingLeft: 10 }}>
+          //                 <p>
+          //                   <strong>{`성과 ${j + 1}: ${outcome.task}`}</strong>
+          //                 </p>
+          //                 <p>{outcome.result}</p>
+          //               </div>
+          //             )
+          //           )}
+          //         </div>
+          //       ))}
+          //     </section>
+          //   );
           case "custom":
             return (
               <section key={id} style={{ marginTop: 30 }}>

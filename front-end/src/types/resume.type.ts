@@ -1,50 +1,87 @@
-interface BasicInfoSection {
-  type: "basicInfo";
-  name: string;
-  email: string;
-  githubUrl: string;
-  phoneNumber: number;
-}
-
-interface SkillsSection {
-  type: "skills";
-  familiar: string[];
-  strengths: string[];
-}
-
-interface ProjectsSection {
-  type: "projects";
-  items: {
-    name: string;
-    role: string;
-    description: string;
-    outcomes: { task: string; result: string }[];
-  }[];
-}
-
-interface IntroductionSection {
-  type: "introduction";
-  headline: string;
-  description: string;
-}
-
-interface CustomSection {
-  type: "custom";
+export type ResumeData = {
+  id: string;
   title: string;
-  content: string;
-}
+  order: string[];
+  entities: ResumeSection[];
+};
 
-// 🔹 유니언 타입으로 묶기
-type SectionEntity =
-  | BasicInfoSection
+type ResumeSection =
+  | ProfileSection
   | SkillsSection
-  | ProjectsSection
+  | CareerSection
+  | AchievementSection
+  | ProjectSection
+  | OutcomeSection
   | IntroductionSection
   | CustomSection;
 
-interface ResumeData {
-  order: string[];
-  entities: Record<string, SectionEntity>;
+type ProfileSection = {
+  id: string;
+  type: "profile";
+  name: string;
+  email: string;
+  github_url?:string;
+	blog_url?:string;
+  phone_number: string;
+  address: string;
+  education?: string;
 };
 
-export type {ResumeData};
+type SkillsSection = {
+  id: string;
+  type: "skills";
+  familiar: string[];
+  strengths: string[];
+};
+
+type CareerSection = {
+  id: string;
+  type: "career";
+  company: string;
+  position: string;
+  start_date: string;
+  end_date: string;
+  is_current: boolean;
+  description: string;
+  technologies: string[];
+};
+
+type AchievementSection = {
+  id: string;
+  type: "achievement";
+  title: string;
+  organization?: string;
+  date: string;
+  description: string;
+};
+
+type ProjectSection = {
+  id: string;
+  type: "project";
+  description: string;
+  start_date: string;
+  end_date: string;
+  technologies: string[];
+};
+
+type OutcomeSection = {
+  id: string;
+  type: "outcomes";
+  task: string;
+  result: string;
+  project: string; // 연결된 project의 id
+};
+
+type IntroductionSection = {
+  id: string;
+  type: "introduction";
+  headline: string;
+  description: string;
+};
+
+type CustomSection = {
+  id: string;
+  type: "custom";
+  title: string;
+  content: string;
+};

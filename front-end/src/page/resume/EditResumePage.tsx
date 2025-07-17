@@ -104,44 +104,90 @@ export const EditResumePage = () => {
   console.log("-----gitInfo", gitInfo);
 
   const createSections: ResumeData = {
-    order: [
-      "basicInfo",
-      "skills",
-      "custom-1", // 첫 번째 커스텀
-      "projects",
-      "custom-2", // 두 번째 커스텀
-      "introduction",
-    ],
-    entities: {
-      basicInfo: {
-        type: "basicInfo",
+    id: "123123455",
+    title: "자소서1",
+
+    order: ["123", "1234", "12345", "123456", "1234567", "12345678"],
+    entities: [
+      {
+        id: "123",
+        type: "profile",
         name: userData.name || "",
         email: userData.email || "",
-        githubUrl: userData.githubUrl || "",
-        phoneNumber: userData.phoneNumber,
+        github_url: userData.githubUrl || "",
+        blog_url: userData.blogUrl || "",
+        phone_number: userData.phoneNumber,
+        address: "경기도 화성시",
+        education: "한신대학교",
       },
-      skills: {
+      {
+        id: "1234",
         type: "skills",
         familiar: gitInfo.skills?.familiar || [],
         strengths: gitInfo.skills?.strengths || [],
       },
-      projects: { type: "projects", items: gitInfo.projects },
-      introduction: {
+      {
+        id: "12345",
+        type: "career",
+        company: "OpenAI Korea",
+        position: "Frontend Developer",
+        start_date: "2022-07-01",
+        end_date: "2024-12-31",
+        description:
+          "React, TypeScript, Electron 기반 편집기 개발 및 유지보수. 협업툴, 에디터, Three.js 등 다양한 기능 구현.",
+        is_current: false,
+        technologies: ["React", "TypeScript", "Electron", "Three.js", "NestJS"],
+      },
+      {
+        id: "123456",
+        type: "achievement",
+        title: "정보처리기사",
+        organization: "한국산업인력공단",
+        date: "2023-06-15",
+        description: "필기 및 실기 시험 모두 합격",
+      },
+      {
+        id: "1234567",
+        type: "project",
+        description: gitInfo.description || "",
+        start_date: "2022-07-01",
+        end_date: "2024-12-31",
+        technologies: ["React", "TypeScript", "Electron", "Three.js", "NestJS"],
+      },
+      {
+        id: "1234512345678",
+        type: "outcomes",
+        task: "한 일1",
+        result: "성과1",
+        project: "1234567",
+      },
+      {
+        id: "12345123456789",
+        type: "outcomes",
+        task: "한 일2",
+        result: "성과2",
+        project: "1234567",
+      },
+
+      {
+        id: "1234567890",
         type: "introduction",
         headline: gitInfo.introduction.headline || "",
         description: gitInfo.introduction.description || "",
       },
-      "custom-1": {
+      {
+        id: "12345678901",
         type: "custom",
         title: "수상 경력",
         content: "2024 교내 해커톤 우승",
       },
-      "custom-2": {
+      {
+        id: "12345678912",
         type: "custom",
         title: "봉사 활동",
         content: "코딩 멘토 100시간",
       },
-    },
+    ],
   } as const;
   console.log("createSEction----------", createSections);
   const [sections, setSections] = useState(createSections);
