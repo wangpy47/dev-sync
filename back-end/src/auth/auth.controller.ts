@@ -20,7 +20,7 @@ export class AuthController {
 
   @Get('google')
   @UseGuards(GoogleAuthGuard)
-  @UseFilters(AuthExceptionFilter) // 예외 처리기 적용
+  @UseFilters(AuthExceptionFilter)
   async googleAuthRedirect(@Request() req, @Response() res) {
     const { user } = req;
     if (user) {
