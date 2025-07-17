@@ -10,6 +10,9 @@ export class SkillModel {
   @Column()
   name: string;
 
+  @Column({ nullable: true })
+  icon: string;
+
   @ManyToMany(() => ResumeModel, (resume) => resume.str_skills)
   strongResumes: ResumeModel[];
 

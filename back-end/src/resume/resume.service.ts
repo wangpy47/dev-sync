@@ -255,6 +255,10 @@ export class ResumeService {
   async upsertIntroduction(resumeId: number, dto: SaveIntroductionDto) {
     const resume = await this.getResumeById(resumeId);
 
+    if (!resume) {
+      throw new NotFoundException(`Resume with ID ${resumeId} not found.`);
+    }
+
     let introduction = await this.introductionRepository.findOne({
       where: { resume: { id: resume.id } },
     });
@@ -274,6 +278,10 @@ export class ResumeService {
   async removeIntroduction(resumeId: number) {
     const resume = await this.getResumeById(resumeId);
 
+    if (!resume) {
+      throw new NotFoundException(`Resume with ID ${resumeId} not found.`);
+    }
+    
     const introduction = await this.introductionRepository.findOne({
       where: { resume: { id: resume.id } },
     });

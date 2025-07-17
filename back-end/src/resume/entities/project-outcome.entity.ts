@@ -3,8 +3,8 @@ import { ProjectModel } from './project.entity';
 
 @Entity()
 export class ProjectOutcomeModel {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @Column()
   task: string;
