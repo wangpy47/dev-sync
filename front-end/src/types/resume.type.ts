@@ -15,7 +15,7 @@ type ResumeSection =
   | IntroductionSection
   | CustomSection;
 
-type ProfileSection = {
+export type ProfileSection = {
   id: string;
   type: "profile";
   name: string;
@@ -55,16 +55,17 @@ type AchievementSection = {
   description: string;
 };
 
-type ProjectSection = {
+export type ProjectSection = {
   id: string;
   type: "project";
+  name: string;
   description: string;
   start_date: string;
   end_date: string;
   technologies: string[];
 };
 
-type OutcomeSection = {
+export type OutcomeSection = {
   id: string;
   type: "outcomes";
   task: string;

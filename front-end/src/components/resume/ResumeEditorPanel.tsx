@@ -12,7 +12,11 @@ import {
   Switch,
 } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import type { ResumeData } from "../../types/resume.type";
+import type {
+  OutcomeSection,
+  ResumeData,
+  ProjectSection,
+} from "../../types/resume.type";
 import dayjs from "dayjs";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -56,8 +60,7 @@ const textFieldStyle = css`
 
 const textareaStyle = css`
   width: 100%;
-  height: 100%;
-  overflow: auto;
+  box-sizing: border-box;
 `;
 
 const titleTextFieldStyle = css`
@@ -78,6 +81,21 @@ const skillListStyle = css`
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+`;
+
+const dateStyle = css`
+  color: #787878;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  &::before {
+    content: "";
+    display: inline-block;
+    margin: 0 8px;
+    width: 1px;
+    height: 12px;
+    background: #757575;
+  }
 `;
 
 interface GitResumeProps {
@@ -160,10 +178,12 @@ export const ResumeEditorPanel = ({
   return (
     <div css={containerStyle}>
       {order.map((id: string) => {
+        console.log(id);
         const section = entities.find((entity) => entity.id === id);
         if (section === undefined) {
           return;
         }
+        console.log(section);
         switch (section.type) {
           case "profile":
             return (
@@ -198,7 +218,7 @@ export const ResumeEditorPanel = ({
                       />
                       <TextField
                         css={textFieldStyle}
-                        label="깃허브"
+                        // label="gitHub"
                         variant="outlined"
                         value={section.github_url || ""}
                         slotProps={{
@@ -211,8 +231,28 @@ export const ResumeEditorPanel = ({
                           },
                         }}
                       />
+                      <TextField
+                        css={textFieldStyle}
+                        label="blog"
+                        variant="outlined"
+                        value={section.blog_url || ""}
+                        placeholder="블로그 주소를 입력하세요"
+                      />
+                      <TextField
+                        css={textFieldStyle}
+                        label="학력"
+                        variant="outlined"
+                        value={section.education || ""}
+                        placeholder="학력을 입력하세요"
+                      />
                     </div>
-                    <EditSaveButton isEditing={true} editId={id} />
+                    <TextField
+                      css={textFieldStyle}
+                      label="주소"
+                      type="address"
+                      variant="outlined"
+                      value={section.address || ""}
+                    />
                   </>
                 ) : (
                   <>
@@ -223,17 +263,16 @@ export const ResumeEditorPanel = ({
                         전화번호 : {section.phone_number || ""}
                       </Typography>
                       <Typography>
-                        git주소 : {section.github_url || ""}
+                        gitHub : {section.github_url || ""}
                       </Typography>
-                      <Typography>
-                        블로그 주소 : {section.blog_url || ""}
-                      </Typography>
-                      <Typography>집 주소 : {section.address || ""}</Typography>
+                      <Typography>blog : {section.blog_url || ""}</Typography>
                       <Typography>학력 : {section.education || ""}</Typography>
+                      <Typography>집 주소 : {section.address || ""}</Typography>
                     </div>
-                    <EditSaveButton isEditing={false} editId={id} />
+                    {/* <EditSaveButton isEditing={false} editId={id} /> */}
                   </>
                 )}
+                <EditSaveButton isEditing={isEditing[id]} editId={id} />
               </div>
             );
 
@@ -293,7 +332,7 @@ export const ResumeEditorPanel = ({
                     />
                   ))}
                 </div>
-                <EditSaveButton isEditing={!!isEditing[id]} editId={id} />
+                <EditSaveButton isEditing={isEditing[id]} editId={id} />
               </div>
             );
 
@@ -358,7 +397,6 @@ export const ResumeEditorPanel = ({
                   {isEditing[id] ? (
                     <div
                       css={css`
-                        // justifiy-content: center;
                         align-items: center;
                         display: flex;
                       `}
@@ -406,7 +444,6 @@ export const ResumeEditorPanel = ({
                       <TextField
                         multiline
                         label="담당업무"
-                        // rows={4}
                         css={css`
                           width: 100%;
                           box-sizing: border-box;
@@ -458,7 +495,6 @@ export const ResumeEditorPanel = ({
                     <div
                       css={css`
                         display: flex;
-                        // margin-bottom: 1rem;
                       `}
                     >
                       <Typography
@@ -470,18 +506,15 @@ export const ResumeEditorPanel = ({
                       >
                         {section.company || ""}
                       </Typography>
-                      <Typography
-                        css={css`
-                          font-size: 1.1rem;
-                          color: #787878;
-                        `}
-                      >
+                      <Typography css={dateStyle}>
                         {section.start_date}
                       </Typography>
                     </div>
                     <Typography
                       css={css`
                         margin-bottom: 1rem;
+                        font-size: 0.9rem;
+                        color: #464646;
                       `}
                     >
                       {section.position}
@@ -506,124 +539,328 @@ export const ResumeEditorPanel = ({
             return (
               <div key={id} css={contentStyle}>
                 <Typography css={titleStyle} variant="h5">
-                  자격증
+                  자격 및 수상 내역
                 </Typography>
 
                 {isEditing[id] ? (
                   <>
-                    <TextField
-                      label="자격증명"
-                      value={section.title}
-                      fullWidth
-                      size="small"
-                      margin="dense"
-                    />
-                    <TextField
-                      label="발행기관"
-                      value={section.organization}
-                      fullWidth
-                      size="small"
-                      margin="dense"
-                    />
-                    <LocalizationProvider dateAdapter={AdapterDayjs}>
-                      <DatePicker
-                        label="취득일"
-                        value={dayjs(section.date)}
-                        slotProps={{
-                          textField: {
-                            fullWidth: true,
-                            size: "small",
-                            margin: "dense",
-                          },
-                        }}
+                    <div css={gridStyle}>
+                      <TextField
+                        label="항목명"
+                        value={section.title}
+                        fullWidth
+                        size="small"
+                        margin="dense"
                       />
-                    </LocalizationProvider>
-                    <TextField value={section.description} />
+                      <TextField
+                        label="발행기관"
+                        value={section.organization}
+                        fullWidth
+                        size="small"
+                        margin="dense"
+                      />
+                      <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <DatePicker
+                          label="취득일"
+                          value={dayjs(section.date)}
+                          slotProps={{
+                            textField: {
+                              fullWidth: true,
+                              size: "small",
+                              margin: "dense",
+                            },
+                          }}
+                        />
+                      </LocalizationProvider>
+                    </div>
+                    <TextField
+                      label="설명"
+                      rows="4"
+                      // value={section.description}
+                      css={textareaStyle}
+                      multiline
+                    />
                     <EditSaveButton isEditing={true} editId={id} />
                   </>
                 ) : (
                   <>
-                    <Typography>자격증명: {section.title}</Typography>
-                    <Typography>발행기관: {section.organization}</Typography>
-                    <Typography>
-                      취득일:
-                      {section.date}
-                    </Typography>
-                    <Typography>설명: {section.description}</Typography>
+                    <Typography>{section.title}</Typography>
+                    <Typography> {section.organization}</Typography>
+
+                    <Typography>{section.date}</Typography>
+                    <Typography> {section.description}</Typography>
                     <EditSaveButton isEditing={false} editId={id} />
                   </>
                 )}
               </div>
             );
 
-          // case "projects":
-          //   return section.items.map((proj, idx) => {
-          //     const editKey = `${id}-${idx}`;
-          //     return (
-          //       <div key={editKey} css={contentStyle}>
-          //         <Typography css={titleStyle} variant="h5">
-          //           프로젝트 {idx + 1}
-          //         </Typography>
+          case "project":
+            const relatedOutcomes = entities.filter(
+              (e): e is OutcomeSection =>
+                e.type === "outcomes" && e.project === section.id
+            );
+            return (
+              <div key={id} css={contentStyle}>
+                <Typography css={titleStyle} variant="h5">
+                  프로젝트 - {section.name}
+                </Typography>
 
-          //         {!isEditing[editKey] ? (
-          //           <>
-          //             <Typography>제목 : {proj.name || ""}</Typography>
-          //             <Typography>역할 : {proj.role || ""}</Typography>
-          //             <Typography>설명: {proj.description || ""}</Typography>
+                {!isEditing[id] ? (
+                  <>
+                    <Bar />
+                    <Typography>설명: {section.description}</Typography>
+                    <Typography>
+                      기간: {section.start_date} ~ {section.end_date}
+                    </Typography>
+                    <Typography>
+                      사용 기술: {section.technologies?.join(", ")}
+                    </Typography>
 
-          //             {proj.outcomes.map((o, oIdx) => (
-          //               <Typography key={oIdx}>
-          //                 성과 {oIdx + 1}: {o.task} — {o.result}
-          //               </Typography>
-          //             ))}
+                    {/* 연결된 성과 (outcomes) 목록 */}
+                    {relatedOutcomes.length > 0 && (
+                      <div css={{ marginTop: "1rem" }}>
+                        <Typography
+                          css={css`
+                            font-weight: bold;
+                            font-size: 1.1rem;
+                          `}
+                        >
+                          관련 성과
+                        </Typography>
+                        {relatedOutcomes.map((outcome) => (
+                          <div
+                            key={outcome.id}
+                            css={{ marginBottom: "0.5rem" }}
+                          >
+                            <Typography>• 한 일: {outcome.task}</Typography>
+                            <Typography>→ 성과: {outcome.result}</Typography>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    <EditSaveButton isEditing={false} editId={id} />
+                  </>
+                ) : (
+                  <>
+                    <TextField
+                      label="설명"
+                      value={section.description}
+                      fullWidth
+                      size="small"
+                      margin="dense"
+                    />
+                    <TextField
+                      label="시작일"
+                      value={section.start_date}
+                      fullWidth
+                      size="small"
+                      margin="dense"
+                    />
+                    <TextField
+                      label="종료일"
+                      value={section.end_date}
+                      fullWidth
+                      size="small"
+                      margin="dense"
+                    />
+                    <TextField
+                      label="사용 기술"
+                      value={section.technologies?.join(", ") || ""}
+                      fullWidth
+                      size="small"
+                      margin="dense"
+                      placeholder="예: React, TypeScript, NestJS"
+                    />
+                    {relatedOutcomes.length > 0 && (
+                      <div css={{ marginTop: "1rem" }}>
+                        <Typography
+                          css={css`
+                            font-weight: bold;
+                            font-size: 1.1rem;
+                          `}
+                        >
+                          관련 성과
+                        </Typography>
+                        {relatedOutcomes.map((outcome) => (
+                          <div
+                            key={outcome.id}
+                            css={{
+                              marginBottom: "0.5rem",
+                              display: "grid",
+                              gap: "0.5rem",
+                            }}
+                          >
+                            <TextField
+                              label="한 일"
+                              value={outcome.task}
+                              fullWidth
+                              size="small"
+                              margin="dense"
+                            />
+                            <TextField
+                              label="성과"
+                              value={outcome.result}
+                              fullWidth
+                              size="small"
+                              margin="dense"
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    <EditSaveButton isEditing={true} editId={id} />
+                  </>
+                )}
+              </div>
+            );
 
-          //             <EditSaveButton isEditing={false} editId={editKey} />
-          //           </>
-          //         ) : (
-          //           <>
-          //             <TextField
-          //               type="title"
-          //               css={textFieldStyle}
-          //               label="제목"
-          //               value={proj.name}
-          //             />
-          //             <TextField
-          //               type="role"
-          //               label="역할"
-          //               css={textFieldStyle}
-          //               value={proj.role}
-          //             />
-          //             <TextField
-          //               multiline
-          //               label="설명"
-          //               css={textFieldStyle}
-          //               value={proj.description}
-          //             />
-          //             {proj.outcomes.map((outcome, j) => (
-          //               <div key={j} style={{ paddingTop: 20 }}>
+          // case "project":
+          //   const projectSections = entities.filter(
+          //     (e): e is ProjectSection => e.type === "project"
+          //   );
+
+          //   return (
+          //     <div key={id} css={contentStyle}>
+          //       <Typography css={titleStyle} variant="h5">
+          //         프로젝트 경험
+          //       </Typography>
+
+          //       {projectSections.map((section) => {
+          //         const relatedOutcomes = entities.filter(
+          //           (e): e is OutcomeSection =>
+          //             e.type === "outcomes" && e.project === section.id
+          //         );
+
+          //         return (
+          //           <div key={section.id} css={{ marginBottom: "2rem" }}>
+          //             {isEditing["projects"] ? (
+          //               <>
+          //                 <Bar />
           //                 <TextField
-          //                   css={css`
-          //                     width: 100%;
-          //                     margin-bottom: 5px;
-          //                   `}
-          //                   label={`성과${j + 1}`}
-          //                   value={outcome.task}
-          //                   multiline
+          //                   label="이름"
+          //                   value={section.name}
+          //                   fullWidth
+          //                   size="small"
+          //                   margin="dense"
           //                 />
           //                 <TextField
-          //                   css={textFieldStyle}
-          //                   label={`성과${j + 1} - 설명`}
-          //                   value={outcome.result}
-          //                   multiline
+          //                   label="설명"
+          //                   value={section.description}
+          //                   fullWidth
+          //                   size="small"
+          //                   margin="dense"
           //                 />
-          //               </div>
-          //             ))}
-          //             <EditSaveButton isEditing={true} editId={editKey} />
-          //           </>
-          //         )}
-          //       </div>
-          //     );
-          //   });
+          //                 <TextField
+          //                   label="시작일"
+          //                   value={section.start_date}
+          //                   fullWidth
+          //                   size="small"
+          //                   margin="dense"
+          //                 />
+          //                 <TextField
+          //                   label="종료일"
+          //                   value={section.end_date}
+          //                   fullWidth
+          //                   size="small"
+          //                   margin="dense"
+          //                 />
+          //                 <TextField
+          //                   label="사용 기술"
+          //                   value={section.technologies?.join(", ") || ""}
+          //                   fullWidth
+          //                   size="small"
+          //                   margin="dense"
+          //                   placeholder="예: React, TypeScript, NestJS"
+          //                 />
+
+          //                 {relatedOutcomes.length > 0 && (
+          //                   <div css={{ marginTop: "1rem" }}>
+          //                     <Typography
+          //                       css={css`
+          //                         font-weight: bold;
+          //                         font-size: 1.1rem;
+          //                       `}
+          //                     >
+          //                       관련 성과
+          //                     </Typography>
+          //                     {relatedOutcomes.map((outcome) => (
+          //                       <div
+          //                         key={outcome.id}
+          //                         css={{
+          //                           marginBottom: "0.5rem",
+          //                           display: "grid",
+          //                           gap: "0.5rem",
+          //                         }}
+          //                       >
+          //                         <TextField
+          //                           label="한 일"
+          //                           value={outcome.task}
+          //                           fullWidth
+          //                           size="small"
+          //                           margin="dense"
+          //                         />
+          //                         <TextField
+          //                           label="성과"
+          //                           value={outcome.result}
+          //                           fullWidth
+          //                           size="small"
+          //                           margin="dense"
+          //                         />
+          //                       </div>
+          //                     ))}
+          //                   </div>
+          //                 )}
+          //               </>
+          //             ) : (
+          //               <>
+          //                 <Bar />
+          //                 <Typography>제목: {section.name}</Typography>
+          //                 {/* <Bar /> */}
+          //                 <Typography>설명: {section.description}</Typography>
+          //                 <Typography>
+          //                   기간: {section.start_date} ~ {section.end_date}
+          //                 </Typography>
+          //                 <Typography>
+          //                   사용 기술: {section.technologies?.join(", ")}
+          //                 </Typography>
+
+          //                 {relatedOutcomes.length > 0 && (
+          //                   <div css={{ marginTop: "1rem" }}>
+          //                     <Typography
+          //                       css={css`
+          //                         font-weight: bold;
+          //                         font-size: 1.1rem;
+          //                       `}
+          //                     >
+          //                       관련 성과
+          //                     </Typography>
+          //                     {relatedOutcomes.map((outcome) => (
+          //                       <div
+          //                         key={outcome.id}
+          //                         css={{ marginBottom: "0.5rem" }}
+          //                       >
+          //                         <Typography>
+          //                           • 한 일: {outcome.task}
+          //                         </Typography>
+          //                         <Typography>
+          //                           → 성과: {outcome.result}
+          //                         </Typography>
+          //                       </div>
+          //                     ))}
+          //                   </div>
+          //                 )}
+          //               </>
+          //             )}
+          //           </div>
+          //         );
+          //       })}
+          //       <EditSaveButton
+          //         isEditing={isEditing["projects"]}
+          //         editId={"projects"}
+          //       />
+          //     </div>
+          //   );
 
           case "custom":
             return (
