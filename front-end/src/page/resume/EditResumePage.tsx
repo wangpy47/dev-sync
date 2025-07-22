@@ -13,6 +13,8 @@ import CloseIcon from "@mui/icons-material/Close";
 import { SectionOrderManager } from "../../components/resume/SectionOrderManager.tsx";
 import type { ResumeData } from "../../types/resume.type.ts";
 import FormatListNumberedIcon from "@mui/icons-material/FormatListNumbered";
+import { modernStyle } from "../../styles/modernTheme.ts";
+import { blueGrayStyle } from "../../styles/blueGrayTheme.ts";
 const containerStyle = css`
   display: flex;
   flex-direction: row;
@@ -100,14 +102,30 @@ export const EditResumePage = () => {
   const location = useLocation();
   const gitInfo = location.state;
   const printRef = useRef<HTMLDivElement>(null);
+  const [theme, setTheme] = useState<"modern" | "blueGray">("modern");
   console.log("-----userData", userData);
   console.log("-----gitInfo", gitInfo);
+
+  const selectedStyle = theme === "modern" ? modernStyle : blueGrayStyle;
 
   const createSections: ResumeData = {
     id: "123123455",
     title: "자소서1",
 
-    order: ["123", "1234", "12345", "123456", "1234567", "12345678"],
+    order: [
+      "123",
+      "1234",
+      "12345",
+      "123456",
+      "1234567",
+      "12345678",
+      "123456789",
+      "1234567890",
+      "12345678901",
+      "12345678912",
+      "123456789123",
+      "1234567891234",
+    ],
     entities: [
       {
         id: "123",
@@ -149,24 +167,43 @@ export const EditResumePage = () => {
       {
         id: "1234567",
         type: "project",
+        name: "devSync",
         description: gitInfo.description || "",
         start_date: "2022-07-01",
         end_date: "2024-12-31",
         technologies: ["React", "TypeScript", "Electron", "Three.js", "NestJS"],
       },
       {
-        id: "1234512345678",
+        id: "12345678",
         type: "outcomes",
-        task: "한 일1",
-        result: "성과1",
+        task: "한 일입니다. 나는 할일입니다.",
+        result:
+          "성과1성과1성과1성과1성과1성과1성과1성과1 성과1성과1성과1성과1 성과1 ",
         project: "1234567",
       },
       {
-        id: "12345123456789",
+        id: "123456789",
         type: "outcomes",
         task: "한 일2",
         result: "성과2",
         project: "1234567",
+      },
+      {
+        id: "123456789123",
+        type: "project",
+        name: "편집기 3D",
+        description: gitInfo.description || "",
+        start_date: "2022-07-01",
+        end_date: "2024-12-31",
+        technologies: ["React", "TypeScript", "Electron", "Three.js", "NestJS"],
+      },
+      {
+        id: "1234567891234",
+        type: "outcomes",
+        task: "한 일입니다2222. 나는 할일입니다.",
+        result:
+          "성과222222성과1성과1성과1성과1성과1성과1성과1 성과1성과1성과1성과1 성과1 ",
+        project: "123456789123",
       },
 
       {
@@ -246,13 +283,13 @@ export const EditResumePage = () => {
   const [open, setOpen] = useState(false);
   const anchorRef = useRef(null);
 
-  console.log(anchorRef.current);
-  // console.log(createSections.order);
-
   return (
     <div css={containerStyle}>
       <div css={leftPanelStyle}>
-        <ResumeOptionBar onDownloadPdf={handleDownloadPdf} />
+        <ResumeOptionBar
+          onDownloadPdf={handleDownloadPdf}
+          setTheme={setTheme}
+        />
         <ResumeEditorPanel
           sections={sections}
           updateSectionData={updateSectionData}
@@ -303,7 +340,13 @@ export const EditResumePage = () => {
         </Popover>
       </div>
       <div css={rightPanelStyle}>
-        {gitInfo && <ResumePreviewPanel sections={sections} ref={printRef} />}
+        {gitInfo && (
+          <ResumePreviewPanel
+            sections={sections}
+            ref={printRef}
+            styleTheme={selectedStyle}
+          />
+        )}
       </div>
     </div>
   );

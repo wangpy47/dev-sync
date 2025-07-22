@@ -1,6 +1,3 @@
-import { red } from "@mui/material/colors";
-
-// styles/modern.ts
 export const modernStyle = {
   input: {
     padding: "10px 12px",
@@ -38,4 +35,18 @@ export const modernStyle = {
     fontFamily: "Arial, sans-serif",
     color: "#333",
   },
+    chipList: {
+  display: 'flex',
+  flexWrap: 'wrap',
+  gap: '8px',
+  marginTop: '8px',
+}as React.CSSProperties,
+chip: {
+  padding: '4px 12px',
+  backgroundColor: '#e1e8f0',
+  color: '#334e68',
+  borderRadius: '16px',
+  fontSize: '13px',
+  lineHeight: '1.5',
+},
 };

@@ -59,12 +59,7 @@ export const SectionOrderManager = ({
           flexDirection: "column",
         }}
       >
-        <Typography
-          fontWeight={600}
-          textAlign="center"
-          mb={1}
-          color="#2f2f2f"
-        >
+        <Typography fontWeight={600} textAlign="center" mb={1} color="#2f2f2f">
           섹션 순서 변경
         </Typography>
 
@@ -84,16 +79,22 @@ export const SectionOrderManager = ({
                 }}
               >
                 {localOrder.map((id, index) => {
-                  const entity = sections.entities[id];
+                  const entity = sections.entities.find((i) => i.id === id);
+                  if (!entity) {
+                    return;
+                  }
                   const label =
                     entity.type === "custom"
                       ? entity.title
                       : (
                           {
-                            basicInfo: "기본 정보",
+                            profile: "기본 정보",
                             skills: "기술 스택",
-                            projects: "프로젝트",
-                            introduction: "소개",
+                            project: "프로젝트",
+                            outcomes: "성과",
+                            achievement: "수상/자격",
+                            career: "경력",
+                            introduction: "자기소개",
                           } as const
                         )[entity.type];
 

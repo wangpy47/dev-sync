@@ -1,0 +1,56 @@
+export const blueGrayStyle = {
+  input: {
+    padding: "10px 12px",
+    fontSize: 15,
+    border: "1px solid #90a4ae",
+    borderRadius: 4,
+    fontFamily: "inherit",
+    backgroundColor: "#eceff1",
+    color: "#263238",
+  },
+  button: {
+    padding: "10px",
+    fontSize: 16,
+    backgroundColor: "#607d8b",
+    color: "white",
+    border: "none",
+    borderRadius: 4,
+    cursor: "pointer",
+  },
+  sectionTitle: {
+    fontSize: 18,
+    marginBottom: 10,
+    borderBottom: "1px solid #b0bec5",
+    paddingBottom: 4,
+    color: "#37474f",
+  },
+  sectionContent: {
+    fontSize: 15,
+    whiteSpace: "pre-wrap",
+    lineHeight: 1.6,
+    color: "#455a64",
+  },
+  previewContainer: {
+    minHeight: 600,
+    backgroundColor: "#f5f8fa",
+    boxShadow: "0 0 10px rgba(0,0,0,0.08)",
+    padding: "40px 50px",
+    fontFamily: "Segoe UI, sans-serif",
+    color: "#263238",
+  },
+  chipList: {
+  display: "flex",
+  flexWrap: "wrap",
+  gap: "8px",
+  marginTop: "8px",
+}as React.CSSProperties,
+chip: {
+  padding: "4px 12px",
+  backgroundColor: "#e1e8f0",
+  color: "#334e68",
+  borderRadius: "16px",
+  fontSize: "13px",
+  lineHeight: "1.5",
+},
+
+};
