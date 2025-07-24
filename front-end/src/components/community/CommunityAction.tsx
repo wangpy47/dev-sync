@@ -1,9 +1,15 @@
-import { useLocation, useNavigate } from "react-router-dom";
-import { TextField, InputAdornment, Button, Divider } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-import { useState, type SetStateAction } from "react";
-import { MenuItem, Select } from "@mui/material";
+import {
+  Button,
+  Divider,
+  InputAdornment,
+  MenuItem,
+  Select,
+  TextField,
+} from "@mui/material";
+import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useLocation, useNavigate } from "react-router-dom";
 import { openLoginForm } from "../../redux/redux";
 
 interface CommunityActionsProps {

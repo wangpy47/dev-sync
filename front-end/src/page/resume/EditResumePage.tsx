@@ -1,20 +1,20 @@
 /** @jsxImportSource @emotion/react */
-import { useState, useEffect, useRef } from "react";
-import { useSelector } from "react-redux";
-import { ResumePreviewPanel } from "../../components/resume/ResumePreviewPanel.tsx";
-import { ResumeEditorPanel } from "../../components/resume/ResumeEditorPanel";
-import { useLocation } from "react-router-dom";
 import { css } from "@emotion/react";
-import { ResumeOptionBar } from "../../components/resume/ResumeOptionBar.tsx";
-import { nanoid } from "@reduxjs/toolkit";
-import html2pdf from "html2pdf.js";
-import { Fab, Popover } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import { SectionOrderManager } from "../../components/resume/SectionOrderManager.tsx";
-import type { ResumeData } from "../../types/resume.type.ts";
 import FormatListNumberedIcon from "@mui/icons-material/FormatListNumbered";
-import { modernStyle } from "../../styles/modernTheme.ts";
+import { Fab, Popover } from "@mui/material";
+import html2pdf from "html2pdf.js";
+import { useRef, useState } from "react";
+import { useSelector } from "react-redux";
+import { useLocation } from "react-router-dom";
+import { ResumeEditorPanel } from "../../components/resume/ResumeEditorPanel";
+import { ResumeOptionBar } from "../../components/resume/ResumeOptionBar.tsx";
+import { ResumePreviewPanel } from "../../components/resume/ResumePreviewPanel.tsx";
+import { SectionOrderManager } from "../../components/resume/SectionOrderManager.tsx";
 import { blueGrayStyle } from "../../styles/blueGrayTheme.ts";
+import { modernStyle } from "../../styles/modernTheme.ts";
+import type { ResumeData } from "../../types/resume.type.ts";
+
 const containerStyle = css`
   display: flex;
   flex-direction: row;
@@ -230,28 +230,28 @@ export const EditResumePage = () => {
   const [sections, setSections] = useState(createSections);
 
   // 섹션 데이터 업데이트 함수
-  const updateSectionData = (type: string, newData: any) => {};
+  // const updateSectionData = (type: string, newData: any) => {};
 
   // 섹션 삭제 함수 (위/아래 이동)
-  const removeSection = (index, direction) => {};
+  // const removeSection = (index, direction) => {};
 
   // 섹션 추가 함수 예시 (custom 타입)
-  const addSection = () => {
-    setSections((prev) => {
-      const id = nanoid(10); // 예: "f13da"
-      return {
-        order: [...prev.order, id],
-        entities: {
-          ...prev.entities,
-          [id]: {
-            type: "custom",
-            title: "새 섹션",
-            content: "내용을 입력하세요.",
-          },
-        },
-      };
-    });
-  };
+  // const addSection = () => {
+  //   setSections((prev) => {
+  //     const id = nanoid(10); // 예: "f13da"
+  //     return {
+  //       order: [...prev.order, id],
+  //       entities: {
+  //         ...prev.entities,
+  //         [id]: {
+  //           type: "custom",
+  //           title: "새 섹션",
+  //           content: "내용을 입력하세요.",
+  //         },
+  //       },
+  //     };
+  //   });
+  // };
 
   const handleDownloadPdf = () => {
     if (!printRef.current) return;
@@ -292,9 +292,9 @@ export const EditResumePage = () => {
         />
         <ResumeEditorPanel
           sections={sections}
-          updateSectionData={updateSectionData}
-          removeSection={removeSection}
-          addSection={addSection}
+          // updateSectionData={updateSectionData}
+          // removeSection={removeSection}
+          // addSection={addSection}
         />
         <Fab
           ref={anchorRef}
@@ -334,7 +334,7 @@ export const EditResumePage = () => {
               onReorder={(newOrder: string[]) =>
                 setSections((prev) => ({ ...prev, order: newOrder }))
               }
-              onClose={() => setOpen(false)}
+              // onClose={() => setOpen(false)}
             />
           )}
         </Popover>

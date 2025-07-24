@@ -1,18 +1,18 @@
 /** @jsxImportSource @emotion/react */
-import { Button, css, Divider, TextField, Typography } from "@mui/material";
-import { useLocation, useNavigate } from "react-router-dom";
-import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
-import DOMPurify from "dompurify";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import KeyboardBackspaceIcon from "@mui/icons-material/KeyboardBackspace";
+import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
+import { Button, css, Divider, Typography } from "@mui/material";
+import DOMPurify from "dompurify";
+import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { useLocation, useNavigate } from "react-router-dom";
 import { GetLikeCount } from "../../api/GetLikeCount";
 import { ToggleLike } from "../../api/ToggleLike";
-import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import { CommentPost } from "../../components/community/CommentPost";
-import { useEffect, useState, useTransition } from "react";
-import { useSelector } from "react-redux";
-import { OptionBar } from "../../components/community/OptionBar";
 import { DeletePostDlalog } from "../../components/community/DeletePostDialog";
-import FavoriteIcon from "@mui/icons-material/Favorite";
+import { OptionBar } from "../../components/community/OptionBar";
 
 export const ReadPostPage = () => {
   const location = useLocation();

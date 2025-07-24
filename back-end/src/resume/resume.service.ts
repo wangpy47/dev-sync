@@ -1,14 +1,14 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 import axios from 'axios';
 import { UserService } from 'src/user/user.service';
-import { InjectRepository } from '@nestjs/typeorm';
-import { ResumeModel } from './entities/resume.entity';
 import { Repository } from 'typeorm';
-import { IntroductionModel } from './entities/introduction.entity';
 import { SaveIntroductionDto } from './dto/save-introduction.dto';
 import { SaveSkillDto } from './dto/save-skill.dto';
-import { SkillModel } from './entities/skill.entity';
+import { IntroductionModel } from './entities/introduction.entity';
 import { ProfileModel } from './entities/profile.entity';
+import { ResumeModel } from './entities/resume.entity';
+import { SkillModel } from './entities/skill.entity';
 
 @Injectable()
 export class ResumeService {
@@ -81,6 +81,7 @@ export class ResumeService {
   }
 
   async getUserRepositories(username: string) {
+    console.log('토큰',process.env.GITHUB_TOKEN)
     try {
       const response = await axios.get(
         `https://api.github.com/users/${username}/repos`,

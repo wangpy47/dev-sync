@@ -1,26 +1,25 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
-import Avatar from "@mui/material/Avatar";
-import Button from "@mui/material/Button";
-import TextField from "@mui/material/TextField";
-import { useEffect, useState, type SetStateAction } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import {
   Alert,
   Collapse,
   Divider,
   FormControl,
   InputAdornment,
-  InputLabel,
   MenuItem,
   Select,
   type SelectChangeEvent,
 } from "@mui/material";
-import { login } from "../redux/redux";
+import Avatar from "@mui/material/Avatar";
+import Button from "@mui/material/Button";
+import TextField from "@mui/material/TextField";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import dayjs from "dayjs";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { login } from "../redux/redux";
 
 // 공통 스타일 정의
 const containerStyle = css`
@@ -84,7 +83,11 @@ interface CustomTextProps {
   onChange: (newValue: string) => void;
 }
 
-const CustomTextField = ({ label, value, onChange }: CustomTextProps) => (
+export const CustomTextField = ({
+  label,
+  value,
+  onChange,
+}: CustomTextProps) => (
   <TextField
     placeholder={label}
     variant="outlined"

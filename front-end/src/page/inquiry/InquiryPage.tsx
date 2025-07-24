@@ -1,8 +1,7 @@
 /** @jsxImportSource @emotion/react */
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import * as styles from "../../components/contact/Inquiry.styles";
-import { useSelector } from "react-redux";
 
 // 저장된 문의 데이터 (조회 시 사용)
 export interface Inquiry {
@@ -27,7 +26,7 @@ export const InquiryPage = () => {
     setLoading(true); // 버튼 비활성화 시작
     try {
       const response = await fetch(
-        `http://localhost:3000/contact/inquiries?email=${email}`
+        `http://localhost:3000/contact/inquiries?email=$'{email'}`
       );
 
       if (!response.ok) {

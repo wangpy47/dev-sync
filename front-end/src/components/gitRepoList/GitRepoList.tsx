@@ -1,14 +1,13 @@
 /** @jsxImportSource @emotion/react */
-import { useState, useEffect } from "react";
-import { Checkbox, Typography, TextareaAutosize, Button } from "@mui/material";
-import DescriptionIcon from "@mui/icons-material/Description";
+import { Button, Checkbox, TextareaAutosize, Typography } from "@mui/material";
+import { useEffect, useState } from "react";
 import {
-  containerStyle,
-  itemStyle,
   commitAreaStyle,
   commitContainerStyle,
-  commitStyle,
   commitHeaderStyle,
+  commitStyle,
+  containerStyle,
+  itemStyle,
   textareaStyle,
 } from "./GitRepoList.styles";
 
@@ -18,8 +17,8 @@ const GitRepoList = ({
 }: {
   result: {
     name: string;
-    recent_commit_messages: string[];
-    commits: { message: string; description: string };
+    recent_commit_messages?: string[];
+    commits?: { message: string; description: string };
   }[];
   onSelectionChange: (
     selected: {
@@ -45,11 +44,13 @@ const GitRepoList = ({
         name: item.name,
         selected: true,
         showCommits: false,
-        commits: item.recent_commit_messages.map((message, index) => ({
-          message,
-          description: "",
-          selected: index < 10, // 처음 10개 선택
-        })),
+        commits: item.recent_commit_messages
+          ? item.recent_commit_messages.map((message, index) => ({
+              message,
+              description: "",
+              selected: index < 10,
+            }))
+          : [],
       }))
     );
   }, [result]);
