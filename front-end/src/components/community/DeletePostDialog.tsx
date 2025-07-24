@@ -1,3 +1,4 @@
+import WarningOutlinedIcon from "@mui/icons-material/WarningOutlined";
 import {
   Button,
   Dialog,
@@ -6,10 +7,8 @@ import {
   DialogContentText,
   DialogTitle,
 } from "@mui/material";
-import WarningOutlinedIcon from "@mui/icons-material/WarningOutlined";
-import { useState } from "react";
-import { RemovePost } from "../../api/RemovePost";
 import { useNavigate } from "react-router-dom";
+import { RemovePost } from "../../api/RemovePost";
 
 export const DeletePostDlalog = ({
   open,

@@ -1,19 +1,19 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
-import { Button, Divider, TextField, Avatar } from "@mui/material";
-import { useDispatch, useSelector } from "react-redux";
-import { memo, useEffect, useRef, useState } from "react";
-import { useEvent } from "../../hooks/useEvent";
-import { useLocation, useNavigate } from "react-router-dom";
-import { RemoveComment } from "../../api/RemoveComment";
-import { CommentReply } from "./CommentReply";
-import { SendComment } from "../../api/SendComment";
-import { CommentGroup } from "./CommentGroup";
 import SubdirectoryArrowRightIcon from "@mui/icons-material/SubdirectoryArrowRight";
-import { GetCommentList } from "../../api/GetCommentList";
-import { OptionBar } from "./OptionBar";
+import { Avatar, Button, Divider, TextField } from "@mui/material";
+import { memo, useEffect, useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useLocation } from "react-router-dom";
 import { EditComment } from "../../api/EditComment";
+import { GetCommentList } from "../../api/GetCommentList";
+import { RemoveComment } from "../../api/RemoveComment";
+import { SendComment } from "../../api/SendComment";
+import { useEvent } from "../../hooks/useEvent";
 import { openLoginForm } from "../../redux/redux";
+import { CommentGroup } from "./CommentGroup";
+import { CommentReply } from "./CommentReply";
+import { OptionBar } from "./OptionBar";
 
 const CommentLayout = memo(
   ({

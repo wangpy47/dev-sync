@@ -1,10 +1,10 @@
 import { Avatar, Menu, MenuItem } from "@mui/material";
 import { useState } from "react";
-import { logoutUser } from "../../api/auth";
 import { useNavigate } from "react-router-dom";
+import { logoutUser } from "../../api/auth";
 
 const ProfileButton = () => {
-  const [anchorEl, setAnchorEl] = useState(null);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const navigate = useNavigate();
 
@@ -12,9 +12,8 @@ const ProfileButton = () => {
     navigate("/Users"); // 새로운 경로로 이동
   };
 
-  const handleAvatarClick = (e) => {
+  const handleAvatarClick = (e: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(e.currentTarget);
-    console.log(e.currentTarget);
   };
 
   const handleClose = () => {

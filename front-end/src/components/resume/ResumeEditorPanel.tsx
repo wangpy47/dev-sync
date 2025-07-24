@@ -1,25 +1,21 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
-import { useState, type Key } from "react";
 import {
   Button,
+  Chip,
+  InputAdornment,
+  MenuItem,
+  Select,
+  Switch,
   TextField,
   Typography,
-  InputAdornment,
-  Select,
-  MenuItem,
-  Chip,
-  Switch,
 } from "@mui/material";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import type {
-  OutcomeSection,
-  ResumeData,
-  ProjectSection,
-} from "../../types/resume.type";
-import dayjs from "dayjs";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import dayjs from "dayjs";
+import { useState } from "react";
+import type { OutcomeSection, ResumeData } from "../../types/resume.type";
 
 const containerStyle = css`
   height: 100vh;
@@ -46,14 +42,7 @@ const gridStyle = css`
   max-width: 800px;
   margin: 2rem auto;
 `;
-const threeGridStyle = css`
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1rem;
-  max-width: 100%;
-  // margin: 2rem auto;
-  border: 2px solid red;
-`;
+
 const textFieldStyle = css`
   width: 100%;
 `;
@@ -101,16 +90,16 @@ const dateStyle = css`
 interface GitResumeProps {
   sections: ResumeData;
   // updateSectionData: (id: Key, newData: SectionData) => void;
-  moveSection: (index: number, direction: "up" | "down") => void;
-  addSection: () => void;
+  // moveSection: (index: number, direction: "up" | "down") => void;
+  // addSection: () => void;
 }
 
 export const ResumeEditorPanel = ({
   sections,
-  updateSectionData,
-  removeSection,
-  addSection,
-}: GitResumeProps) => {
+}: // updateSectionData,
+// removeSection,
+// addSection,
+GitResumeProps) => {
   const [isEditing, setEditing] = useState<Record<string, boolean>>({});
   const [selectSkill, setSelectSkill] = useState<string>("knowledgeable");
 
@@ -917,7 +906,11 @@ export const ResumeEditorPanel = ({
           text-align: center;
         `}
       >
-        <Button variant="outlined" size="large" onClick={addSection}>
+        <Button
+          variant="outlined"
+          size="large"
+          // onClick={addSection}
+        >
           섹션 추가하기
         </Button>
       </div>

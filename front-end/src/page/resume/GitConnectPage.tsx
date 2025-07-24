@@ -2,8 +2,8 @@
 import { css } from "@emotion/react";
 import { Button, CircularProgress } from "@mui/material";
 import { useCallback, useEffect } from "react";
-import GitRepoList from "../../components/gitRepoList/GitRepoList";
 import { useNavigate, useOutletContext } from "react-router-dom";
+import GitRepoList from "../../components/gitRepoList/GitRepoList";
 import type { ResumeContextType } from "../../layout/ResumeSetupLayout ";
 
 export const GitConnectPage = () => {
@@ -22,7 +22,7 @@ export const GitConnectPage = () => {
       updatedSelection: {
         name: string;
         selected: boolean;
-        commits: { message: string; description: string };
+        commits: { message: string; description: string }[];
       }[]
     ) => {
       setSelectedRepos(updatedSelection);
@@ -34,26 +34,26 @@ export const GitConnectPage = () => {
     const filteredRepos = repoData.filter((repo) => repo.selected);
 
     setIsLoading(true);
-    const profileData = filteredRepos
-      .map((repo) => {
-        const commitDetails = repo.commits
-          .map(
-            (commit, index) =>
-              `- ${commit.message}\n  Description: ${
-                commit.description || "No additional details provided"
-              }`
-          )
-          .join("\n");
+    // const profileData = filteredRepos
+    //   .map((repo) => {
+    //     const commitDetails = repo.commits
+    //       .map(
+    //         (commit: { message: any; description: any }, index: any) =>
+    //           `- ${commit.message}\n  Description: ${
+    //             commit.description || "No additional details provided"
+    //           }`
+    //       )
+    //       .join("\n");
 
-        return `Repository: ${repo.name}\nDescription: ${
-          repo.description || "N/A"
-        }\nLanguage: ${repo.language || "N/A"}\nSize: ${repo.size} KB\nStars: ${
-          repo.stargazers_count
-        }\nForks: ${
-          repo.forks_count
-        }\nRecent Commit Details:\n${commitDetails}\n`;
-      })
-      .join("\n");
+    //     return `Repository: ${repo.name}\nDescription: ${
+    //       repo.description || "N/A"
+    //     }\nLanguage: ${repo.language || "N/A"}\nSize: ${repo.size} KB\nStars: ${
+    //       repo.stargazers_count
+    //     }\nForks: ${
+    //       repo.forks_count
+    //     }\nRecent Commit Details:\n${commitDetails}\n`;
+    //   })
+    //   .join("\n");
 
     try {
       const response = await fetch("http://localhost:3000/resume/generate", {

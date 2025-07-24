@@ -1,5 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
+import MenuIcon from "@mui/icons-material/Menu";
 import {
   AppBar,
   Box,
@@ -8,16 +9,14 @@ import {
   Menu,
   MenuItem,
   Toolbar,
-  Typography,
 } from "@mui/material";
-import MenuIcon from "@mui/icons-material/Menu";
 import { useState } from "react";
-import LoginForm from "../components/user/LoginForm";
 import { useDispatch, useSelector } from "react-redux";
-import ProfileButton from "../components/user/ProfileButton";
-import { Link, useNavigate } from "react-router-dom";
-import { openLoginForm } from "../redux/redux";
+import { useNavigate } from "react-router-dom";
 import logo from "../assets/logo.png";
+import LoginForm from "../components/user/LoginForm";
+import ProfileButton from "../components/user/ProfileButton";
+import { openLoginForm } from "../redux/redux";
 
 const containerStyle = css`
   max-width: 1600px; /* main과 동일하게 설정 */

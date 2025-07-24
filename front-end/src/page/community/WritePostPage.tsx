@@ -1,21 +1,21 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
 import {
-  TextField,
-  Button,
-  Select,
-  MenuItem,
   Box,
+  Button,
   CircularProgress,
+  MenuItem,
+  Select,
+  TextField,
 } from "@mui/material";
-import useFetchCategories from "../../api/FetchCategories";
+import Quill from "quill";
+import { ImageResize } from "quill-image-resize-module-ts";
+import "quill/dist/quill.snow.css";
 import { useEffect, useState } from "react";
 import { useQuill } from "react-quilljs";
-import "quill/dist/quill.snow.css";
 import { useLocation, useNavigate } from "react-router-dom";
-import { ImageResize } from "quill-image-resize-module-ts";
-import Quill from "quill";
 import { EditContentSave } from "../../api/EditContentSave";
+import useFetchCategories from "../../api/FetchCategories";
 
 // 타입 선언
 declare global {
@@ -127,7 +127,10 @@ export const WritePostPage = () => {
         const imageUrl = reader.result as string;
         const range = quill?.getSelection(true);
         const customImageTag = `<img src="${imageUrl}" alt="${uniqueFile.name}"/>`;
-        quill?.clipboard.dangerouslyPasteHTML(range?.index, customImageTag);
+        // quill?.clipboard.dangerouslyPasteHTML(range?.index, customImageTag);
+        if (range) {
+          quill?.clipboard.dangerouslyPasteHTML(range.index, customImageTag);
+        }
 
         // 파일 상태 업데이트
         setUploadedFiles((prevFiles) => [...prevFiles, uniqueFile]);

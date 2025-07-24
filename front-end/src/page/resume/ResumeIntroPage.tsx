@@ -1,9 +1,9 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
 import { Button, CircularProgress } from "@mui/material";
-import { Navigate, useNavigate, useOutletContext } from "react-router-dom";
-import type { ResumeContextType } from "../../layout/ResumeSetupLayout ";
 import { useEffect } from "react";
+import { useNavigate, useOutletContext } from "react-router-dom";
+import type { ResumeContextType } from "../../layout/ResumeSetupLayout ";
 
 const btnStyle = css`
   display: flex;
@@ -37,6 +37,7 @@ export const ResumeIntroPage = () => {
       setRepoData(data); // 받아온 배열 저
       setIsLoading(false);
       navigate("/resume/connect");
+      console.log("성공");
     } else {
       const error = await response.json();
       console.error("Update failed:", error);

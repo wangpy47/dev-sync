@@ -1,7 +1,7 @@
-import { forwardRef, useEffect, useRef, useState } from "react";
+import { forwardRef } from "react";
 import { useSelector } from "react-redux";
-import { modernStyle } from "../../styles/modernTheme";
 import { blueGrayStyle } from "../../styles/blueGrayTheme";
+import { modernStyle } from "../../styles/modernTheme";
 import type { ResumeData } from "../../types/resume.type";
 
 type props = {
@@ -12,8 +12,8 @@ type props = {
 export const ResumePreviewPanel = forwardRef<HTMLDivElement, props>(
   ({ sections, styleTheme }, ref) => {
     const userData = useSelector((state: any) => state.login.loginInfo);
-    let projectCount = 0;
-    let projectRendered = false;
+    // let projectCount = 0;
+    // let projectRendered = false;
     console.log(styleTheme);
     console.log("userData", userData);
     const { order, entities } = sections;

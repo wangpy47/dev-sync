@@ -1,33 +1,33 @@
 import {
   DragDropContext,
-  Droppable,
   Draggable,
+  Droppable,
   DropResult,
 } from "@hello-pangea/dnd";
 import {
-  Paper,
-  Typography,
+  Button,
+  Fade,
   List,
   ListItem,
   ListItemButton,
   ListItemText,
-  Fade,
-  Button,
+  Paper,
+  Typography,
 } from "@mui/material";
-import type { ResumeData } from "../../types/resume.type";
 import { useEffect, useRef, useState } from "react";
+import type { ResumeData } from "../../types/resume.type";
 
 interface Props {
   sections: ResumeData;
   onReorder: (newOrder: string[]) => void;
-  onClose: () => void;
+  // onClose: () => void;
 }
 
 export const SectionOrderManager = ({
   sections,
   onReorder,
-  onClose,
-}: Props) => {
+}: // onClose,
+Props) => {
   const [localOrder, setLocalOrder] = useState(sections.order);
   const initialOrderRef = useRef<string[]>([]);
 
