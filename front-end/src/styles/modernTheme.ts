@@ -1,52 +1,122 @@
+/** @jsxImportSource @emotion/react */
+import { css } from "@emotion/react";
+
 export const modernStyle = {
-  input: {
-    padding: "10px 12px",
-    fontSize: 15,
-    border: "1px solid #ccc",
-    borderRadius: 4,
-    fontFamily: "inherit",
-  },
-  button: {
-    padding: "10px",
-    fontSize: 16,
-    backgroundColor: "#4CAF50",
-    color: "white",
-    border: "none",
-    borderRadius: 4,
-    cursor: "pointer",
-  },
-  sectionTitle: {
-    fontSize: 18,
-    marginBottom: 10,
-    borderBottom: "1px solid #ddd",
-    paddingBottom: 4,
-  },
-  sectionContent: {
-    fontSize: 15,
-    whiteSpace: "pre-wrap",
-    lineHeight: 1.6,
-  },
-  previewContainer: {
-    minHeight: 600,
-    backgroundColor: "#fdfdfd",
-    boxShadow: "0 0 10px rgba(0,0,0,0.1)",
-    padding: "40px 50px",
-    margin :'',
-    fontFamily: "Arial, sans-serif",
-    color: "#333",
-  },
-    chipList: {
-  display: 'flex',
-  flexWrap: 'wrap',
-  gap: '8px',
-  marginTop: '8px',
-}as React.CSSProperties,
-chip: {
-  padding: '4px 12px',
-  backgroundColor: '#e1e8f0',
-  color: '#334e68',
-  borderRadius: '16px',
-  fontSize: '13px',
-  lineHeight: '1.5',
-},
+  sectionTitle: css`
+    font-size: 18px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 4px;
+  `,
+
+  sectionContent: css`
+    font-size: 15px;
+    white-space: pre-wrap;
+    line-height: 1.6;
+  `,
+
+  previewContainer: css`
+    min-height: 600px;
+    background-color: #fdfdfd;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 40px 50px;
+    font-family: Arial, sans-serif;
+    color: #333;
+  `,
+
+  chipList: css`
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 8px;
+  `,
+
+  chip: css`
+    padding: 4px 12px;
+    background-color: #eeeeee;
+    color: #434343;
+    border-radius: 16px;
+    font-size: 13px;
+    line-height: 1.5;
+  `,
+
+  careerLeft: css`
+    width: 20%;
+    font-size: 14px;
+    color: #232323;
+    font-weight: 500;
+    padding-right: 12px;
+    box-sizing: border-box;
+  `,
+
+  careerRight: css`
+    margin: 0;
+    font-size: 16px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #e2e2e2;
+  `,
+
+  profileStyle: css`
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #cbd5e1;
+    font-size: 14px;
+    color: #474b51;
+  `,
+
+  profileName: css`
+    margin: 0;
+    font-size: 30px;
+    font-weight: 700;
+    color: #0e0f0f;
+    text-align: left;
+  `,
+
+  profileSide: css`
+    display: flex;
+    gap: 20px;
+    margin-top: 20px;
+    justify-content: flex-end;
+    color: #474747;
+    font-size: 14px;
+
+    span {
+      color: #585858;
+      min-width: 50px;
+    }
+  `,
+
+  fontColor: css`
+    color: #383838;
+  `,
+
+  career: css`
+    margin: 0;
+    font-size: 16px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #2c2d2e;
+
+    span {
+      font-size: 14px;
+      color: #434343;
+      font-weight: 400;
+    }
+  `,
+
+  careerSkills: css`
+    margin-top: 6px;
+    font-size: 13px;
+    color: #525558;
+  `,
+
+  careerDescription: css`
+    font-size: 14px;
+    color: #3e3e3e;
+  `,
 };
