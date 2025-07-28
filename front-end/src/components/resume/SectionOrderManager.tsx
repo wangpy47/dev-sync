@@ -80,7 +80,11 @@ Props) => {
               >
                 {localOrder.map((id, index) => {
                   const entity = sections.entities.find((i) => i.id === id);
-                  if (!entity) {
+                  if (
+                    !entity ||
+                    entity.type === "project" ||
+                    entity.type === "outcome"
+                  ) {
                     return;
                   }
                   const label =
@@ -89,9 +93,8 @@ Props) => {
                       : (
                           {
                             profile: "기본 정보",
-                            skills: "기술 스택",
-                            project: "프로젝트",
-                            outcomes: "성과",
+                            skills: "스킬",
+                            projects: "프로젝트",
                             achievement: "수상/자격",
                             career: "경력",
                             introduction: "자기소개",
@@ -99,7 +102,12 @@ Props) => {
                         )[entity.type];
 
                   return (
-                    <Draggable key={id} draggableId={id} index={index}>
+                    <Draggable
+                      key={id}
+                      draggableId={id}
+                      index={index}
+                      isDragDisabled={entity.type === "profile"}
+                    >
                       {(provided, snapshot) => (
                         <ListItem
                           ref={provided.innerRef}
@@ -113,16 +121,18 @@ Props) => {
                         >
                           <ListItemButton>
                             <ListItemText primary={label} />
-                            <div
-                              {...provided.dragHandleProps}
-                              style={{
-                                cursor: "grab",
-                                padding: "4px 6px",
-                                color: "#aaa",
-                              }}
-                            >
-                              ☰
-                            </div>
+                            {entity.type !== "profile" && (
+                              <div
+                                {...provided.dragHandleProps}
+                                style={{
+                                  cursor: "grab",
+                                  padding: "4px 6px",
+                                  color: "#aaa",
+                                }}
+                              >
+                                ☰
+                              </div>
+                            )}
                           </ListItemButton>
                         </ListItem>
                       )}

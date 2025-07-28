@@ -111,7 +111,6 @@ export const EditResumePage = () => {
   const createSections: ResumeData = {
     id: "123123455",
     title: "자소서1",
-
     order: [
       "123",
       "1234",
@@ -125,6 +124,7 @@ export const EditResumePage = () => {
       "12345678912",
       "123456789123",
       "1234567891234",
+      "12345678912345",
     ],
     entities: [
       {
@@ -165,47 +165,53 @@ export const EditResumePage = () => {
         description: "필기 및 실기 시험 모두 합격",
       },
       {
-        id: "1234567",
-        type: "project",
-        name: "devSync",
-        description: gitInfo.description || "",
-        start_date: "2022-07-01",
-        end_date: "2024-12-31",
-        technologies: ["React", "TypeScript", "Electron", "Three.js", "NestJS"],
+        id: "12345678912345",
+        type: "projects",
+        items: [
+          {
+            id: "1234567",
+            name: "devSync",
+            type: "project",
+            description: gitInfo.description || "",
+            start_date: "2022-07-01",
+            end_date: "2024-12-31",
+            skills: ["React", "TypeScript", "Electron", "Three.js", "NestJS"],
+            outcomes: [
+              {
+                id: "12345678",
+                type: "outcome",
+                task: "한 일입니다. 나는 할일입니다.",
+                result:
+                  "성과1성과1성과1성과1성과1성과1성과1성과1 성과1성과1성과1성과1 성과1 ",
+              },
+              {
+                id: "123456789",
+                task: "한 일2",
+                type: "outcome",
+                result: "성과2",
+              },
+            ],
+          },
+          {
+            id: "123456789123",
+            name: "편집기 3D",
+            type: "project",
+            description: gitInfo.description || "",
+            start_date: "2022-07-01",
+            end_date: "2024-12-31",
+            skills: ["React", "TypeScript", "Electron", "Three.js", "NestJS"],
+            outcomes: [
+              {
+                type: "outcome",
+                id: "1234567891234",
+                task: "한 일입니다2222. 나는 할일입니다.",
+                result:
+                  "성과222222성과1성과1성과1성과1성과1성과1성과1 성과1성과1성과1성과1 성과1 ",
+              },
+            ],
+          },
+        ],
       },
-      {
-        id: "12345678",
-        type: "outcomes",
-        task: "한 일입니다. 나는 할일입니다.",
-        result:
-          "성과1성과1성과1성과1성과1성과1성과1성과1 성과1성과1성과1성과1 성과1 ",
-        project: "1234567",
-      },
-      {
-        id: "123456789",
-        type: "outcomes",
-        task: "한 일2",
-        result: "성과2",
-        project: "1234567",
-      },
-      {
-        id: "123456789123",
-        type: "project",
-        name: "편집기 3D",
-        description: gitInfo.description || "",
-        start_date: "2022-07-01",
-        end_date: "2024-12-31",
-        technologies: ["React", "TypeScript", "Electron", "Three.js", "NestJS"],
-      },
-      {
-        id: "1234567891234",
-        type: "outcomes",
-        task: "한 일입니다2222. 나는 할일입니다.",
-        result:
-          "성과222222성과1성과1성과1성과1성과1성과1성과1 성과1성과1성과1성과1 성과1 ",
-        project: "123456789123",
-      },
-
       {
         id: "1234567890",
         type: "introduction",
@@ -225,7 +231,7 @@ export const EditResumePage = () => {
         content: "코딩 멘토 100시간",
       },
     ],
-  } as const;
+  };
   console.log("createSEction----------", createSections);
   const [sections, setSections] = useState(createSections);
 
@@ -292,6 +298,7 @@ export const EditResumePage = () => {
         />
         <ResumeEditorPanel
           sections={sections}
+          setSections={setSections}
           // updateSectionData={updateSectionData}
           // removeSection={removeSection}
           // addSection={addSection}
