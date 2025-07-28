@@ -13,15 +13,16 @@ type ResumeSection =
   | ProjectSection
   | OutcomeSection
   | IntroductionSection
-  | CustomSection;
+  | CustomSection
+  | ProjectsSection;
 
 export type ProfileSection = {
   id: string;
   type: "profile";
   name: string;
   email: string;
-  github_url?:string;
-	blog_url?:string;
+  github_url?: string;
+  blog_url?: string;
   phone_number: string;
   address: string;
   education?: string;
@@ -62,15 +63,21 @@ export type ProjectSection = {
   description: string;
   start_date: string;
   end_date: string;
-  technologies: string[];
+  skills: string[];
+  outcomes: OutcomeSection[];
+};
+
+export type ProjectsSection = {
+  id: string;
+  type: "projects";
+  items: ProjectSection[];
 };
 
 export type OutcomeSection = {
   id: string;
-  type: "outcomes";
+  type: "outcome";
   task: string;
   result: string;
-  project: string; // 연결된 project의 id
 };
 
 type IntroductionSection = {
