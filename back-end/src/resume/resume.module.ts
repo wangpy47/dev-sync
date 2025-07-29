@@ -14,8 +14,23 @@ import { ProfileModel } from './entities/profile.entity';
 import { SkillSeederService } from './skill_seeder.service';
 
 @Module({
-  imports: [UserModule,TypeOrmModule.forFeature([ResumeModel, IntroductionModel, ProjectModel, ProjectOutcomeModel, SkillModel, ProfileModel])], // 여기에 필요한 엔티티를 추가하세요
+  imports: [
+    UserModule,
+    TypeOrmModule.forFeature([
+      ResumeModel,
+      IntroductionModel,
+      ProjectModel,
+      ProjectOutcomeModel,
+      SkillModel,
+      ProfileModel,
+    ]),
+  ], // 여기에 필요한 엔티티를 추가하세요
   controllers: [ResumeController],
-  providers: [SessionSerializer,ResumeService,ResumeGenerationService, SkillSeederService], 
+  providers: [
+    SessionSerializer,
+    ResumeService,
+    ResumeGenerationService,
+    SkillSeederService,
+  ],
 })
 export class ResumeModule {}

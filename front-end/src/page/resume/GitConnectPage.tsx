@@ -56,8 +56,9 @@ export const GitConnectPage = () => {
       .join("\n");
 
     try {
-      const response = await fetch("http://localhost:3000/resume/generate", {
+      const response = await fetch("http://localhost:3000/resumes/generate", {
         method: "POST",
+        credentials: "include", // 세션 쿠키 포함
         headers: {
           "Content-Type": "application/json",
         },

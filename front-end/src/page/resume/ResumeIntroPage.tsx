@@ -26,7 +26,7 @@ export const ResumeIntroPage = () => {
   const updateUserData = async () => {
     setRepoData([]); // 레포지토리 배열 초기화
     setIsLoading(true);
-    const response = await fetch("http://localhost:3000/resume/github/repos", {
+    const response = await fetch("http://localhost:3000/resumes/github/repos", {
       method: "GET",
       credentials: "include", // 세션 쿠키 포함
     });

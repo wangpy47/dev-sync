@@ -1,17 +1,98 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import OpenAI from 'openai';
+import { ResumeService } from './resume.service';
+import { UserService } from 'src/user/user.service';
 
 @Injectable()
 export class ResumeGenerationService {
   private openai: OpenAI;
 
-  constructor() {
+  constructor(
+    private readonly resumeService: ResumeService,
+    private readonly userService: UserService,
+  ) {
     this.openai = new OpenAI({
       apiKey: process.env.OPENAI_API_KEY,
     });
   }
 
-  async generateResume(profileData: string): Promise<string> {
+  async generateResume(profileData: string, userId: number): Promise<string> {
+    const resumeData = JSON.parse(await this.callResumeCompletion(profileData));
+
+    const user = await this.userService.getUserById(userId);
+    if (!user) {
+      throw new NotFoundException(`User with ID ${userId} not found.`);
+    }
+
+    const resume = await this.resumeService.createResume(
+      userId,
+      `${user.name}의 자소서`,
+    );
+
+    await this.resumeService.upsertProfile(resume.id, {
+      name: user.name,
+      email: user.email,
+      phoneNumber: user.phone_number,
+      education: user.educationLevel,
+      githubUrl: user.githubUrl,
+      blogUrl: user.blogUrl,
+    });
+
+    await this.resumeService.upsertIntroduction(resume.id, {
+      headline: resumeData.introduction.headline,
+      description: resumeData.introduction.description,
+    });
+
+    const strengthsRaw = await Promise.all(
+      resumeData.skills.strengths.map(async (skill) => {
+        const [match] = await this.resumeService.searchSkills(skill);
+        return match;
+      }),
+    );
+    const strengths = strengthsRaw.filter(Boolean);
+
+    const familiarRaw = await Promise.all(
+      resumeData.skills.familiar.map(async (skill) => {
+        const [match] = await this.resumeService.searchSkills(skill);
+        return match;
+      }),
+    );
+    const familiar = familiarRaw.filter(Boolean);
+
+    await this.resumeService.setSkillsForResume(resume.id, {
+      strongSkillIds: strengths.map((s) => s.id),
+      familiarSkillIds: familiar.map((s) => s.id),
+    });
+
+    const projects = resumeData.projects;
+
+    for (const project of resumeData.projects) {
+      const matchedSkillIds = (
+        await Promise.all(
+          (project.skills || []).map(async (skillName) => {
+            const [result] = await this.resumeService.searchSkills(skillName);
+
+            return result ? result.id : undefined;
+          }),
+        )
+      ).filter(Boolean);
+
+      project.skills = matchedSkillIds;
+    }
+
+    const syncResult = await this.resumeService.syncProjectsForResume(
+      resume.id,
+      {
+        projects: projects,
+      },
+    );
+
+    console.log('projects : ', syncResult);
+
+    return JSON.stringify(resumeData);
+  }
+
+  async callResumeCompletion(profileData: string): Promise<string> {
     const prompt = `
 Using the following GitHub profile data, generate a structured JSON object for a developer portfolio. 
 
@@ -29,6 +110,9 @@ Using the following GitHub profile data, generate a structured JSON object for a
     {
       "name": "", // Repository name.
       "description": "", // Brief description of the project in Korean.
+      "startDate": "", // Start date of the project (if available).
+      "endDate": "", // End date of the project (if available).
+      "skills": [], // List of skill IDs used in the project.
       "outcomes": [
         {
           "task": "", // A short title in Korean summarizing the task or achievement (e.g., "구글 인증 구현").
