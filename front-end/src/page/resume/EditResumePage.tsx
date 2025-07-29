@@ -215,8 +215,8 @@ export const EditResumePage = () => {
       {
         id: "1234567890",
         type: "introduction",
-        headline: gitInfo.introduction.headline || "",
-        description: gitInfo.introduction.description || "",
+        headline: gitInfo.introduction?.headline || "",
+        description: gitInfo.introduction?.description || "",
       },
       {
         id: "12345678901",

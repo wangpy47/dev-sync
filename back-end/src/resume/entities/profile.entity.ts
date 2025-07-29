@@ -1,4 +1,3 @@
-import { IsEmail, IsString, IsUrl } from 'class-validator';
 import {
   Column,
   Entity,
@@ -13,30 +12,24 @@ export class ProfileModel {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @IsString()
   @Column()
-  username: string;
+  name: string;
 
-  @IsEmail()
   @Column()
   email: string;
 
   @Column()
   phoneNumber: number;
 
-  @IsString()
-  @Column()
+  @Column({ nullable: true })
   address: string;
 
-  @IsString()
   @Column({ nullable: true })
   education: string;
 
-  @IsUrl()
   @Column({ nullable: true })
   githubUrl: string;
 
-  @IsUrl()
   @Column({ nullable: true })
   blogUrl: string;
 

@@ -18,8 +18,6 @@ export class SkillSeederService implements OnModuleInit {
 
     try {
       const skills = await this.fetchDeviconSkills();
- 
-      
 
       for (const { name, icon } of skills) {
         const existing = await this.skillRepository.findOne({
@@ -34,8 +32,6 @@ export class SkillSeederService implements OnModuleInit {
           await this.skillRepository.save(existing);
         }
       }
-
-      
     } catch (error) {
       this.logger.error('Failed to initialize skills', error);
     }
