@@ -13,7 +13,6 @@ export class IntroductionModel {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-
   @Column()
   @IsString()
   headline: string;

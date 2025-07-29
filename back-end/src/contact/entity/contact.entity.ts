@@ -1,11 +1,14 @@
 import { BaseModel } from 'src/common/entity/base.entity';
-import { Column, Entity } from 'typeorm';
+import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 
 import { IsEmail, IsOptional, IsString } from 'class-validator';
 import { Exclude } from 'class-transformer';
 
 @Entity()
-export class ContactModel extends BaseModel {
+export class ContactModel {
+  @PrimaryGeneratedColumn()
+  id: number;
+
   @Column()
   @IsString({ message: 'Name must be a string' })
   name: string;
@@ -28,4 +31,10 @@ export class ContactModel extends BaseModel {
     toPlainOnly: true,
   })
   password: string;
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updateAt: Date;
 }

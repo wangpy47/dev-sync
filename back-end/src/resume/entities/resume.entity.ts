@@ -12,12 +12,10 @@ import {
 import { IntroductionModel } from './introduction.entity';
 import { SkillModel } from './skill.entity';
 import { ProjectModel } from './project.entity';
-import { IsString } from 'class-validator';
 import { ProfileModel } from './profile.entity';
 
 @Entity()
 export class ResumeModel extends BaseModel {
-  @IsString()
   @Column()
   title: string;
 
