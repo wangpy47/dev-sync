@@ -45,7 +45,7 @@ export class ResumeController {
         limitedProfileData,
         user.id,
       );
-      return JSON.parse(resume);
+      return resume;
     } catch(err) {
       console.error('Error generating resume:', err);
       throw new HttpException(
