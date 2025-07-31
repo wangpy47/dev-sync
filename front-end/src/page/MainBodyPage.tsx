@@ -1,13 +1,13 @@
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
-import "./Main.body.css";
 import homepage from "../assets/homepage.png";
 import findImg1 from "../assets/section2_1.jpg";
 import findImg2 from "../assets/section2_2.jpg";
 import findImg3 from "../assets/section2_3.jpg";
+import "./Main.body.css";
 
 export const MainBodyPage = () => {
-  const [ref1, inView1] = useInView({ triggerOnce: true, threshold: 0.2 });
+  // const [ref1, inView1] = useInView({ triggerOnce: true, threshold: 0.2 });
   const [ref2, inView2] = useInView({ triggerOnce: true, threshold: 0.2 });
   const [ref3, inView3] = useInView({ triggerOnce: true, threshold: 0.2 });
 

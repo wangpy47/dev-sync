@@ -1,18 +1,31 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
-import { Button } from "@mui/material";
+import { Button, Menu, MenuItem } from "@mui/material";
+import { useState } from "react";
 import logo from "../../assets/logo2.png";
 
-export const ResumeOptionBar = ({
-  onDownloadPdf,
-}: {
+interface Props {
   onDownloadPdf: () => void;
-}) => {
+  setTheme: (theme: "modern" | "blueGray") => void;
+}
+
+export const ResumeOptionBar = ({ onDownloadPdf, setTheme }: Props) => {
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+
+  const handleThemeClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleThemeSelect = (theme: "modern" | "blueGray") => {
+    setTheme(theme);
+    setAnchorEl(null);
+  };
+
   return (
     <div
       css={css`
         width: 100%;
-        max-width: 100%;
         height: 4.9em;
         background-color: #ffffff;
         border-bottom: 1px solid #e0e0e0;
@@ -25,13 +38,11 @@ export const ResumeOptionBar = ({
         top: 0;
         z-index: 10;
         box-sizing: border-box;
-        overflow-x: hidden;
       `}
     >
       <div
         css={css`
           padding-top: 0.3rem;
-          // border: 1px solid red;
           font-size: 1.6rem;
           font-weight: 600;
         `}
@@ -52,6 +63,16 @@ export const ResumeOptionBar = ({
           gap: 1rem;
         `}
       >
+        <Button onClick={handleThemeClick}>테마 변경</Button>
+        <Menu anchorEl={anchorEl} open={open} onClose={() => setAnchorEl(null)}>
+          <MenuItem onClick={() => handleThemeSelect("modern")}>
+            Modern
+          </MenuItem>
+          <MenuItem onClick={() => handleThemeSelect("blueGray")}>
+            Blue Gray
+          </MenuItem>
+        </Menu>
+
         <Button>저장하기</Button>
         <Button onClick={onDownloadPdf}>PDF 출력</Button>
       </div>

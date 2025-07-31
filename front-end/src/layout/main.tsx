@@ -1,22 +1,22 @@
 import { createRoot } from "react-dom/client";
-import App from "./App.tsx";
-import "./index.css";
 import { Provider } from "react-redux";
-import store from "../redux/store.ts";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import { UserPage } from "../page/UserPage.tsx";
-import { EditResumePage } from "../page/resume/EditResumePage.tsx";
+import { CommunityLayout } from "../components/community/CommunityLayout.tsx";
 import { MainBodyPage } from "../page/MainBodyPage.tsx";
+import { UserPage } from "../page/UserPage.tsx";
+import { CommunityListPage } from "../page/community/CommunityListPage.tsx";
+import { ReadPostPage } from "../page/community/ReadPostPage.tsx";
+import { WritePostPage } from "../page/community/WritePostPage.tsx";
 import { InquiryFormPage } from "../page/inquiry/InquiryFormPage.tsx";
 import { InquiryPage } from "../page/inquiry/InquiryPage.tsx";
-import { WritePostPage } from "../page/community/WritePostPage.tsx";
-import { ReadPostPage } from "../page/community/ReadPostPage.tsx";
-import { CommunityLayout } from "../components/community/CommunityLayout.tsx";
-import { ResumeSetupLayout } from "./ResumeSetupLayout .tsx";
-import { CommunityListPage } from "../page/community/CommunityListPage.tsx";
-import { ResumeListPage } from "../page/resume/ResumeListPage.tsx";
+import { EditResumePage } from "../page/resume/EditResumePage.tsx";
 import { GitConnectPage } from "../page/resume/GitConnectPage.tsx";
 import { ResumeIntroPage } from "../page/resume/ResumeIntroPage.tsx";
+import { ResumeListPage } from "../page/resume/ResumeListPage.tsx";
+import store from "../redux/store.ts";
+import App from "./App.tsx";
+import { ResumeSetupLayout } from "./ResumeSetupLayout .tsx";
+import "./index.css";
 
 const router = createBrowserRouter([
   {

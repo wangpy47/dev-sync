@@ -46,6 +46,7 @@ export class ResumeController {
         user.id,
       );
       return resume;
+
     } catch(err) {
       console.error('Error generating resume:', err);
       throw new HttpException(

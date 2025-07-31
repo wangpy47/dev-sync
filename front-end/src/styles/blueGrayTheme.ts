@@ -1,27 +1,29 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
 
-export const modernStyle = {
+export const blueGrayStyle = {
   sectionTitle: css`
     font-size: 18px;
     margin-bottom: 10px;
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid #6e7f88;
     padding-bottom: 4px;
+    color: #37474f;
   `,
 
   sectionContent: css`
     font-size: 15px;
     white-space: pre-wrap;
     line-height: 1.6;
+    color: #455a64;
   `,
 
   previewContainer: css`
     min-height: 600px;
-    background-color: #fdfdfd;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    background-color: #f5f8fa;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.08);
     padding: 40px 50px;
-    font-family: Arial, sans-serif;
-    color: #333;
+    font-family: "Noto Sans KR", "Segoe UI", sans-serif, Roboto;
+    color: #263238;
   `,
 
   chipList: css`
@@ -33,8 +35,8 @@ export const modernStyle = {
 
   chip: css`
     padding: 4px 12px;
-    background-color: #eeeeee;
-    color: #434343;
+    background-color: #e1e8f0;
+    color: #334e68;
     border-radius: 16px;
     font-size: 13px;
     line-height: 1.5;
@@ -43,7 +45,7 @@ export const modernStyle = {
   careerLeft: css`
     width: 20%;
     font-size: 14px;
-    color: #232323;
+    color: #64748b;
     font-weight: 500;
     padding-right: 12px;
     box-sizing: border-box;
@@ -56,7 +58,7 @@ export const modernStyle = {
     display: flex;
     align-items: center;
     gap: 8px;
-    color: #e2e2e2;
+    color: #1e293b;
   `,
 
   profileStyle: css`
@@ -64,14 +66,14 @@ export const modernStyle = {
     padding-bottom: 20px;
     border-bottom: 2px solid #cbd5e1;
     font-size: 14px;
-    color: #474b51;
+    color: #6782a7;
   `,
 
   profileName: css`
     margin: 0;
     font-size: 30px;
     font-weight: 700;
-    color: #0e0f0f;
+    color: #0f172a;
     text-align: left;
   `,
 
@@ -80,17 +82,17 @@ export const modernStyle = {
     gap: 20px;
     margin-top: 20px;
     justify-content: flex-end;
-    color: #474747;
+    color: #38414f;
     font-size: 14px;
 
     span {
-      color: #585858;
+      color: #64748b;
       min-width: 50px;
     }
   `,
 
   fontColor: css`
-    color: #383838;
+    color: #64748b;
   `,
 
   career: css`
@@ -100,11 +102,11 @@ export const modernStyle = {
     display: flex;
     align-items: center;
     gap: 8px;
-    color: #2c2d2e;
+    color: #1e293b;
 
     span {
       font-size: 14px;
-      color: #434343;
+      color: #94a3b8;
       font-weight: 400;
     }
   `,
@@ -112,11 +114,11 @@ export const modernStyle = {
   careerSkills: css`
     margin-top: 6px;
     font-size: 13px;
-    color: #525558;
+    color: #64748b;
   `,
 
   careerDescription: css`
     font-size: 14px;
-    color: #3e3e3e;
+    color: #475569;
   `,
 };

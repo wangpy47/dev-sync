@@ -1,18 +1,20 @@
 /** @jsxImportSource @emotion/react */
-import { useState, useEffect, useRef } from "react";
-import { useSelector } from "react-redux";
-import { ResumePreviewPanel } from "../../components/resume/ResumePreviewPanel.tsx";
-import { ResumeEditorPanel } from "../../components/resume/ResumeEditorPanel";
-import { useLocation } from "react-router-dom";
 import { css } from "@emotion/react";
-import { ResumeOptionBar } from "../../components/resume/ResumeOptionBar.tsx";
-import { nanoid } from "@reduxjs/toolkit";
-import html2pdf from "html2pdf.js";
-import { Fab, Popover } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import { SectionOrderManager } from "../../components/resume/SectionOrderManager.tsx";
-import type { ResumeData } from "../../types/resume.type.ts";
 import FormatListNumberedIcon from "@mui/icons-material/FormatListNumbered";
+import { Fab, Popover } from "@mui/material";
+import html2pdf from "html2pdf.js";
+import { useRef, useState } from "react";
+import { useSelector } from "react-redux";
+import { useLocation } from "react-router-dom";
+import { ResumeEditorPanel } from "../../components/resume/ResumeEditorPanel";
+import { ResumeOptionBar } from "../../components/resume/ResumeOptionBar.tsx";
+import { ResumePreviewPanel } from "../../components/resume/ResumePreviewPanel.tsx";
+import { SectionOrderManager } from "../../components/resume/SectionOrderManager.tsx";
+import { blueGrayStyle } from "../../styles/blueGrayTheme.ts";
+import { modernStyle } from "../../styles/modernTheme.ts";
+import type { ResumeData } from "../../types/resume.type.ts";
+
 const containerStyle = css`
   display: flex;
   flex-direction: row;
@@ -100,14 +102,30 @@ export const EditResumePage = () => {
   const location = useLocation();
   const gitInfo = location.state;
   const printRef = useRef<HTMLDivElement>(null);
+  const [theme, setTheme] = useState<"modern" | "blueGray">("modern");
   console.log("-----userData", userData);
   console.log("-----gitInfo", gitInfo);
+
+  const selectedStyle = theme === "modern" ? modernStyle : blueGrayStyle;
 
   const createSections: ResumeData = {
     id: "123123455",
     title: "자소서1",
-
-    order: ["123", "1234", "12345", "123456", "1234567", "12345678"],
+    order: [
+      "123",
+      "1234",
+      "12345",
+      "123456",
+      "1234567",
+      "12345678",
+      "123456789",
+      "1234567890",
+      "12345678901",
+      "12345678912",
+      "123456789123",
+      "1234567891234",
+      "12345678912345",
+    ],
     entities: [
       {
         id: "123",
@@ -147,28 +165,53 @@ export const EditResumePage = () => {
         description: "필기 및 실기 시험 모두 합격",
       },
       {
-        id: "1234567",
-        type: "project",
-        description: gitInfo.description || "",
-        start_date: "2022-07-01",
-        end_date: "2024-12-31",
-        technologies: ["React", "TypeScript", "Electron", "Three.js", "NestJS"],
+        id: "12345678912345",
+        type: "projects",
+        items: [
+          {
+            id: "1234567",
+            name: "devSync",
+            type: "project",
+            description: gitInfo.description || "",
+            start_date: "2022-07-01",
+            end_date: "2024-12-31",
+            skills: ["React", "TypeScript", "Electron", "Three.js", "NestJS"],
+            outcomes: [
+              {
+                id: "12345678",
+                type: "outcome",
+                task: "한 일입니다. 나는 할일입니다.",
+                result:
+                  "성과1성과1성과1성과1성과1성과1성과1성과1 성과1성과1성과1성과1 성과1 ",
+              },
+              {
+                id: "123456789",
+                task: "한 일2",
+                type: "outcome",
+                result: "성과2",
+              },
+            ],
+          },
+          {
+            id: "123456789123",
+            name: "편집기 3D",
+            type: "project",
+            description: gitInfo.description || "",
+            start_date: "2022-07-01",
+            end_date: "2024-12-31",
+            skills: ["React", "TypeScript", "Electron", "Three.js", "NestJS"],
+            outcomes: [
+              {
+                type: "outcome",
+                id: "1234567891234",
+                task: "한 일입니다2222. 나는 할일입니다.",
+                result:
+                  "성과222222성과1성과1성과1성과1성과1성과1성과1 성과1성과1성과1성과1 성과1 ",
+              },
+            ],
+          },
+        ],
       },
-      {
-        id: "1234512345678",
-        type: "outcomes",
-        task: "한 일1",
-        result: "성과1",
-        project: "1234567",
-      },
-      {
-        id: "12345123456789",
-        type: "outcomes",
-        task: "한 일2",
-        result: "성과2",
-        project: "1234567",
-      },
-
       {
         id: "1234567890",
         type: "introduction",
@@ -188,33 +231,33 @@ export const EditResumePage = () => {
         content: "코딩 멘토 100시간",
       },
     ],
-  } as const;
+  };
   console.log("createSEction----------", createSections);
   const [sections, setSections] = useState(createSections);
 
   // 섹션 데이터 업데이트 함수
-  const updateSectionData = (type: string, newData: any) => {};
+  // const updateSectionData = (type: string, newData: any) => {};
 
   // 섹션 삭제 함수 (위/아래 이동)
-  const removeSection = (index, direction) => {};
+  // const removeSection = (index, direction) => {};
 
   // 섹션 추가 함수 예시 (custom 타입)
-  const addSection = () => {
-    setSections((prev) => {
-      const id = nanoid(10); // 예: "f13da"
-      return {
-        order: [...prev.order, id],
-        entities: {
-          ...prev.entities,
-          [id]: {
-            type: "custom",
-            title: "새 섹션",
-            content: "내용을 입력하세요.",
-          },
-        },
-      };
-    });
-  };
+  // const addSection = () => {
+  //   setSections((prev) => {
+  //     const id = nanoid(10); // 예: "f13da"
+  //     return {
+  //       order: [...prev.order, id],
+  //       entities: {
+  //         ...prev.entities,
+  //         [id]: {
+  //           type: "custom",
+  //           title: "새 섹션",
+  //           content: "내용을 입력하세요.",
+  //         },
+  //       },
+  //     };
+  //   });
+  // };
 
   const handleDownloadPdf = () => {
     if (!printRef.current) return;
@@ -246,18 +289,19 @@ export const EditResumePage = () => {
   const [open, setOpen] = useState(false);
   const anchorRef = useRef(null);
 
-  console.log(anchorRef.current);
-  // console.log(createSections.order);
-
   return (
     <div css={containerStyle}>
       <div css={leftPanelStyle}>
-        <ResumeOptionBar onDownloadPdf={handleDownloadPdf} />
+        <ResumeOptionBar
+          onDownloadPdf={handleDownloadPdf}
+          setTheme={setTheme}
+        />
         <ResumeEditorPanel
           sections={sections}
-          updateSectionData={updateSectionData}
-          removeSection={removeSection}
-          addSection={addSection}
+          setSections={setSections}
+          // updateSectionData={updateSectionData}
+          // removeSection={removeSection}
+          // addSection={addSection}
         />
         <Fab
           ref={anchorRef}
@@ -297,13 +341,19 @@ export const EditResumePage = () => {
               onReorder={(newOrder: string[]) =>
                 setSections((prev) => ({ ...prev, order: newOrder }))
               }
-              onClose={() => setOpen(false)}
+              // onClose={() => setOpen(false)}
             />
           )}
         </Popover>
       </div>
       <div css={rightPanelStyle}>
-        {gitInfo && <ResumePreviewPanel sections={sections} ref={printRef} />}
+        {gitInfo && (
+          <ResumePreviewPanel
+            sections={sections}
+            ref={printRef}
+            styleTheme={selectedStyle}
+          />
+        )}
       </div>
     </div>
   );

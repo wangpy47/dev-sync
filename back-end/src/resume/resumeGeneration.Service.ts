@@ -16,7 +16,9 @@ export class ResumeGenerationService {
     });
   }
 
-  async generateResume(profileData: string, userId: number): Promise<string> {
+
+  async generateResume(profileData: string, userId: number) {
+
     const resumeData = JSON.parse(await this.callResumeCompletion(profileData));
 
     const user = await this.userService.getUserById(userId);
@@ -90,6 +92,7 @@ export class ResumeGenerationService {
     console.log('projects : ', syncResult);
 
     return JSON.stringify(resumeData);
+
   }
 
   async callResumeCompletion(profileData: string): Promise<string> {

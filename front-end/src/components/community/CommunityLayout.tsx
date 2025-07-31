@@ -1,16 +1,15 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
 import {
-  Button,
   Drawer,
   List,
   ListItem,
   ListItemButton,
   ListItemText,
 } from "@mui/material";
-import { Outlet, useLocation, useNavigate } from "react-router-dom";
-import useFetchCategories from "../../api/FetchCategories";
 import { useState } from "react";
+import { Outlet, useNavigate } from "react-router-dom";
+import useFetchCategories from "../../api/FetchCategories";
 import CommunityAction from "./CommunityAction";
 type PostType = {
   post_id: number;

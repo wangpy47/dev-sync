@@ -1,33 +1,33 @@
 import {
   DragDropContext,
-  Droppable,
   Draggable,
+  Droppable,
   DropResult,
 } from "@hello-pangea/dnd";
 import {
-  Paper,
-  Typography,
+  Button,
+  Fade,
   List,
   ListItem,
   ListItemButton,
   ListItemText,
-  Fade,
-  Button,
+  Paper,
+  Typography,
 } from "@mui/material";
-import type { ResumeData } from "../../types/resume.type";
 import { useEffect, useRef, useState } from "react";
+import type { ResumeData } from "../../types/resume.type";
 
 interface Props {
   sections: ResumeData;
   onReorder: (newOrder: string[]) => void;
-  onClose: () => void;
+  // onClose: () => void;
 }
 
 export const SectionOrderManager = ({
   sections,
   onReorder,
-  onClose,
-}: Props) => {
+}: // onClose,
+Props) => {
   const [localOrder, setLocalOrder] = useState(sections.order);
   const initialOrderRef = useRef<string[]>([]);
 
@@ -59,12 +59,7 @@ export const SectionOrderManager = ({
           flexDirection: "column",
         }}
       >
-        <Typography
-          fontWeight={600}
-          textAlign="center"
-          mb={1}
-          color="#2f2f2f"
-        >
+        <Typography fontWeight={600} textAlign="center" mb={1} color="#2f2f2f">
           섹션 순서 변경
         </Typography>
 
@@ -84,21 +79,35 @@ export const SectionOrderManager = ({
                 }}
               >
                 {localOrder.map((id, index) => {
-                  const entity = sections.entities[id];
+                  const entity = sections.entities.find((i) => i.id === id);
+                  if (
+                    !entity ||
+                    entity.type === "project" ||
+                    entity.type === "outcome"
+                  ) {
+                    return;
+                  }
                   const label =
                     entity.type === "custom"
                       ? entity.title
                       : (
                           {
-                            basicInfo: "기본 정보",
-                            skills: "기술 스택",
+                            profile: "기본 정보",
+                            skills: "스킬",
                             projects: "프로젝트",
-                            introduction: "소개",
+                            achievement: "수상/자격",
+                            career: "경력",
+                            introduction: "자기소개",
                           } as const
                         )[entity.type];
 
                   return (
-                    <Draggable key={id} draggableId={id} index={index}>
+                    <Draggable
+                      key={id}
+                      draggableId={id}
+                      index={index}
+                      isDragDisabled={entity.type === "profile"}
+                    >
                       {(provided, snapshot) => (
                         <ListItem
                           ref={provided.innerRef}
@@ -112,16 +121,18 @@ export const SectionOrderManager = ({
                         >
                           <ListItemButton>
                             <ListItemText primary={label} />
-                            <div
-                              {...provided.dragHandleProps}
-                              style={{
-                                cursor: "grab",
-                                padding: "4px 6px",
-                                color: "#aaa",
-                              }}
-                            >
-                              ☰
-                            </div>
+                            {entity.type !== "profile" && (
+                              <div
+                                {...provided.dragHandleProps}
+                                style={{
+                                  cursor: "grab",
+                                  padding: "4px 6px",
+                                  color: "#aaa",
+                                }}
+                              >
+                                ☰
+                              </div>
+                            )}
                           </ListItemButton>
                         </ListItem>
                       )}
