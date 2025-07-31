@@ -16,7 +16,9 @@ export class ResumeGenerationService {
     });
   }
 
+
   async generateResume(profileData: string, userId: number) {
+
     const resumeData = JSON.parse(await this.callResumeCompletion(profileData));
 
     const user = await this.userService.getUserById(userId);
@@ -80,11 +82,17 @@ export class ResumeGenerationService {
       project.skills = matchedSkillIds;
     }
 
-    await this.resumeService.syncProjectsForResume(resume.id, {
-      projects: projects,
-    });
+    const syncResult = await this.resumeService.syncProjectsForResume(
+      resume.id,
+      {
+        projects: projects,
+      },
+    );
 
-    return await this.resumeService.getResumeDetails(resume.id);
+    console.log('projects : ', syncResult);
+
+    return JSON.stringify(resumeData);
+
   }
 
   async callResumeCompletion(profileData: string): Promise<string> {
