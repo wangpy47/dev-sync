@@ -82,16 +82,16 @@ export class ResumeGenerationService {
       project.skills = matchedSkillIds;
     }
 
-    const syncResult = await this.resumeService.syncProjectsForResume(
+    await this.resumeService.syncProjectsForResume(
       resume.id,
       {
         projects: projects,
       },
     );
 
-    console.log('projects : ', syncResult);
 
-    return JSON.stringify(resumeData);
+
+    return this.resumeService.getResumeDetails(resume.id);
 
   }
 

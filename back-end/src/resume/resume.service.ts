@@ -493,7 +493,7 @@ export class ResumeService {
 
     project = await this.projectRepository.save(project);
 
-    await this.syncProjectSkills(project.id, projectData.skills);
+    await this.syncProjectSkills(project.id, projectData.skills.map((skill) => skill.id));
     await this.syncProjectOutcomes(project.id, projectData.outcomes);
 
     return this.projectRepository.findOne({
