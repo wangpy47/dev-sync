@@ -1,4 +1,3 @@
-/** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
 import CloseIcon from "@mui/icons-material/Close";
 import FormatListNumberedIcon from "@mui/icons-material/FormatListNumbered";
@@ -108,6 +107,7 @@ export const EditResumePage = () => {
 
   const selectedStyle = theme === "modern" ? modernStyle : blueGrayStyle;
 
+  console.log(gitInfo);
   const createSections: ResumeData = {
     id: "123123455",
     title: "자소서1",
@@ -141,7 +141,7 @@ export const EditResumePage = () => {
       {
         id: "1234",
         type: "skills",
-        familiar: gitInfo.skills?.familiar || [],
+        familiars: gitInfo.skills?.familiars || [],
         strengths: gitInfo.skills?.strengths || [],
       },
       {
@@ -318,7 +318,6 @@ export const EditResumePage = () => {
         >
           {open ? <CloseIcon /> : <FormatListNumberedIcon />}
         </Fab>
-
         <Popover
           open={open}
           anchorEl={anchorRef.current}

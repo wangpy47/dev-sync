@@ -1,4 +1,3 @@
-/** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
 import Header from "./Header";
 import Footer from "./Footer";
@@ -6,7 +5,7 @@ import { StrictMode, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { login, logout } from "../redux/redux";
 import { Outlet } from "react-router-dom";
-
+import "devicon/devicon.min.css";
 const layoutStyle = css`
   display: flex;
   flex-direction: column;

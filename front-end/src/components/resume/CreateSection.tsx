@@ -1,5 +1,3 @@
-/** @jsxImportSource @emotion/react */
-
 import React, { useState, type Dispatch, type SetStateAction } from "react";
 import {
   Popover,
@@ -56,11 +54,11 @@ export const CreateSection = ({ sections, setSections }: GitResumeProps) => {
 
   const handleAddSection = (type: keyof typeof sectionTemplates) => {
     const newSection = { ...sectionTemplates[type], id: crypto.randomUUID() };
-    setSections((prev) => ({
-      ...prev,
-      order: [...prev.order, newSection.id],
-      entities: [...prev.entities, newSection],
-    }));
+    // setSections((prev) => ({
+    //   ...prev,
+    //   order: [...prev.order, newSection.id],
+    //   entities: [...prev.entities, newSection],
+    // }));
     handleClose();
   };
 

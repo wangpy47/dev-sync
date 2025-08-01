@@ -1,4 +1,3 @@
-/** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
 import {
   Box,
@@ -11,6 +10,7 @@ import {
   Typography,
 } from "@mui/material";
 import Grid from "@mui/material/Grid";
+import { useEffect, useState } from "react";
 type ResumeSummary = {
   id: string;
   name: string;
@@ -20,7 +20,34 @@ type ResumeSummary = {
   skills: string[];
 };
 
+type List = { id: string; title: string; order: any[]; entities: any[] };
+
 export const ResumeListPage = () => {
+  const [resumes, setResumes] = useState([]);
+
+  useEffect(() => {
+    console.log("aaaa");
+    const fetchResumes = async () => {
+      try {
+        const response = await fetch("http://localhost:3000/resumes", {
+          method: "GET",
+          credentials: "include",
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        console.log(response);
+        const data = await response.json();
+        console.log(data);
+        setResumes(data);
+      } catch (error) {
+        console.error("이력서 리스트 가져오기 실패:", error);
+      }
+    };
+
+    fetchResumes();
+  }, []);
   const resumeList: ResumeSummary[] = [
     {
       id: "resume-001",
