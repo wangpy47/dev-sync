@@ -5,18 +5,18 @@ export type ResumeData = {
   entities: ResumeSection[];
 };
 
-type ResumeSection =
-  | ProfileSection
-  | SkillsSection
-  | CareerSection
-  | AchievementSection
-  | ProjectSection
-  | OutcomeSection
-  | IntroductionSection
-  | CustomSection
-  | ProjectsSection;
+export type ResumeSection =
+  | ProfileTypeSection
+  | SkillsTypeSection
+  | CareerTypeSection
+  | AchievementTypeSection
+  | ProjectTypeSection
+  | OutcomeTypeSection
+  | IntroductionTypeSection
+  | CustomTypeSection
+  | ProjectsTypeSection;
 
-export type ProfileSection = {
+export type ProfileTypeSection = {
   id: string;
   type: "profile";
   name: string;
@@ -28,14 +28,14 @@ export type ProfileSection = {
   education?: string;
 };
 
-type SkillsSection = {
+export type SkillsTypeSection = {
   id: string;
   type: "skills";
-  familiar: string[];
+  familiars: string[];
   strengths: string[];
 };
 
-type CareerSection = {
+export type CareerTypeSection = {
   id: string;
   type: "career";
   company: string;
@@ -47,7 +47,7 @@ type CareerSection = {
   technologies: string[];
 };
 
-type AchievementSection = {
+export type AchievementTypeSection = {
   id: string;
   type: "achievement";
   title: string;
@@ -56,7 +56,7 @@ type AchievementSection = {
   description: string;
 };
 
-export type ProjectSection = {
+export type ProjectTypeSection = {
   id: string;
   type: "project";
   name: string;
@@ -64,30 +64,30 @@ export type ProjectSection = {
   start_date: string;
   end_date: string;
   skills: string[];
-  outcomes: OutcomeSection[];
+  outcomes: OutcomeTypeSection[];
 };
 
-export type ProjectsSection = {
+export type ProjectsTypeSection = {
   id: string;
   type: "projects";
-  items: ProjectSection[];
+  items: ProjectTypeSection[];
 };
 
-export type OutcomeSection = {
+export type OutcomeTypeSection = {
   id: string;
   type: "outcome";
   task: string;
   result: string;
 };
 
-type IntroductionSection = {
+export type IntroductionTypeSection = {
   id: string;
   type: "introduction";
   headline: string;
   description: string;
 };
 
-type CustomSection = {
+export type CustomTypeSection = {
   id: string;
   type: "custom";
   title: string;

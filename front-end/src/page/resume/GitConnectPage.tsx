@@ -1,4 +1,3 @@
-/** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
 import { Button, CircularProgress } from "@mui/material";
 import { useCallback, useEffect } from "react";
@@ -32,28 +31,8 @@ export const GitConnectPage = () => {
 
   const generateResume = async (repoData: any[]) => {
     const filteredRepos = repoData.filter((repo) => repo.selected);
-
+    console.log(filteredRepos);
     setIsLoading(true);
-    // const profileData = filteredRepos
-    //   .map((repo) => {
-    //     const commitDetails = repo.commits
-    //       .map(
-    //         (commit: { message: any; description: any }, index: any) =>
-    //           `- ${commit.message}\n  Description: ${
-    //             commit.description || "No additional details provided"
-    //           }`
-    //       )
-    //       .join("\n");
-
-    //     return `Repository: ${repo.name}\nDescription: ${
-    //       repo.description || "N/A"
-    //     }\nLanguage: ${repo.language || "N/A"}\nSize: ${repo.size} KB\nStars: ${
-    //       repo.stargazers_count
-    //     }\nForks: ${
-    //       repo.forks_count
-    //     }\nRecent Commit Details:\n${commitDetails}\n`;
-    //   })
-    //   .join("\n");
 
     try {
       const response = await fetch("http://localhost:3000/resumes/generate", {
@@ -65,10 +44,18 @@ export const GitConnectPage = () => {
         body: JSON.stringify({ profileData: filteredRepos }),
       });
 
+      // Check if the request was successful
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(
+          `HTTP error! status: ${response.status}, message: ${
+            errorData.message || "Unknown error"
+          }`
+        );
+      }
+
       const result = await response.json();
-      console.log(result);
-      //   setGitInfo(result);
-      //   setGitBtnClick(true);
+      console.log("Generated Resume Data:", result);
       navigate("/resume/editor", { state: result });
     } catch (error) {
       console.error("Error generating resume:", error);
