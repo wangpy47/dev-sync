@@ -14,6 +14,7 @@ import {
 import { ResumeService } from './resume.service';
 import { UserService } from 'src/user/user.service';
 import { ResumeGenerationService } from './resumeGeneration.Service';
+import { SkillSeederService } from './skill_seeder.service';
 import { AuthenticatedGuard } from 'src/auth/auth.guard';
 import { CreateIntroductionDto } from './dto/create-introduction.dto';
 import { CreateProfileDto } from './dto/create-profile.dto';
@@ -26,6 +27,7 @@ export class ResumeController {
     private readonly userService: UserService,
     private readonly resumeService: ResumeService,
     private readonly resumeGenerationService: ResumeGenerationService,
+    private readonly skillSeederService: SkillSeederService,
   ) {}
 
   // 자소서 생성 엔드포인트
