@@ -21,18 +21,24 @@ export type ProfileTypeSection = {
   type: "profile";
   name: string;
   email: string;
-  github_url?: string;
-  blog_url?: string;
-  phone_number: string;
+  githubUrl?: string;
+  blogUrl?: string;
+  phoneNumber: string;
   address: string;
   education?: string;
+};
+
+export type SkillInnerType = {
+  id: number;
+  name: string;
+  icon: string;
 };
 
 export type SkillsTypeSection = {
   id: string;
   type: "skills";
-  familiars: string[];
-  strengths: string[];
+  familiars: SkillInnerType[];
+  strengths: SkillInnerType[];
 };
 
 export type CareerTypeSection = {
@@ -40,9 +46,9 @@ export type CareerTypeSection = {
   type: "career";
   company: string;
   position: string;
-  start_date: string;
-  end_date: string;
-  is_current: boolean;
+  startDate: string;
+  endDate: string;
+  isCurrent: boolean;
   description: string;
   technologies: string[];
 };
@@ -62,7 +68,7 @@ export type ProjectTypeSection = {
   name: string;
   description: string;
   start_date: string;
-  end_date: string;
+  endDate: string;
   skills: string[];
   outcomes: OutcomeTypeSection[];
 };

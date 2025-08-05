@@ -29,7 +29,6 @@ export const SectionWrapper = ({
   onDelete?: () => void;
   children: React.ReactNode;
 }) => {
-  console.log(isEditing);
   return (
     <div css={contentStyle}>
       <Typography css={titleStyle} variant="h5">
