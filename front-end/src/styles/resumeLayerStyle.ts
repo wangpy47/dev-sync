@@ -41,7 +41,7 @@ export const rowStyle = css`
   display: flex;
   gap: 8px;
   align-items: center;
-  margin-bottom: 16px;
+  margin-bottom: 0px;
 `;
 
 export const skillListStyle = css`
@@ -70,4 +70,11 @@ export const sectionBar = css`
   height: 1px;
   background-color: #e0e0e0; /* 연한 그레이 */
   margin: 1rem 0;
+`;
+
+export const chipIcon = css`
+  margin-right: 5px;
+  font-size: 1.1rem;
+  position: relative;
+  top: 2px;
 `;

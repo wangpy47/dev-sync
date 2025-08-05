@@ -5,7 +5,7 @@ import { blueGrayStyle } from "../../styles/blueGrayTheme";
 import { modernStyle } from "../../styles/modernTheme";
 import type { ResumeData } from "../../types/resume.type";
 import { css } from "@emotion/react";
-
+import { SkillInnerType } from "../../types/resume.type";
 type Props = {
   sections: ResumeData;
   styleTheme: typeof modernStyle | typeof blueGrayStyle;
@@ -20,15 +20,13 @@ export const ResumePreviewPanel = forwardRef<HTMLDivElement, Props>(
         {order.map((id) => {
           const section = entities.find((entity) => entity.id === id);
           if (!section) return null;
-
+          console.log(sections);
           switch (section.type) {
             case "profile":
               return (
                 <div key={id} css={styleTheme.profileStyle}>
                   {/* 이름 */}
-                  <h1 css={styleTheme.profileName}>
-                    {section.name || "이민경"}
-                  </h1>
+                  <h1 css={styleTheme.profileName}>{section.name || ""}</h1>
 
                   {/* 이메일 + 전화번호 */}
                   <div css={styleTheme.profileSide}>
@@ -38,7 +36,7 @@ export const ResumePreviewPanel = forwardRef<HTMLDivElement, Props>(
                       `}
                     >
                       <span>이메일</span>
-                      <span>{section.email || "lmk4070@gmail.com"}</span>
+                      <span>{section.email || ""}</span>
                     </div>
                     <div
                       css={css`
@@ -47,7 +45,7 @@ export const ResumePreviewPanel = forwardRef<HTMLDivElement, Props>(
                       `}
                     >
                       <span>전화번호</span>
-                      <span>{section.phone_number || "010-5555-4875"}</span>
+                      <span>{section.phoneNumber || ""}</span>
                     </div>
                   </div>
 
@@ -68,7 +66,7 @@ export const ResumePreviewPanel = forwardRef<HTMLDivElement, Props>(
                     >
                       주소
                     </span>
-                    <span>{"경기도 화성시 봉담읍 (18315)"}</span>
+                    <span>{""}</span>
                   </div>
 
                   {/* 구분선 */}
@@ -121,7 +119,7 @@ export const ResumePreviewPanel = forwardRef<HTMLDivElement, Props>(
                         GitHub
                       </span>
                       <span>
-                        {section.github_url || "깃허브 아이디를 입력하세요"}
+                        {section.githubUrl || "깃허브 아이디를 입력하세요"}
                       </span>
                     </div>
                     <div
@@ -139,7 +137,7 @@ export const ResumePreviewPanel = forwardRef<HTMLDivElement, Props>(
                       >
                         블로그
                       </span>
-                      <span>{section.blog_url || "dsfksdl@com"}</span>
+                      <span>{section.blogUrl || "aaaaa@com"}</span>
                     </div>
                   </div>
                 </div>
@@ -171,17 +169,19 @@ export const ResumePreviewPanel = forwardRef<HTMLDivElement, Props>(
                 >
                   <h3 css={styleTheme.sectionTitle}>기술 스택</h3>
                   <div css={styleTheme.chipList}>
-                    {(section.familiar || []).map(
-                      (skill: string, i: number) => (
+                    {(section.familiars || []).map(
+                      (skill: SkillInnerType, i: number) => (
                         <span key={`familiar-${i}`} css={styleTheme.chip}>
-                          {skill}
+                          <i className={`${skill.icon} colored`}></i>{" "}
+                          {skill.name}
                         </span>
                       )
                     )}
                     {(section.strengths || []).map(
-                      (skill: string, i: number) => (
+                      (skill: SkillInnerType, i: number) => (
                         <span key={`strength-${i}`} css={styleTheme.chip}>
-                          {skill}
+                          <i className={`${skill.icon} colored`}></i>{" "}
+                          {skill.name}
                         </span>
                       )
                     )}
@@ -204,8 +204,8 @@ export const ResumePreviewPanel = forwardRef<HTMLDivElement, Props>(
                     `}
                   >
                     <div css={styleTheme.careerLeft}>
-                      {section.start_date} ~{" "}
-                      {section.is_current ? "현재" : section.end_date}
+                      {section.startDate} ~{" "}
+                      {section.isCurrent ? "현재" : section.endDate}
                     </div>
                     <div
                       css={css`
