@@ -13,7 +13,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy) {
       callbackURL: 'http://localhost:3000/auth/google',
       scope: ['email', 'profile', 'openid'],
       accessType: 'offline',
-      prompt: 'consent',  // 항상 사용자에게 동의를 요청하고 로그인 창 표시
+      prompt: 'consent',
     });
   }
   async validate(accessToken: string, refreshToken: string, profile: Profile) {
