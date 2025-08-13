@@ -2,7 +2,7 @@ import { Type } from 'class-transformer';
 import { IsArray, ValidateNested } from 'class-validator';
 import { CreateProjectDto } from './create-project.dto';
 
-export class CreateProjects {
+export class CreateProjectsWidthOutcomesDto {
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => CreateProjectDto)

@@ -2,6 +2,7 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Category } from './entities/category.entity';
+import { PostCategory } from './enum/post-category.enum';
 
 
 @Injectable()
@@ -16,14 +17,9 @@ export class CategoryService implements OnModuleInit {
   }
 
   async initRepository() {
-    const defaultCategories = [
-      { category: '자유게시판' },
-      { category: '질문게시판' },
-      { ㅍcategory: '정보게시판' },
-      { category: '공지사항' },
-      { category: '문의하기' },
-      { category: 'default'}
-    ];
+    const defaultCategories = Object.values(PostCategory).map(category => ({
+      category
+    }));
 
     for (const category of defaultCategories) {
       const exists = await this.categoryRepository.findOne({ where: { category: category.category } });

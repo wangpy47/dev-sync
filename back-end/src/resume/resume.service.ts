@@ -14,7 +14,7 @@ import { ProjectModel } from './entities/project.entity';
 import { ProjectOutcomeModel } from './entities/project-outcome.entity';
 import { CreateOutcomeDto } from './dto/create-project-outcome.dto';
 import { CreateProjectDto } from './dto/create-project.dto';
-import { CreateProjects } from './dto/create-projects-width-outcomes.dto';
+import { CreateProjectsWidthOutcomesDto } from './dto/create-projects-width-outcomes.dto';
 import { CreateSkillsDto } from './dto/create-skills.dto';
 
 @Injectable()
@@ -435,7 +435,7 @@ export class ResumeService {
 
   async syncProjectsForResume(
     resumeId: string,
-    createProjectsDto: CreateProjects,
+    createProjectsDto: CreateProjectsWidthOutcomesDto,
   ): Promise<ProjectModel[]> {
     await this.getResume(resumeId);
 

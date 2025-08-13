@@ -18,7 +18,7 @@ import { SkillSeederService } from './skill_seeder.service';
 import { AuthenticatedGuard } from 'src/auth/auth.guard';
 import { CreateIntroductionDto } from './dto/create-introduction.dto';
 import { CreateProfileDto } from './dto/create-profile.dto';
-import { CreateProjects } from './dto/create-projects-width-outcomes.dto';
+import { CreateProjectsWidthOutcomesDto } from './dto/create-projects-width-outcomes.dto';
 import { CreateSkillsDto } from './dto/create-skills.dto';
 
 @Controller('resumes')
@@ -125,7 +125,7 @@ export class ResumeController {
   @UseGuards(AuthenticatedGuard)
   async createProject(
     @Param('id') id: string,
-    @Body() createProjectsDto: CreateProjects,
+    @Body() createProjectsDto: CreateProjectsWidthOutcomesDto,
   ) {
     return await this.resumeService.syncProjectsForResume(
       id,

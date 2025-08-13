@@ -24,18 +24,14 @@ export class AuthController {
   async googleAuthRedirect(@Request() req, @Response() res) {
     const { user } = req;
     if (user) {
-      // 로그인 성공 시 세션에 유저 정보 저장
-      console.log('Google Auth successful:', user);
-      return res.redirect('http://localhost:4000/'); // 원하는 경로로 리디렉션
+      return res.redirect('http://localhost:4000/');
     } else {
-      console.log('Google Auth failed');
       return res.status(403).send('Authentication failed');
     }
   }
 
   @Get('logout')
   logout(@Request() req, @Response() res) {
-    console.log('logout');
     req.logout((err) => {
       if (err) {
         return res.status(500).send('Logout failed');
@@ -44,7 +40,7 @@ export class AuthController {
         if (err) {
           return res.status(500).send('Failed to destroy session');
         }
-        res.clearCookie('connect.sid', { path: '/' }); // 세션 쿠키 명시적으로 삭제
+        res.clearCookie('connect.sid', { path: '/' });
         return res.status(200).send('Logged out');
       });
     });

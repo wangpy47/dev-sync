@@ -8,7 +8,7 @@ import {
   UploadedFile,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { UpdateUserDto } from './user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer'; 
 

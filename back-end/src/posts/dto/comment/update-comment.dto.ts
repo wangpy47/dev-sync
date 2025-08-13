@@ -1,4 +1,5 @@
 import { IsInt, IsString, Min } from 'class-validator';
+import { ValidateLength } from 'src/common/decorators/validate-length.decorator';
 
 export class UpdateCommentDto {
   @IsInt()
@@ -6,5 +7,6 @@ export class UpdateCommentDto {
   comment_id: number;
 
   @IsString()
-  comment;
+  @ValidateLength('COMMENT_CONTENT')
+  comment:string;
 }

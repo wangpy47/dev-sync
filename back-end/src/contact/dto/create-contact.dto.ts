@@ -1,4 +1,30 @@
-import { PickType } from "@nestjs/mapped-types";
-import { ContactModel } from "../entity/contact.entity";
+import {
+  IsEmail,
+  IsOptional,
+  IsString,
+  Length,
+} from 'class-validator';
+import { ValidateLength } from 'src/common/decorators/validate-length.decorator';
 
-export class CreateContactDto extends PickType(ContactModel,["name","email","title","content","password"]){}
+export class CreateContactDto {
+  @IsString()
+  @ValidateLength('USER_NAME')
+  name: string;
+
+  @IsEmail()
+  @ValidateLength('USER_EMAIL')
+  email: string;
+
+  @IsString()
+  @ValidateLength('POST_TITLE')
+  title: string;
+
+  @IsString()
+  @ValidateLength('POST_CONTENT')
+  content: string;
+
+  @IsOptional()
+  @IsString()
+  @Length(4, 4, { message: '비밀번호는 정확히 4자리여야 합니다.' })
+  password?: string;
+}

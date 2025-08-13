@@ -1,23 +1,29 @@
-import { IsEmail, IsOptional, IsString } from 'class-validator';
+import { IsEmail, IsOptional, IsString, Length } from 'class-validator';
+import { ValidateLength } from 'src/common/decorators/validate-length.decorator';
 
 export class UpdateContactDto {
   @IsOptional()
-  @IsString({ message: '이름은 문자열이어야 합니다.' })
+  @IsString()
+  @ValidateLength('USER_NAME')
   name?: string;
 
   @IsOptional()
-  @IsEmail({}, { message: '이메일 형식이 올바르지 않습니다.' })
+  @IsEmail()
+  @ValidateLength('USER_EMAIL')
   email?: string;
 
   @IsOptional()
-  @IsString({ message: '제목은 문자열이어야 합니다.' })
+  @IsString()
+  @ValidateLength('POST_TITLE')
   title?: string;
 
   @IsOptional()
-  @IsString({ message: '내용은 문자열이어야 합니다.' })
+  @IsString()
+  @ValidateLength('POST_CONTENT')
   content?: string;
 
   @IsOptional()
-  @IsString({ message: '비밀번호는 문자열이어야 합니다.' })
+  @IsString()
+  @Length(4, 4, { message: '비밀번호는 정확히 4자리여야 합니다.'})
   password?: string;
 }
