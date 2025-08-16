@@ -1,7 +1,7 @@
 import { Dialog, DialogTitle, IconButton, Button } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { useDispatch, useSelector } from "react-redux";
-import { closeLoginForm } from "../../redux/redux";
+import { closeLoginForm } from "../../redux/loginSlice";
 
 const LoginForm = () => {
   const dialogOpen = useSelector((state: any) => state.login.loginForm);
@@ -13,13 +13,15 @@ const LoginForm = () => {
 
   return (
     <Dialog
-      PaperProps={{
-        sx: {
-          m: 4, // 여백 적용
-          p: 2, // 내부 패딩
-          borderRadius: 2,
-          maxWidth: 300, // 원하는 너비 제한
-          minWidth: 100,
+      slotProps={{
+        paper: {
+          sx: {
+            m: 4, // 여백 적용
+            p: 2, // 내부 패딩
+            borderRadius: 2,
+            maxWidth: 300, // 원하는 너비 제한
+            minWidth: 100,
+          },
         },
       }}
       open={dialogOpen}

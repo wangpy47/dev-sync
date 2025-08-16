@@ -40,10 +40,10 @@ const sectionTemplates = {
 
 interface GitResumeProps {
   sections: ResumeData;
-  setSections: Dispatch<SetStateAction<ResumeData>>;
+  setSections?: Dispatch<SetStateAction<ResumeData>>;
 }
 
-export const CreateSection = ({ sections, setSections }: GitResumeProps) => {
+export const CreateSection = ({ sections }: GitResumeProps) => {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
   const handleOpen = (event: React.MouseEvent<HTMLElement>) => {

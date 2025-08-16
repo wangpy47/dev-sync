@@ -16,7 +16,7 @@ import { useNavigate } from "react-router-dom";
 import logo from "../assets/logo.png";
 import LoginForm from "../components/user/LoginForm";
 import ProfileButton from "../components/user/ProfileButton";
-import { openLoginForm } from "../redux/redux";
+import { openLoginForm } from "../redux/loginSlice";
 
 const containerStyle = css`
   max-width: 1600px; /* main과 동일하게 설정 */

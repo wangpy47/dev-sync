@@ -18,13 +18,13 @@ const containerStyle = css`
 
 interface GitResumeProps {
   sections: ResumeData;
-  setSections: Dispatch<SetStateAction<ResumeData>>;
+  // setSections: Dispatch<SetStateAction<ResumeData>>;
 }
 
 export const ResumeEditorPanel = ({
   sections,
-  setSections,
-}: GitResumeProps) => {
+}: // setSections,
+GitResumeProps) => {
   const [isEditing, setEditing] = useState<Record<string, boolean>>({});
 
   const onEdit = (id: string) => {
@@ -35,13 +35,13 @@ export const ResumeEditorPanel = ({
     setEditing((prev) => ({ ...prev, [id]: false }));
   };
 
-  const commonProps = {
-    setSections,
-  };
+  // const commonProps = {
+  //   setSections,
+  // };
 
   const renderSection = (section: ResumeSection) => {
     const common = {
-      ...commonProps,
+      // ...commonProps,
       isEditing: isEditing[section.id],
       onEdit: () => onEdit(section.id),
       onSave: () => onSave(section.id),
@@ -82,7 +82,7 @@ export const ResumeEditorPanel = ({
         if (!section) return null;
         return renderSection(section);
       })}
-      <CreateSection sections={sections} setSections={setSections} />
+      <CreateSection sections={sections} />
     </div>
   );
 };

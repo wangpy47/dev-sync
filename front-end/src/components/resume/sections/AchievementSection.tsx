@@ -12,7 +12,7 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
 interface Props {
   section: AchievementTypeSection;
-  setSections: Dispatch<SetStateAction<ResumeData>>;
+  setSections?: Dispatch<SetStateAction<ResumeData>>;
   isEditing: boolean;
   onEdit: () => void;
   onSave: () => void;

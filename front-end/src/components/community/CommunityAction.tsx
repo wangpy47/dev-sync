@@ -10,7 +10,7 @@ import {
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
-import { openLoginForm } from "../../redux/redux";
+import { openLoginForm } from "../../redux/loginSlice";
 
 interface CommunityActionsProps {
   category: string;

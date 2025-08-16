@@ -19,14 +19,14 @@ import type { ResumeData } from "../../types/resume.type";
 
 interface Props {
   sections: ResumeData;
-  onReorder: (newOrder: string[]) => void;
+  // onReorder: (newOrder: string[]) => void;
   // onClose: () => void;
 }
 
 export const SectionOrderManager = ({
   sections,
-  onReorder,
-}: // onClose,
+}: // onReorder,
+// onClose,
 Props) => {
   const [localOrder, setLocalOrder] = useState(sections.order);
   const initialOrderRef = useRef<string[]>([]);
@@ -152,7 +152,10 @@ Props) => {
           >
             취소
           </Button>
-          <Button variant="contained" onClick={() => onReorder(localOrder)}>
+          <Button
+            variant="contained"
+            //  onClick={() => onReorder(localOrder)}
+          >
             확인
           </Button>
         </div>

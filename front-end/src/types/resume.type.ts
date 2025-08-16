@@ -28,6 +28,21 @@ export type ProfileTypeSection = {
   education?: string;
 };
 
+export type userInfo = {
+  user_id: number;
+  email: string;
+  name: string;
+  phone_number: number;
+  profile_image: string;
+  createdDt: string;
+  githubUrl: string;
+  blogUrl: string;
+  universityName: string;
+  departmentName: string;
+  educationLevel: string;
+  birthDate: string;
+};
+
 export type SkillInnerType = {
   id: number;
   name: string;
@@ -35,6 +50,7 @@ export type SkillInnerType = {
 };
 
 export type SkillsTypeSection = {
+  selectSkill: any;
   id: string;
   type: "skills";
   familiars: SkillInnerType[];

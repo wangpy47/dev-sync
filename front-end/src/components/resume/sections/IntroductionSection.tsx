@@ -12,7 +12,7 @@ import { TextField, Typography, css } from "@mui/material";
 
 interface Props {
   section: IntroductionTypeSection;
-  setSections: Dispatch<SetStateAction<ResumeData>>;
+  setSections?: Dispatch<SetStateAction<ResumeData>>;
   isEditing: boolean;
   onEdit: () => void;
   onSave: () => void;

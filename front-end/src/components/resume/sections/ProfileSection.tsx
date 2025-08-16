@@ -8,7 +8,7 @@ import { gridStyle, textFieldStyle } from "../../../styles/resumeLayerStyle";
 import { TextField, InputAdornment, Typography } from "@mui/material";
 interface Props {
   section: ProfileTypeSection;
-  setSections: Dispatch<SetStateAction<ResumeData>>;
+  setSections?: Dispatch<SetStateAction<ResumeData>>;
   isEditing: boolean;
   onEdit: () => void;
   onSave: () => void;

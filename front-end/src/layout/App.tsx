@@ -3,7 +3,7 @@ import Header from "./Header";
 import Footer from "./Footer";
 import { StrictMode, useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { login, logout } from "../redux/redux";
+import { setloggedIn } from "../redux/loginSlice";
 import { Outlet } from "react-router-dom";
 import "devicon/devicon.min.css";
 const layoutStyle = css`
@@ -48,17 +48,9 @@ function App() {
       .then((response) => response.text())
       .then((data) => {
         if (data === "Not authenticated") {
-          dispatch(logout());
+          dispatch(setloggedIn(false));
         } else {
-          fetch(`http://localhost:3000/user/getUser`, {
-            credentials: "include",
-          })
-            .then((response) => response.json())
-            .then((userInfo) => {
-              console.log(userInfo, "app 초기");
-              dispatch(login(userInfo));
-            })
-            .catch((error) => console.error("Error:", error));
+          dispatch(setloggedIn(true));
         }
       });
   }, []);
