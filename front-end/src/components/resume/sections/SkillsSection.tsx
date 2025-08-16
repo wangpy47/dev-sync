@@ -17,7 +17,7 @@ import { rowStyle } from "../../../styles/resumeLayerStyle";
 import { useDebouncedFetch } from "../../../hooks/useDebouncedFetch";
 interface Props {
   section: SkillsTypeSection;
-  setSections: Dispatch<SetStateAction<ResumeData>>;
+  setSections?: Dispatch<SetStateAction<ResumeData>>;
   isEditing: boolean;
   onEdit: () => void;
   onSave: () => void;
@@ -79,7 +79,12 @@ export const SkillsSection = ({
     vertical-align: middle;
   `;
   const handleAddSkill = () => {
-    if (query) {
+    if (query && section) {
+      // const new = {... section, section[selectSkill]}
+      // setSection();
+      console.log(section.selectSkill);
+
+      console.log(section);
       console.log(selectSkill);
       console.log(query);
     }

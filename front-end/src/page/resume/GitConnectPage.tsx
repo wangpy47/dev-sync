@@ -4,7 +4,8 @@ import { useCallback, useEffect } from "react";
 import { useNavigate, useOutletContext } from "react-router-dom";
 import GitRepoList from "../../components/gitRepoList/GitRepoList";
 import type { ResumeContextType } from "../../layout/ResumeSetupLayout ";
-
+import { useDispatch } from "react-redux";
+import { setResume } from "../../redux/resumeSlice";
 export const GitConnectPage = () => {
   const {
     repoData,
@@ -14,7 +15,7 @@ export const GitConnectPage = () => {
     setRepoData,
     isLoading,
   } = useOutletContext<ResumeContextType>();
-
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const handleSelectionChange = useCallback(
     (
@@ -56,7 +57,8 @@ export const GitConnectPage = () => {
 
       const result = await response.json();
       console.log("Generated Resume Data:", result);
-      navigate("/resume/editor", { state: result });
+      navigate("/resume/editor");
+      dispatch(setResume(result));
     } catch (error) {
       console.error("Error generating resume:", error);
     }

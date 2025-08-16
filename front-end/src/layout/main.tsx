@@ -13,10 +13,11 @@ import { EditResumePage } from "../page/resume/EditResumePage.tsx";
 import { GitConnectPage } from "../page/resume/GitConnectPage.tsx";
 import { ResumeIntroPage } from "../page/resume/ResumeIntroPage.tsx";
 import { ResumeListPage } from "../page/resume/ResumeListPage.tsx";
-import store from "../redux/store.ts";
+import { store, persistor } from "../redux/store.ts";
 import App from "./App.tsx";
 import { ResumeSetupLayout } from "./ResumeSetupLayout .tsx";
 import "./index.css";
+import { PersistGate } from "redux-persist/integration/react";
 
 const router = createBrowserRouter([
   {
@@ -86,6 +87,8 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById("root")!).render(
   <Provider store={store}>
-    <RouterProvider router={router} />
+    <PersistGate loading={null} persistor={persistor}>
+      <RouterProvider router={router} />
+    </PersistGate>
   </Provider>
 );

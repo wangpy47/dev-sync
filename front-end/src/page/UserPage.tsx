@@ -17,9 +17,26 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import dayjs from "dayjs";
-import { useEffect, useState } from "react";
+import { useEffect, useReducer, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { login } from "../redux/redux";
+import { setloggedIn } from "../redux/loginSlice";
+import { fetchUserInfo } from "../api/UserApi";
+import type { ProfileTypeSection, userInfo } from "../types/resume.type";
+
+const initialState: userInfo = {
+  user_id: 0,
+  createdDt: "",
+  name: "",
+  email: "",
+  githubUrl: "",
+  blogUrl: "",
+  profile_image: "",
+  universityName: "",
+  departmentName: "",
+  educationLevel: "",
+  birthDate: "s",
+  phone_number: 12345678910,
+};
 
 // 공통 스타일 정의
 const containerStyle = css`
@@ -95,59 +112,40 @@ export const CustomTextField = ({
     onChange={(e) => onChange(e.target.value)} // 입력값 변경 처리
     size="small"
     css={customTextFieldStyle}
-    slotProps={
-      label === "Github-Name"
-        ? {
-            input: {
-              startAdornment: (
-                <InputAdornment position="start">github.com/</InputAdornment>
-              ),
-            },
-          }
-        : undefined
-    }
   />
 );
 
+function reducer(state: userInfo, action: { field: string; value: any }) {
+  console.log("상태", state, "액션", action);
+  return { ...state, [action.field]: action.value };
+}
+
 // UserPage 컴포넌트
 export const UserPage = () => {
-  const userData = useSelector((state: any) => state.login.loginInfo);
-  const dispatch = useDispatch();
-  // 로컬 상태로 사용자 데이터 관리
-  const [name, setUsername] = useState(userData.name || "name 값이 비어 있음");
-  const [email, setEmail] = useState(userData.email || "");
-  const [githubUrl, setGithubUrl] = useState(userData.githubUrl || "");
-  const [blogUrl, setBlogUrl] = useState(userData.blogUrl || "");
+  const [userData, setUserData] = useReducer(reducer, initialState);
   const [selectedFile, setSelectedFile] = useState(null); // 선택된 파일 상태
   const [previewImage, setPreviewImage] = useState(
-    userData.profile_image || ""
+    userData?.profile_image || ""
   );
-  const [alertProfile, setAlertProfile] = useState(false);
-  const [alertInfor, setAlertInfor] = useState(false);
-  const [birthDate, setBirthDate] = useState(userData.BirthDate || null);
-  const [educationLevel, setEduLevel] = useState(
-    userData.educationLevel || null
-  );
-  const [universityName, setUnivName] = useState(userData.universityName);
-  const [departmentName, setDepartName] = useState(
-    userData.departmentName || null
-  );
-  const [phone_number, setPhone] = useState(userData.phone_number || null);
+  const [alertUpdate, setAlertUpdate] = useState<{
+    type: string;
+    open: boolean;
+  }>({ type: "", open: false });
+
+  console.log("유저 데이터", userData, typeof userData.phone_number);
 
   useEffect(() => {
-    if (userData) {
-      setUsername(userData.name || "");
-      setEmail(userData.email || "");
-      setGithubUrl(userData.githubUrl || "");
-      setBlogUrl(userData.blogUrl || "");
-      setPreviewImage(userData.profile_image || "");
-      setUnivName(userData.universityName || "");
-      setDepartName(userData.departmentName || "");
-      setEduLevel(userData.educationLevel || "");
-      setBirthDate(userData.birthDate || "");
-      setPhone(userData.phone_number || null);
-    }
-  }, [userData]);
+    fetchUserInfo()
+      .then((data) => {
+        Object.entries(data).forEach(([key, value]) => {
+          setUserData({ field: key, value });
+        });
+      })
+      .catch((err) => {
+        console.log(err.message || "알 수 없는 에러");
+        // setLoading(false);
+      });
+  }, []);
 
   const handlePreviewChange = (event: any) => {
     const file = event.target.files?.[0];
@@ -176,8 +174,9 @@ export const UserPage = () => {
       if (response.ok) {
         const result = await response.json();
         console.log("Profile image update success:", result);
-        setAlertProfile(true);
-        dispatch(login(result));
+        // setAlertProfile(true);
+        setAlertUpdate({ type: "profile", open: true });
+        // dispatch(login(result));
       } else {
         const error = await response.json();
         console.error("Profile image update failed:", error.message || error);
@@ -188,6 +187,8 @@ export const UserPage = () => {
   };
 
   const handleSave = async () => {
+    const { user_id, profile_image, createdDt, ...rest } = userData;
+    console.log(rest);
     const response = await fetch("http://localhost:3000/user/update", {
       method: "POST",
       headers: {
@@ -196,23 +197,12 @@ export const UserPage = () => {
       },
       credentials: "include", // 세션 쿠키 포함
 
-      body: JSON.stringify({
-        email,
-        name,
-        githubUrl,
-        blogUrl,
-        educationLevel,
-        departmentName,
-        universityName,
-        phone_number,
-        birthDate,
-      }),
+      body: JSON.stringify(rest),
     });
 
     if (response.ok) {
       const result = await response.json();
-      dispatch(login(result));
-      setAlertInfor(true);
+      setAlertUpdate({ type: "user", open: true });
     } else {
       const error = await response.json();
       console.error("Update failed:", error, response);
@@ -220,13 +210,14 @@ export const UserPage = () => {
   };
 
   useEffect(() => {
-    if (userData.profile_image) {
+    if (userData?.profile_image) {
       setPreviewImage(userData.profile_image);
     }
-  }, [userData.profile_image]);
+  }, [userData?.profile_image]);
 
-  const handleEducationChange = (e: SelectChangeEvent<string>) => {
-    setEduLevel(e.target.value);
+  const changeValue = (section: keyof userInfo, data: any) => {
+    console.log(section, data);
+    setUserData({ field: section, value: data });
   };
 
   return (
@@ -234,7 +225,7 @@ export const UserPage = () => {
       <div css={containerStyle}>
         <div css={headerStyle}>Profile</div>
         <div css={sectionStyle}>
-          <Collapse in={alertProfile}>
+          <Collapse in={alertUpdate.type === "profile"}>
             <Alert severity="success">프로필이 업데이트 되었습니다.</Alert>
           </Collapse>
           <div css={labelStyle}>Image</div>
@@ -289,8 +280,8 @@ export const UserPage = () => {
       <div css={containerStyle}>
         <div css={headerStyle}>Account Information</div>
         <div css={sectionStyle}>
-          <Collapse in={alertInfor}>
-            <Alert severity="success">프로필이 업데이트 되었습니다.</Alert>
+          <Collapse in={alertUpdate.type === "user"}>
+            <Alert severity="success">유저 정보가 업데이트 되었습니다.</Alert>
           </Collapse>
           <div
             css={css`
@@ -301,16 +292,20 @@ export const UserPage = () => {
               Name
               <CustomTextField
                 label="Username"
-                value={name}
-                onChange={setUsername}
+                value={userData.name}
+                onChange={(value) => {
+                  changeValue("name", value);
+                }}
               />
             </div>
             <div css={labelStyle}>
               E-mail
               <CustomTextField
                 label="E-mail"
-                value={email}
-                onChange={setEmail}
+                value={userData.email}
+                onChange={(value) => {
+                  changeValue("email", value);
+                }}
               />
             </div>
           </div>
@@ -322,17 +317,21 @@ export const UserPage = () => {
             <div css={labelStyle}>
               GitHub
               <CustomTextField
-                label="Github-Name"
-                value={githubUrl}
-                onChange={setGithubUrl}
+                label="github.com/"
+                value={userData.githubUrl}
+                onChange={(value) => {
+                  changeValue("githubUrl", value);
+                }}
               />
             </div>
             <div css={labelStyle}>
               Blog
               <CustomTextField
                 label="Blog"
-                value={blogUrl}
-                onChange={setBlogUrl}
+                value={userData.blogUrl}
+                onChange={(value) => {
+                  changeValue("blogUrl", value);
+                }}
               />
             </div>
           </div>{" "}
@@ -345,13 +344,14 @@ export const UserPage = () => {
               BirthDay
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
-                  value={birthDate ? dayjs(birthDate) : null}
+                  value={userData.birthDate ? dayjs(userData.birthDate) : null}
                   onChange={(newValue) => {
                     if (newValue) {
                       const formattedDate = newValue.format("YYYY-MM-DD");
-                      setBirthDate(formattedDate); // 상태 업데이트
+                      // setBirthDate(formattedDate); // 상태 업데이트
+                      changeValue("birthDate", formattedDate);
                     } else {
-                      setBirthDate(null); // null 처리
+                      changeValue("birthDate", null);
                     }
                   }}
                 />
@@ -371,8 +371,11 @@ export const UserPage = () => {
                 variant="outlined"
                 size="small"
                 css={longTextFieldStyle}
-                onChange={(e) => setPhone(Number(e.target.value))}
-                value={phone_number}
+                value={userData.phone_number}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                  console.log(typeof e.target.value, e.target.value);
+                  changeValue("phone_number", Number(e.target.value));
+                }}
                 slotProps={{
                   input: {
                     startAdornment: (
@@ -404,6 +407,9 @@ export const UserPage = () => {
       <div css={containerStyle}>
         <div css={headerStyle}>Career Information</div>
         <div css={sectionStyle}>
+          <Collapse in={alertUpdate.type === "user"}>
+            <Alert severity="success">정보가 업데이트 되었습니다.</Alert>
+          </Collapse>
           <div
             css={css`
               display: flex;
@@ -417,8 +423,10 @@ export const UserPage = () => {
                 <Select
                   displayEmpty
                   size="small"
-                  value={educationLevel}
-                  onChange={handleEducationChange}
+                  value={userData.educationLevel}
+                  onChange={(e) =>
+                    changeValue("educationLevel", e.target.value)
+                  }
                 >
                   <MenuItem value="" disabled>
                     학력 구분 선택
@@ -432,17 +440,19 @@ export const UserPage = () => {
                 </Select>
               </FormControl>
             </div>
-            {educationLevel === "대학교대학원 이상 졸업" && (
+            {userData.educationLevel === "대학교대학원 이상 졸업" && (
               <>
                 <div css={labelStyle}>
                   Univ
                   <TextField
                     placeholder="학교명을 입력하세요"
                     variant="outlined"
-                    value={universityName}
+                    value={userData.universityName}
                     size="small"
                     sx={{ width: "45%" }}
-                    onChange={(e) => setUnivName(e.target.value)}
+                    onChange={(e) =>
+                      changeValue("universityName", e.target.value)
+                    }
                   />
                 </div>
                 <div css={labelStyle}>
@@ -450,10 +460,12 @@ export const UserPage = () => {
                   <TextField
                     placeholder="학과명을 입력하세요"
                     variant="outlined"
-                    value={departmentName}
+                    value={userData.departmentName}
                     size="small"
                     sx={{ width: "45%" }}
-                    onChange={(e) => setDepartName(e.target.value)}
+                    onChange={(e) =>
+                      changeValue("departmentName", e.target.value)
+                    }
                   />
                 </div>
               </>

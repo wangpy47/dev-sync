@@ -10,7 +10,7 @@ import { GetCommentList } from "../../api/GetCommentList";
 import { RemoveComment } from "../../api/RemoveComment";
 import { SendComment } from "../../api/SendComment";
 import { useEvent } from "../../hooks/useEvent";
-import { openLoginForm } from "../../redux/redux";
+import { openLoginForm } from "../../redux/loginSlice";
 import { CommentGroup } from "./CommentGroup";
 import { CommentReply } from "./CommentReply";
 import { OptionBar } from "./OptionBar";

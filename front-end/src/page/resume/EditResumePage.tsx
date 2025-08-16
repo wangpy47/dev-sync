@@ -95,21 +95,24 @@ const rightPanelStyle = css`
     background: #a0a0a0;
   }
 `;
+type ResumeState = ResumeData | null;
 
 export const EditResumePage = () => {
   const userData = useSelector((state: any) => state.login.loginInfo);
   const location = useLocation();
-  const gitInfo = location.state;
+  // const gitInfo = location.state;
+  const sections = useSelector((state: any) => state.resumeInfo);
+
   const printRef = useRef<HTMLDivElement>(null);
   const [theme, setTheme] = useState<"modern" | "blueGray">("modern");
   console.log("-----userData", userData);
-  console.log("-----gitInfo", gitInfo);
+  // console.log("-----gitInfo", gitInfo);
 
   const selectedStyle = theme === "modern" ? modernStyle : blueGrayStyle;
 
-  console.log(gitInfo);
+  // console.log(gitInfo);
 
-  const [sections, setSections] = useState(gitInfo);
+  // const [sections, setSections] = useState(gitInfo);
 
   // 섹션 데이터 업데이트 함수
   // const updateSectionData = (type: string, newData: any) => {};
@@ -174,7 +177,7 @@ export const EditResumePage = () => {
         />
         <ResumeEditorPanel
           sections={sections}
-          setSections={setSections}
+          // setSections={sections}
           // updateSectionData={updateSectionData}
           // removeSection={removeSection}
           // addSection={addSection}
@@ -213,16 +216,16 @@ export const EditResumePage = () => {
           {open && (
             <SectionOrderManager
               sections={sections}
-              onReorder={(newOrder: string[]) =>
-                setSections((prev) => ({ ...prev, order: newOrder }))
-              }
+              // onReorder={(newOrder: string[]) =>
+              //   setSections((prev) => ({ ...prev, order: newOrder }))
+              // }
               // onClose={() => setOpen(false)}
             />
           )}
         </Popover>
       </div>
       <div css={rightPanelStyle}>
-        {gitInfo && (
+        {sections && (
           <ResumePreviewPanel
             sections={sections}
             ref={printRef}

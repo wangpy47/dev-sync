@@ -16,7 +16,7 @@ import {
 } from "../../../styles/resumeLayerStyle";
 interface Props {
   section: CareerTypeSection;
-  setSections: Dispatch<SetStateAction<ResumeData>>;
+  setSections?: Dispatch<SetStateAction<ResumeData>>;
   isEditing: boolean;
   onEdit: () => void;
   onSave: () => void;
