@@ -40,7 +40,7 @@ import { ProfileModel } from './resume/entities/profile.entity';
       database: process.env[ENV_DB_DATABASE_KEY], 
       entities: [User, Post, Category, Like, Comment, BaseModel,IntroductionModel, ProjectModel, SkillModel, ResumeModel, ProjectOutcomeModel, ContactModel, ProfileModel],
       autoLoadEntities: true,
-      synchronize: false, 
+      synchronize: true, 
     }),
     UserModule,
     AuthModule,
