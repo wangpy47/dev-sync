@@ -22,10 +22,10 @@ export class ResumeModel extends BaseModel {
   @ManyToOne(() => User, (user) => user.resumes, { onDelete: 'CASCADE' })
   author: User;
 
-  @OneToOne(() => IntroductionModel, (introduction) => introduction.resume)
+  @OneToOne(() => IntroductionModel, (introduction) => introduction.resume, { cascade: true, onDelete: 'CASCADE' })
   introduction: IntroductionModel;
 
-  @OneToOne(() => ProfileModel, (profile) => profile.resume)
+  @OneToOne(() => ProfileModel, (profile) => profile.resume, { cascade: true, onDelete: 'CASCADE' })
   profile: ProfileModel;
 
   @ManyToMany(() => SkillModel, (skill) => skill.strongResumes)
@@ -44,6 +44,6 @@ export class ResumeModel extends BaseModel {
   })
   fam_skills: SkillModel[];
 
-  @OneToMany(() => ProjectModel, (project) => project.resume)
+  @OneToMany(() => ProjectModel, (project) => project.resume, { cascade: true, onDelete: 'CASCADE' })
   projects: ProjectModel[];
 }
