@@ -12,7 +12,6 @@ type Props = {
 };
 export const ResumePreviewPanel = forwardRef<HTMLDivElement, Props>(
   ({ sections, styleTheme }, ref) => {
-    const userData = useSelector((state: any) => state.login.loginInfo);
     const { order, entities } = sections;
 
     return (
@@ -20,7 +19,6 @@ export const ResumePreviewPanel = forwardRef<HTMLDivElement, Props>(
         {order.map((id) => {
           const section = entities.find((entity) => entity.id === id);
           if (!section) return null;
-          console.log(sections);
           switch (section.type) {
             case "profile":
               return (
@@ -168,23 +166,32 @@ export const ResumePreviewPanel = forwardRef<HTMLDivElement, Props>(
                   `}
                 >
                   <h3 css={styleTheme.sectionTitle}>기술 스택</h3>
-                  <div css={styleTheme.chipList}>
-                    {(section.familiars || []).map(
-                      (skill: SkillInnerType, i: number) => (
-                        <span key={`familiar-${i}`} css={styleTheme.chip}>
-                          <i className={`${skill.icon} colored`}></i>{" "}
-                          {skill.name}
-                        </span>
-                      )
-                    )}
-                    {(section.strengths || []).map(
-                      (skill: SkillInnerType, i: number) => (
-                        <span key={`strength-${i}`} css={styleTheme.chip}>
-                          <i className={`${skill.icon} colored`}></i>{" "}
-                          {skill.name}
-                        </span>
-                      )
-                    )}
+                  <div css={styleTheme.firstSkillGroup}>
+                    <div css={styleTheme.skillTitle}>familiars</div>
+                    <div css={styleTheme.chipList}>
+                      {(section.familiars || []).map(
+                        (skill: SkillInnerType, i: number) => (
+                          <span key={`familiar-${i}`} css={styleTheme.chip}>
+                            <i className={`${skill.icon} colored`}></i>
+                            {skill.name}
+                          </span>
+                        )
+                      )}
+                    </div>
+                  </div>
+                  <div css={styleTheme.skillGroup}>
+                    <div css={styleTheme.skillTitle}>strengths</div>
+                    <div css={styleTheme.chipList}>
+                      {(section.strengths || []).map(
+                        (skill: SkillInnerType, i: number) => (
+                          <span key={`strength-${i}`} css={styleTheme.chip}>
+                            <i className={`${skill.icon} colored`}></i>
+                            {skill.name}
+                          </span>
+                        )
+                      )}
+                    </div>
+                    <div />
                   </div>
                 </section>
               );

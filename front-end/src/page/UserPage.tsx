@@ -8,7 +8,6 @@ import {
   InputAdornment,
   MenuItem,
   Select,
-  type SelectChangeEvent,
 } from "@mui/material";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
@@ -18,10 +17,8 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import dayjs from "dayjs";
 import { useEffect, useReducer, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { setloggedIn } from "../redux/loginSlice";
 import { fetchUserInfo } from "../api/UserApi";
-import type { ProfileTypeSection, userInfo } from "../types/resume.type";
+import type { userInfo } from "../types/resume.type";
 
 const initialState: userInfo = {
   user_id: 0,
@@ -35,7 +32,7 @@ const initialState: userInfo = {
   departmentName: "",
   educationLevel: "",
   birthDate: "s",
-  phone_number: 12345678910,
+  phone_number: 1012345678,
 };
 
 // 공통 스타일 정의
@@ -96,7 +93,7 @@ const longTextFieldStyle = css`
 // CustomTextField 컴포넌트
 interface CustomTextProps {
   label: string;
-  value: string | null;
+  value: string;
   onChange: (newValue: string) => void;
 }
 
@@ -108,6 +105,7 @@ export const CustomTextField = ({
   <TextField
     placeholder={label}
     variant="outlined"
+    error={!value}
     value={value || ""}
     onChange={(e) => onChange(e.target.value)} // 입력값 변경 처리
     size="small"
@@ -115,9 +113,18 @@ export const CustomTextField = ({
   />
 );
 
-function reducer(state: userInfo, action: { field: string; value: any }) {
-  console.log("상태", state, "액션", action);
-  return { ...state, [action.field]: action.value };
+function reducer(
+  state: userInfo,
+  action:
+    | { type: "SET_FIELD"; field: keyof userInfo; value: any }
+    | { type: "SET_ALL"; payload: Partial<userInfo> }
+) {
+  switch (action.type) {
+    case "SET_ALL":
+      return { ...state, ...action.payload };
+    case "SET_FIELD":
+      return { ...state, [action.field]: action.value };
+  }
 }
 
 // UserPage 컴포넌트
@@ -132,14 +139,11 @@ export const UserPage = () => {
     open: boolean;
   }>({ type: "", open: false });
 
-  console.log("유저 데이터", userData, typeof userData.phone_number);
-
+  console.log(userData);
   useEffect(() => {
     fetchUserInfo()
       .then((data) => {
-        Object.entries(data).forEach(([key, value]) => {
-          setUserData({ field: key, value });
-        });
+        setUserData({ type: "SET_ALL", payload: data });
       })
       .catch((err) => {
         console.log(err.message || "알 수 없는 에러");
@@ -202,6 +206,7 @@ export const UserPage = () => {
 
     if (response.ok) {
       const result = await response.json();
+      console.log(result);
       setAlertUpdate({ type: "user", open: true });
     } else {
       const error = await response.json();
@@ -216,8 +221,7 @@ export const UserPage = () => {
   }, [userData?.profile_image]);
 
   const changeValue = (section: keyof userInfo, data: any) => {
-    console.log(section, data);
-    setUserData({ field: section, value: data });
+    setUserData({ type: "SET_FIELD", field: section, value: data });
   };
 
   return (
@@ -370,10 +374,10 @@ export const UserPage = () => {
                 placeholder="01012341234"
                 variant="outlined"
                 size="small"
+                error={!userData.phone_number}
                 css={longTextFieldStyle}
                 value={userData.phone_number}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                  console.log(typeof e.target.value, e.target.value);
                   changeValue("phone_number", Number(e.target.value));
                 }}
                 slotProps={{
@@ -423,7 +427,7 @@ export const UserPage = () => {
                 <Select
                   displayEmpty
                   size="small"
-                  value={userData.educationLevel}
+                  value={userData.educationLevel || ""}
                   onChange={(e) =>
                     changeValue("educationLevel", e.target.value)
                   }

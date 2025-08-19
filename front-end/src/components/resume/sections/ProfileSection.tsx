@@ -80,16 +80,16 @@ export const ProfileSection = ({
             <ProfileFieldInput
               label="전화번호"
               type="tel"
-              value={section.phone_number || ""}
+              value={section.phoneNumber || ""}
               placeholder="전화번호를 입력하세요"
             />
             <ProfileFieldInput
-              value={section.github_url || ""}
+              value={section.githubUrl || ""}
               startAdornmentText="github.com/"
             />
             <ProfileFieldInput
               label="blog"
-              value={section.blog_url || ""}
+              value={section.blogUrl || ""}
               placeholder="블로그 주소를 입력하세요"
             />
             <ProfileFieldInput
@@ -109,9 +109,9 @@ export const ProfileSection = ({
           <div css={gridStyle}>
             <Typography>이름 : {section.name || "-"}</Typography>
             <Typography>이메일 : {section.email || "-"}</Typography>
-            <Typography>전화번호 : {section.phone_number || ""}</Typography>
-            <Typography>gitHub : {section.github_url || ""}</Typography>
-            <Typography>blog : {section.blog_url || ""}</Typography>
+            <Typography>전화번호 : {section.phoneNumber || ""}</Typography>
+            <Typography>gitHub : {section.githubUrl || ""}</Typography>
+            <Typography>blog : {section.blogUrl || ""}</Typography>
             <Typography>학력 : {section.education || ""}</Typography>
             <Typography>집 주소 : {section.address || ""}</Typography>
           </div>

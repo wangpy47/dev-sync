@@ -1,7 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import { css } from "@emotion/react";
 
-
 const containerStyle = css`
   display: flex;
   position: relative;
@@ -12,7 +11,6 @@ const containerStyle = css`
   min-height: 100vh;
   background-color: #ededed;
 `;
-
 
 const titleStyle = css`
   font-size: 3rem;
@@ -27,7 +25,6 @@ const titleStyle = css`
   text-align: center;
   z-index: 1;
 `;
-
 
 const contentWrapperStyle = css`
   position: relative;
@@ -59,4 +56,25 @@ const headerStyle = css`
   color: #ffffff;
 `;
 
-export {containerStyle , headerStyle , titleStyle , blueBackgroundStyle ,contentWrapperStyle}
+const skillsCloseBtn = css`
+  padding: 0px 0px 0px 0px;
+  margin-left: 5px;
+  color: #4d4d4d;
+  display: flex;
+  border: none;
+  align-items: right;
+  &:hover {
+    color: #e53935; // 호버 시 빨강
+    background: #f5f5f5; // 선택 사항, 버튼 배경 살짝 변경
+    border: none;
+  }
+`;
+
+export {
+  containerStyle,
+  headerStyle,
+  titleStyle,
+  blueBackgroundStyle,
+  contentWrapperStyle,
+  skillsCloseBtn,
+};

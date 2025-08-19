@@ -119,4 +119,25 @@ export const modernStyle = {
     font-size: 14px;
     color: #3e3e3e;
   `,
+
+  skillTitle: css`
+    font-size: 15px;
+    font-weight: bold;
+  `,
+
+  skillGroup: css`
+    margin-top: 12px;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 10px;
+  `,
+
+  firstSkillGroup: css`
+    margin-top: 12px;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 10px;
+  `,
 };
