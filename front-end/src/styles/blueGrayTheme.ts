@@ -121,4 +121,26 @@ export const blueGrayStyle = {
     font-size: 14px;
     color: #475569;
   `,
+
+  skillTitle: css`
+    font-size: 15px;
+    font-weight: bold;
+  `,
+
+  skillGroup: css`
+    margin-top: 12px;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 10px;
+  `,
+
+  firstSkillGroup: css`
+    margin-top: 12px;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #cbd5e1;
+    color: #37474f;
+  `,
 };

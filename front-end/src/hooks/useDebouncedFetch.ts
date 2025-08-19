@@ -34,6 +34,7 @@ export const useDebouncedFetch = <T>(
         }
 
         const result = (await response.json()) as skill[];
+        console.log(result);
         setData(result);
       } catch (error: any) {
         if (error.name !== "AbortError") {

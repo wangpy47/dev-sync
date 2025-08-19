@@ -13,8 +13,12 @@ import {
   Button,
   Autocomplete,
 } from "@mui/material";
+import ClearIcon from "@mui/icons-material/Clear";
 import { rowStyle } from "../../../styles/resumeLayerStyle";
 import { useDebouncedFetch } from "../../../hooks/useDebouncedFetch";
+import { useDispatch } from "react-redux";
+import { updateResume } from "../../../redux/resumeSlice";
+import { skillsCloseBtn } from "../../../styles/resumeCommonStyle";
 interface Props {
   section: SkillsTypeSection;
   setSections?: Dispatch<SetStateAction<ResumeData>>;
@@ -37,9 +41,11 @@ export const SkillsSection = ({
   onEdit,
   onSave,
 }: Props) => {
-  const [selectSkill, setSelectSkill] = useState<string>("familiar");
+  const [selectSkill, setSelectSkill] = useState<"familiars" | "strengths">(
+    "familiars"
+  );
   const [query, setQuery] = useState("");
-
+  const dispatch = useDispatch();
   const { data, loading } = useDebouncedFetch<string>(
     query,
     (q) =>
@@ -78,16 +84,25 @@ export const SkillsSection = ({
     line-height: 1.4;
     vertical-align: middle;
   `;
-  const handleAddSkill = () => {
+  const handleAddSkill = (i: { icon: string; id: number; name: string }[]) => {
     if (query && section) {
-      // const new = {... section, section[selectSkill]}
-      // setSection();
-      console.log(section.selectSkill);
-
-      console.log(section);
-      console.log(selectSkill);
-      console.log(query);
+      const updatedSection = {
+        ...section,
+        [selectSkill]: [...section[selectSkill], ...i], // 기존 배열 + 새 배열
+      };
+      dispatch(updateResume(updatedSection));
     }
+  };
+
+  const handleDeleteSkill = (
+    type: "familiars" | "strengths",
+    data: SkillInnerType
+  ) => {
+    const deleteSkill = {
+      ...section,
+      [type]: section[type].filter((i) => i.id !== data.id),
+    };
+    dispatch(updateResume(deleteSkill));
   };
 
   return (
@@ -107,10 +122,10 @@ export const SkillsSection = ({
               `}
               value={selectSkill}
               onChange={(e) => {
-                setSelectSkill(e.target.value as string);
+                setSelectSkill(e.target.value);
               }}
             >
-              <MenuItem value="familiar">기초</MenuItem>
+              <MenuItem value="familiars">기초</MenuItem>
               <MenuItem value="strengths">강점</MenuItem>
             </Select>
             <Autocomplete
@@ -146,7 +161,7 @@ export const SkillsSection = ({
               css={css`
                 white-space: nowrap;
               `}
-              onClick={handleAddSkill}
+              onClick={() => handleAddSkill(data)}
             >
               추가
             </Button>
@@ -160,7 +175,7 @@ export const SkillsSection = ({
           <h3>기초</h3> {/* 제목을 더 명확하게 h3 태그로 변경 */}
           <div css={chipContainer}>
             {(section.familiars || []).map((skill: SkillInnerType, id) => (
-              <span key={`familiar-${id}`} css={chip}>
+              <span key={`familiars-${id}`} css={chip}>
                 <i
                   css={css`
                     font-size: 1.1rem;
@@ -177,6 +192,18 @@ export const SkillsSection = ({
                 >
                   {skill.name}
                 </span>
+                {isEditing ? (
+                  <button
+                    css={skillsCloseBtn}
+                    onClick={() => handleDeleteSkill("familiars", skill)}
+                  >
+                    <ClearIcon
+                      css={css`
+                        font-size: 15px;
+                      `}
+                    />
+                  </button>
+                ) : null}
               </span>
             ))}
           </div>
@@ -204,6 +231,18 @@ export const SkillsSection = ({
                 >
                   {skill.name}
                 </span>
+                {isEditing ? (
+                  <button
+                    css={skillsCloseBtn}
+                    onClick={() => handleDeleteSkill("strengths", skill)}
+                  >
+                    <ClearIcon
+                      css={css`
+                        font-size: 15px;
+                      `}
+                    />
+                  </button>
+                ) : null}
               </div>
             ))}
           </div>

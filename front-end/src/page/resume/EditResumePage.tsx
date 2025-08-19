@@ -98,14 +98,11 @@ const rightPanelStyle = css`
 type ResumeState = ResumeData | null;
 
 export const EditResumePage = () => {
-  const userData = useSelector((state: any) => state.login.loginInfo);
-  const location = useLocation();
   // const gitInfo = location.state;
   const sections = useSelector((state: any) => state.resumeInfo);
 
   const printRef = useRef<HTMLDivElement>(null);
   const [theme, setTheme] = useState<"modern" | "blueGray">("modern");
-  console.log("-----userData", userData);
   // console.log("-----gitInfo", gitInfo);
 
   const selectedStyle = theme === "modern" ? modernStyle : blueGrayStyle;
