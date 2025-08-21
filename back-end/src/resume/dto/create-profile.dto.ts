@@ -4,9 +4,15 @@ import {
   IsUrl,
   IsOptional,
   IsNumber,
+  IsEnum,
 } from 'class-validator';
+import { ResumeBlockType } from '../enum/resume-type.enum';
 
 export class CreateProfileDto {
+
+  @IsEnum(ResumeBlockType)
+  type: ResumeBlockType.PROFILE;
+
   @IsString()
   name: string;
 
@@ -15,7 +21,7 @@ export class CreateProfileDto {
 
   @IsOptional()
   @IsNumber()
-  phoneNumber: number;
+  phoneNumber?: number;
 
   @IsString()
   address?: string;

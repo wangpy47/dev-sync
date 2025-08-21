@@ -10,6 +10,7 @@ import { Type } from 'class-transformer';
 import { CreateSkillDto } from './create-skill.dto';
 
 export class CreateProjectDto {
+
   @IsString()
   @IsNotEmpty()
   id: string;
