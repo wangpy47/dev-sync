@@ -235,6 +235,21 @@ export class ResumeService {
 
   //resume CRUD
 
+  async saveBlock(resumeId: string, dto: any) {
+    const { type, ...entityData } = dto;
+
+    switch (type) {
+      case 'introduction':
+        return this.upsertIntroduction(resumeId, entityData);
+      case 'profile':
+        return this.upsertProfile(resumeId, entityData);
+      case 'projects':
+        return this.syncProjectsForResume(resumeId, entityData);
+      case 'skills':
+        return this.setSkillsForResume(resumeId, entityData);
+    }
+  }
+
   getResumes(id: number): Promise<ResumeModel[]> {
     return this.resumeRepository.find({
       where: { author: { user_id: id } },
@@ -259,8 +274,8 @@ export class ResumeService {
     const [profile, introduction, skills, projects] = await Promise.all([
       this.getProfile(resume.id),
       this.getIntroduction(resume.id),
-      this.getSkillsByResumeId(id),
-      this.getProjectsByResumeId(id),
+      this.getSkillsByResumeId(resume.id),
+      this.getProjectsByResumeId(resume.id),
     ]);
 
     const entities = [];
@@ -277,7 +292,7 @@ export class ResumeService {
       entities.push(skills);
     }
     if (projects) {
-      entities.push(...projects);
+      entities.push(projects);
     }
 
     return {
@@ -420,17 +435,14 @@ export class ResumeService {
       relations: ['skills', 'outcomes'],
     });
 
-    if (!projects || projects.length === 0) {
-      throw new NotFoundException(
-        `Projects for resume ID ${resumeId} not found.`,
-      );
-    }
-
-    return projects.map((project) => ({
-      id: project.id,
-      type: 'project',
-      ...project,
-    }));
+    return {
+      id: 'projects',
+      type: 'projects',
+      items: projects.map((project) => ({
+        id: project.id,
+        ...project,
+      })),
+    };
   }
 
   async syncProjectsForResume(
@@ -439,17 +451,25 @@ export class ResumeService {
   ): Promise<ProjectModel[]> {
     await this.getResume(resumeId);
 
-    const incomingProjects = createProjectsDto.projects;
+    const incomingProjects = createProjectsDto.items;
     const incomingIds = incomingProjects.map((p) => p.id);
 
     const existingProjects = await this.projectRepository.find({
       where: { resume: { id: resumeId } },
+      relations: ['outcomes'],
     });
 
     const toDelete = existingProjects.filter(
       (project) => !incomingIds.includes(project.id),
     );
+
     if (toDelete.length > 0) {
+      for (const project of toDelete) {
+        if (project.outcomes && project.outcomes.length > 0) {
+          await this.projectOutcomeRepository.remove(project.outcomes);
+        }
+      }
+
       await this.projectRepository.remove(toDelete);
     }
 
@@ -493,7 +513,10 @@ export class ResumeService {
 
     project = await this.projectRepository.save(project);
 
-    await this.syncProjectSkills(project.id, projectData.skills.map((skill) => skill.id));
+    await this.syncProjectSkills(
+      project.id,
+      projectData.skills.map((skill) => skill.id),
+    );
     await this.syncProjectOutcomes(project.id, projectData.outcomes);
 
     return this.projectRepository.findOne({
@@ -656,26 +679,16 @@ export class ResumeService {
     resumeId: string,
     { strongSkillIds, familiarSkillIds }: CreateSkillsDto,
   ) {
-    const resume = await this.resumeRepository.findOne({
-      where: { id: resumeId },
-      relations: ['str_skills', 'fam_skills'],
-    });
-
-    if (!resume) throw new NotFoundException('이력서를 찾을 수 없습니다.');
-
-    const strongSkills =
-      strongSkillIds.length > 0
-        ? await this.skillRepository.findBy({ id: In(strongSkillIds) })
-        : [];
-
-    const familiarSkills =
-      familiarSkillIds.length > 0
-        ? await this.skillRepository.findBy({ id: In(familiarSkillIds) })
-        : [];
-
+    const resume = await this.getResume(resumeId);
+  
+    const [strongSkills, familiarSkills] = await Promise.all([
+      this.skillRepository.findBy({ id: In(strongSkillIds.map(s => s.id)) }),
+      this.skillRepository.findBy({ id: In(familiarSkillIds.map(s => s.id)) })
+    ]);
+  
     resume.str_skills = strongSkills;
     resume.fam_skills = familiarSkills;
-
+  
     return await this.resumeRepository.save(resume);
   }
 

@@ -18,7 +18,7 @@ export class ProfileModel {
   @Column()
   email: string;
 
-  @Column()
+  @Column({ nullable: true })
   phoneNumber: number;
 
   @Column({ nullable: true })

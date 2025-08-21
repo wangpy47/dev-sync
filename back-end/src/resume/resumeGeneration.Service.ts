@@ -31,7 +31,8 @@ export class ResumeGenerationService {
       `${user.name}의 자소서`,
     );
 
-    await this.resumeService.upsertProfile(resume.id, {
+    await this.resumeService.saveBlock(resume.id, {
+      type: "profile",
       name: user.name,
       email: user.email,
       phoneNumber: user.phone_number,
@@ -40,7 +41,8 @@ export class ResumeGenerationService {
       blogUrl: user.blogUrl,
     });
 
-    await this.resumeService.upsertIntroduction(resume.id, {
+    await this.resumeService.saveBlock(resume.id, {
+      type: "introduction",
       headline: resumeData.introduction.headline,
       description: resumeData.introduction.description,
     });
@@ -61,7 +63,8 @@ export class ResumeGenerationService {
     );
     const familiar = familiarRaw.filter(Boolean);
 
-    await this.resumeService.setSkillsForResume(resume.id, {
+    await this.resumeService.saveBlock(resume.id, {
+      type: "skills",
       strongSkillIds: strengths.map((s) => s.id),
       familiarSkillIds: familiar.map((s) => s.id),
     });
@@ -82,10 +85,11 @@ export class ResumeGenerationService {
       project.skills = matchedSkillIds;
     }
 
-    await this.resumeService.syncProjectsForResume(
+    await this.resumeService.saveBlock(
       resume.id,
       {
-        projects: projects,
+        type: "projects",
+        items: projects,
       },
     );
 
@@ -156,7 +160,7 @@ ${profileData}
       const response = await this.openai.chat.completions.create({
         model: 'gpt-3.5-turbo',
         messages: [{ role: 'user', content: prompt }],
-        max_tokens: 1500, // 최대 500 토큰으로 출력 제한
+        max_tokens: 1500, 
         temperature: 0.7,
       });
 

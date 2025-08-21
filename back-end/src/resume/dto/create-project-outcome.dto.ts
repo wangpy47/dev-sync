@@ -1,6 +1,7 @@
-import { IsString, IsNotEmpty } from 'class-validator';
+import { IsString, IsNotEmpty, } from 'class-validator';
 
 export class CreateOutcomeDto {
+ 
   @IsString()
   @IsNotEmpty()
   id: string;
@@ -13,7 +14,4 @@ export class CreateOutcomeDto {
   @IsNotEmpty()
   result: string;
 
-  @IsString()
-  @IsNotEmpty()
-  projectId: string;
 }

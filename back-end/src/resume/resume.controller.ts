@@ -78,7 +78,7 @@ export class ResumeController {
     return this.resumeService.getResumes(req.user.id); // 전체 조회
   }
 
-  @Get('/:id')
+  @Get(':id')
   @UseGuards(AuthenticatedGuard)
   async getResume(@Param('id') id: string) {
     const resume = await this.resumeService.getResumeDetails(id);
@@ -89,7 +89,7 @@ export class ResumeController {
     return resume;
   }
   
-  @Delete('/:id')
+  @Delete(':id')
   @UseGuards(AuthenticatedGuard)
   async deleteResume(@Param('id') id: string, @Request() req) {
     const user = req.user;
@@ -106,7 +106,7 @@ export class ResumeController {
     @Param('id') id: string,
     @Body() createIntroductionDto: CreateIntroductionDto,
   ) {
-    return await this.resumeService.upsertIntroduction(
+    return await this.resumeService.saveBlock(
       id,
       createIntroductionDto,
     );
@@ -118,7 +118,7 @@ export class ResumeController {
     @Param('id') id: string,
     @Body() profileDto: CreateProfileDto,
   ) {
-    return await this.resumeService.upsertProfile(id, profileDto);
+    return await this.resumeService.saveBlock(id, profileDto);
   }
 
   @Post(':id/projects')
@@ -127,7 +127,7 @@ export class ResumeController {
     @Param('id') id: string,
     @Body() createProjectsDto: CreateProjectsWidthOutcomesDto,
   ) {
-    return await this.resumeService.syncProjectsForResume(
+    return await this.resumeService.saveBlock(
       id,
       createProjectsDto,
     );
@@ -139,7 +139,7 @@ export class ResumeController {
     @Param('id') id: string,
     @Body() createSkillsDto: CreateSkillsDto,
   ) {
-    return await this.resumeService.setSkillsForResume(id, createSkillsDto);
+    return await this.resumeService.saveBlock(id, createSkillsDto);
   }
 
   @Get('skills/search')
