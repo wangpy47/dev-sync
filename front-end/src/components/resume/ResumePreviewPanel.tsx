@@ -5,7 +5,12 @@ import { blueGrayStyle } from "../../styles/blueGrayTheme";
 import { modernStyle } from "../../styles/modernTheme";
 import type { ResumeData } from "../../types/resume.type";
 import { css } from "@emotion/react";
-import { SkillInnerType } from "../../types/resume.type";
+import {
+  SkillInnerType,
+  ProjectTypeSection,
+  OutcomeTypeSection,
+} from "../../types/resume.type";
+
 type Props = {
   sections: ResumeData;
   styleTheme: typeof modernStyle | typeof blueGrayStyle;
@@ -64,7 +69,7 @@ export const ResumePreviewPanel = forwardRef<HTMLDivElement, Props>(
                     >
                       주소
                     </span>
-                    <span>{""}</span>
+                    <span>{section.address}</span>
                   </div>
 
                   {/* 구분선 */}
@@ -220,7 +225,15 @@ export const ResumePreviewPanel = forwardRef<HTMLDivElement, Props>(
                       `}
                     >
                       <h4 css={styleTheme.career}>
-                        {section.company} -<span>{section.position}</span>
+                        {section.company}
+                        <span
+                          css={css`
+                            padding: 0 12px;
+                            border-left: 1px solid #d1d5db; /* 구분선 */
+                          `}
+                        >
+                          {section.position}
+                        </span>
                       </h4>
                       <p css={styleTheme.careerSkills}>
                         기술: {section.technologies.join(", ")}
@@ -243,6 +256,199 @@ export const ResumePreviewPanel = forwardRef<HTMLDivElement, Props>(
                 >
                   <h3 css={styleTheme.sectionTitle}>{section.title}</h3>
                   <p css={styleTheme.sectionContent}>{section.content}</p>
+                </section>
+              );
+            case "achievement":
+              // 현재 section이 order에서 첫 번째 achievement인지 확인
+              const firstAchievementIndex = order.findIndex(
+                (id) =>
+                  entities.find((e) => e.id === id)?.type === "achievement"
+              );
+              const isFirstAchievement = order[firstAchievementIndex] === id;
+
+              return (
+                <section key={id}>
+                  {/* 첫 번째 achievement에서만 제목 표시 */}
+                  {isFirstAchievement && (
+                    <h3 css={styleTheme.sectionTitle}>자격증 · 수상</h3>
+                  )}
+
+                  <div
+                    css={css`
+                      display: flex;
+                      flex-direction: column;
+                      border-bottom: 1px solid #ddd;
+                      padding-bottom: 4px;
+                      margin-bottom: 8px;
+                    `}
+                  >
+                    <div
+                      css={css`
+                        display: flex;
+                        align-items: center;
+                      `}
+                    >
+                      {/* 제목 */}
+                      <h4
+                        css={css`
+                          font-size: 14px;
+                          font-weight: 600;
+                          color: #111827;
+                          padding-right: 12px;
+                          border-right: 1px solid #d1d5db;
+                        `}
+                      >
+                        {section.title}
+                      </h4>
+
+                      {/* 기관 */}
+                      {section.organization && (
+                        <span
+                          css={css`
+                            font-size: 14px;
+                            color: #374151;
+                            padding: 0 12px;
+                            border-right: 1px solid #d1d5db;
+                          `}
+                        >
+                          {section.organization}
+                        </span>
+                      )}
+
+                      {/* 날짜 */}
+                      <span
+                        css={css`
+                          font-size: 14px;
+                          color: #6b7280;
+                          padding: 0 12px;
+                        `}
+                      >
+                        {section.date}
+                      </span>
+
+                      {/* 설명 */}
+                      {section.description && (
+                        <span
+                          css={css`
+                            font-size: 14px;
+                            border-left: 1px solid #d1d5db;
+                            color: #374151;
+                            padding-left: 12px;
+                          `}
+                        >
+                          {section.description}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </section>
+              );
+            case "projects":
+              return (
+                <section key={id}>
+                  <h3 css={styleTheme.sectionTitle}>프로젝트</h3>
+                  {section.items.map((i: ProjectTypeSection, idx: number) => (
+                    <div
+                      key={idx}
+                      css={css`
+                        margin-bottom: 20px;
+                      `}
+                    >
+                      {/* 프로젝트명 */}
+                      <h4
+                        css={css`
+                          font-size: 16px;
+                          font-weight: 600;
+                          margin-bottom: 8px;
+                          color: #111827;
+                        `}
+                      >
+                        {i.name}
+                      </h4>
+
+                      {/* 수행기간 */}
+                      <p
+                        css={css`
+                          font-size: 14px;
+                          color: #6b7280;
+                          margin-bottom: 6px;
+                        `}
+                      >
+                        {i.startDate} ~ {i.endDate || "진행 중"}
+                      </p>
+
+                      {/* 설명 */}
+                      <p
+                        css={css`
+                          font-size: 15px;
+                          margin-bottom: 10px;
+                          line-height: 1.5;
+                          color: #374151;
+                        `}
+                      >
+                        {i.description}
+                      </p>
+
+                      {/* 기술 스택 */}
+                      {i.skills?.length > 0 && (
+                        <div
+                          css={css`
+                            display: flex;
+                            flex-wrap: wrap;
+                            gap: 6px;
+                            margin-bottom: 12px;
+                          `}
+                        >
+                          {i.skills.map((skill, sIdx) => (
+                            <span
+                              key={sIdx}
+                              css={css`
+                                font-size: 13px;
+                                padding: 4px 10px;
+                                border-radius: 9999px;
+                                // background: #e0f2fe; /* 파란색 계열 */
+                                color: #465a80;
+                                font-weight: 500;
+                              `}
+                            >
+                              {skill}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+
+                      {/* 한일 & 성과 */}
+                      {i.outcomes.map((t: OutcomeTypeSection, oIdx: number) => (
+                        <div
+                          key={oIdx}
+                          css={css`
+                            margin-top: 20px;
+                            padding-left: 10px;
+                            border-left: 3px solid #aeaeae; /* 파란색 구분선 */
+                          `}
+                        >
+                          <p
+                            css={css`
+                              font-size: 14px;
+                              margin: 0;
+                              color: #111827;
+                            `}
+                          >
+                            <strong>업무 : </strong> {t.task}
+                          </p>
+                          <p
+                            css={css`
+                              font-size: 14px;
+                              margin: 4px 0 0;
+                              color: #374151;
+                            `}
+                          >
+                            <strong>기여 : </strong> {t.result}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  ))}
                 </section>
               );
 

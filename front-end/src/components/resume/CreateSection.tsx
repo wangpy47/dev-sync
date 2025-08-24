@@ -9,6 +9,8 @@ import {
   css,
 } from "@mui/material";
 import type { ResumeData } from "../../types/resume.type";
+import { addResume } from "../../redux/resumeSlice";
+import { useDispatch } from "react-redux";
 
 const sectionTemplates = {
   career: {
@@ -16,10 +18,10 @@ const sectionTemplates = {
     type: "career",
     company: "",
     position: "",
-    start_date: "",
-    end_date: "",
+    startDate: "",
+    endDate: "",
     description: "",
-    is_current: false,
+    isCurrent: false,
     technologies: [] as string[],
   },
   achievement: {
@@ -45,7 +47,7 @@ interface GitResumeProps {
 
 export const CreateSection = ({ sections }: GitResumeProps) => {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
-
+  const dispatch = useDispatch();
   const handleOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -54,11 +56,13 @@ export const CreateSection = ({ sections }: GitResumeProps) => {
 
   const handleAddSection = (type: keyof typeof sectionTemplates) => {
     const newSection = { ...sectionTemplates[type], id: crypto.randomUUID() };
-    // setSections((prev) => ({
-    //   ...prev,
-    //   order: [...prev.order, newSection.id],
-    //   entities: [...prev.entities, newSection],
-    // }));
+    dispatch(
+      addResume((prev) => ({
+        ...prev,
+        order: [...prev.order, newSection.id],
+        entities: [...prev.entities, newSection],
+      }))
+    );
     handleClose();
   };
 

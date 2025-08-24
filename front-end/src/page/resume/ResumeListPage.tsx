@@ -11,19 +11,31 @@ import {
 } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import { useEffect, useState } from "react";
+
 type ResumeSummary = {
   id: string;
-  name: string;
-  email: string;
-  phoneNumber: string;
-  headline: string;
-  skills: string[];
+  fam_skills: [];
+  str_skills: [];
+  title: string;
+  createAt: string;
+  updateAt: string;
+  order: any[];
+  entities: any[];
+  profile: ProfileType;
 };
 
-type List = { id: string; title: string; order: any[]; entities: any[] };
+type ProfileType = {
+  id: number;
+  email: string;
+  name: string;
+  phoneNumber: number;
+  githubUrl: string;
+  blogUrl: string;
+  birthDate: string;
+};
 
 export const ResumeListPage = () => {
-  const [resumes, setResumes] = useState([]);
+  const [resumes, setResumes] = useState<ResumeSummary[]>([]);
 
   useEffect(() => {
     console.log("aaaa");
@@ -37,9 +49,7 @@ export const ResumeListPage = () => {
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
-        console.log(response);
         const data = await response.json();
-        console.log(data);
         setResumes(data);
       } catch (error) {
         console.error("이력서 리스트 가져오기 실패:", error);
@@ -48,48 +58,6 @@ export const ResumeListPage = () => {
 
     fetchResumes();
   }, []);
-  const resumeList: ResumeSummary[] = [
-    {
-      id: "resume-001",
-      name: "홍길동",
-      email: "hong@example.com",
-      phoneNumber: "010-1234-5678",
-      headline: "프론트엔드 개발자 · React 전문가",
-      skills: ["React", "TypeScript", "Emotion", "Vite"],
-    },
-    {
-      id: "resume-002",
-      name: "이영희",
-      email: "lee@example.com",
-      phoneNumber: "010-9876-5432",
-      headline: "풀스택 개발자 · Next.js & Node.js",
-      skills: ["Next.js", "Node.js", "Prisma", "PostgreSQL"],
-    },
-    {
-      id: "resume-003",
-      name: "이영희",
-      email: "lee@example.com",
-      phoneNumber: "010-9876-5432",
-      headline: "풀스택 개발자 · Next.js & Node.js",
-      skills: ["Next.js", "Node.js", "Prisma", "PostgreSQL"],
-    },
-    {
-      id: "resume-004",
-      name: "이영희",
-      email: "lee@example.com",
-      phoneNumber: "010-9876-5432",
-      headline: "풀스택 개발자 · Next.js & Node.js",
-      skills: ["Next.js", "Node.js", "Prisma", "PostgreSQL"],
-    },
-    {
-      id: "resume-005",
-      name: "이영희",
-      email: "lee@example.com",
-      phoneNumber: "010-9876-5432",
-      headline: "풀스택 개발자 · Next.js & Node.js",
-      skills: ["Next.js", "Node.js", "Prisma", "PostgreSQL"],
-    },
-  ];
 
   return (
     <Box
@@ -103,8 +71,8 @@ export const ResumeListPage = () => {
         기존 이력서 목록
       </Typography>
       <Divider sx={{ mb: 3 }} />
-      <Grid container spacing={3}>
-        {resumeList.map((resume) => (
+      <Grid container spacing={4}>
+        {resumes.map((resume) => (
           <Grid size={{ xs: 12, sm: 6, md: 4 }} key={resume.id}>
             <Card
               variant="outlined"
@@ -122,8 +90,25 @@ export const ResumeListPage = () => {
               `}
             >
               <CardContent>
-                <Typography variant="h6" fontWeight={600}>
-                  {resume.name}
+                <div
+                  css={css`
+                    display: flex;
+                    justify-content: space-between;
+                  `}
+                >
+                  <Typography variant="h6" fontWeight={600}>
+                    {resume.title}
+                  </Typography>
+                </div>
+
+                <Typography
+                  variant="body2"
+                  css={css`
+                    margin-bottom: 1rem;
+                    color: #767676;
+                  `}
+                >
+                  {resume.updateAt.split("T")[0]} 수정
                 </Typography>
                 <Typography
                   variant="body2"
@@ -132,7 +117,7 @@ export const ResumeListPage = () => {
                     margin-bottom: 0.3rem;
                   `}
                 >
-                  {resume.email}
+                  {resume.profile.email}
                 </Typography>
                 <Typography
                   variant="body2"
@@ -141,16 +126,7 @@ export const ResumeListPage = () => {
                     margin-bottom: 0.5rem;
                   `}
                 >
-                  {resume.phoneNumber}
-                </Typography>
-                <Typography
-                  variant="body2"
-                  fontWeight="500"
-                  css={css`
-                    margin-bottom: 0.8rem;
-                  `}
-                >
-                  {resume.headline}
+                  {resume.profile.phoneNumber}
                 </Typography>
                 <Stack
                   direction="row"
@@ -158,25 +134,21 @@ export const ResumeListPage = () => {
                   sx={{ gap: 1 }}
                   flexWrap="wrap"
                 >
-                  {resume.skills.map((skill) => (
-                    <Chip
-                      key={skill}
-                      label={skill}
-                      size="small"
-                      variant="outlined"
-                    />
-                  ))}
+                  {[...resume.fam_skills, ...resume.str_skills].map(
+                    (
+                      skill: { id: string; icon: string; name: string },
+                      idx
+                    ) => (
+                      <Chip
+                        key={idx}
+                        label={skill.name}
+                        size="small"
+                        variant="outlined"
+                      />
+                    )
+                  )}
                 </Stack>
               </CardContent>
-              <Box
-                css={css`
-                  padding: 0 1rem 1rem;
-                `}
-              >
-                <Button variant="contained" size="small" fullWidth>
-                  선택하기
-                </Button>
-              </Box>
             </Card>
           </Grid>
         ))}

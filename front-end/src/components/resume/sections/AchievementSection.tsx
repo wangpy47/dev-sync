@@ -10,6 +10,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
+import { useLocalSection } from "../../../hooks/useLocalSection";
 interface Props {
   section: AchievementTypeSection;
   setSections?: Dispatch<SetStateAction<ResumeData>>;
@@ -33,26 +34,32 @@ export const AchievementSection = ({
   onEdit,
   onSave,
 }: Props) => {
+  const { handleChange, SaveSection, localSection } = useLocalSection(
+    section,
+    onSave
+  );
   return (
     <SectionWrapper
       title="자격증 및 수상내역"
       isEditing={isEditing}
       onEdit={onEdit}
-      onSave={onSave}
+      onSave={SaveSection}
     >
       {isEditing ? (
         <>
           <div css={gridStyle}>
             <TextField
               label="항목명"
-              value={section.title}
+              value={localSection.title}
+              onChange={(e) => handleChange("title", e.target.value)}
               fullWidth
               size="small"
               margin="dense"
             />
             <TextField
               label="발행기관"
-              value={section.organization}
+              value={localSection.organization}
+              onChange={(e) => handleChange("organization", e.target.value)}
               fullWidth
               size="small"
               margin="dense"
@@ -60,7 +67,13 @@ export const AchievementSection = ({
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DatePicker
                 label="취득일"
-                value={dayjs(section.date)}
+                value={localSection.date ? dayjs(localSection.date) : null}
+                onChange={(newValue) => {
+                  if (newValue) {
+                    const formattedDate = newValue.format("YYYY-MM-DD");
+                    handleChange("date", formattedDate);
+                  }
+                }}
                 slotProps={{
                   textField: {
                     fullWidth: true,
@@ -74,7 +87,8 @@ export const AchievementSection = ({
           <TextField
             label="설명"
             rows="4"
-            // value={section.description}
+            value={localSection.description}
+            onChange={(e) => handleChange("description", e.target.value)}
             css={textareaStyle}
             multiline
           />

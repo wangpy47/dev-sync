@@ -10,7 +10,6 @@ const resumeSlice = createSlice({
   reducers: {
     //전체 저장
     setResume(state: ResumeState, action: PayloadAction<ResumeData>) {
-      console.log(action);
       return action.payload;
     },
     updateResume<T extends ResumeSection>(
@@ -22,8 +21,12 @@ const resumeSlice = createSlice({
         section.id === action.payload.id ? action.payload : section
       );
     },
+    addResume(state, action: PayloadAction<(prev: ResumeData) => ResumeData>) {
+      if (!state) return state; // 아직 null이면 업데이트 못함
+      return action.payload(state);
+    },
   },
 });
 
-export const { updateResume, setResume } = resumeSlice.actions;
+export const { updateResume, setResume, addResume } = resumeSlice.actions;
 export default resumeSlice.reducer;

@@ -12,8 +12,8 @@ import {
   textFieldStyle,
   skillListStyle,
   dateStyle,
-  sectionBar,
 } from "../../../styles/resumeLayerStyle";
+import { useLocalSection } from "../../../hooks/useLocalSection";
 interface Props {
   section: CareerTypeSection;
   setSections?: Dispatch<SetStateAction<ResumeData>>;
@@ -29,12 +29,17 @@ export const CareerSection = ({
   onEdit,
   onSave,
 }: Props) => {
+  const { handleChange, SaveSection, localSection } = useLocalSection(
+    section,
+    onSave
+  );
+
   return (
     <SectionWrapper
       title="경력"
       isEditing={isEditing}
       onEdit={onEdit}
-      onSave={onSave}
+      onSave={SaveSection}
     >
       {isEditing ? (
         <div
@@ -43,7 +48,7 @@ export const CareerSection = ({
             display: flex;
           `}
         >
-          <Switch checked={section.is_current} />
+          <Switch checked={localSection.isCurrent} />
           <Typography>재직중</Typography>
         </div>
       ) : null}
@@ -55,26 +60,44 @@ export const CareerSection = ({
             <TextField
               multiline
               css={textFieldStyle}
-              value={section.company || ""}
+              value={localSection.company || ""}
+              onChange={(e) => handleChange("company", e.target.value)}
               placeholder="회사명을 입력하세요"
               label="회사 명"
             />
             <TextField
               multiline
               css={textFieldStyle}
-              value={section.position || ""}
+              value={localSection.position || ""}
+              onChange={(e) => handleChange("position", e.target.value)}
               label="직무"
             />
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DatePicker
                 label="입사년월"
                 css={textFieldStyle}
-                value={dayjs(section.start_date) || ""}
+                value={
+                  localSection.startDate ? dayjs(localSection.startDate) : null
+                }
+                onChange={(newValue) => {
+                  if (newValue) {
+                    const formattedDate = newValue.format("YYYY-MM-DD");
+                    handleChange("startDate", formattedDate);
+                  }
+                }}
               />
               <DatePicker
                 label="퇴사년월"
                 css={textFieldStyle}
-                value={dayjs(section.end_date) || ""}
+                value={
+                  localSection.endDate ? dayjs(localSection.endDate) : null
+                }
+                onChange={(newValue) => {
+                  if (newValue) {
+                    const formattedDate = newValue.format("YYYY-MM-DD");
+                    handleChange("endDate", formattedDate);
+                  }
+                }}
               />
             </LocalizationProvider>
           </div>
@@ -90,7 +113,8 @@ export const CareerSection = ({
                 width: 100%;
                 box-sizing: border-box;
               `}
-              value={section.description || ""}
+              value={localSection.description || ""}
+              onChange={(e) => handleChange("description", e.target.value)}
             />
           </div>
           <div
@@ -121,7 +145,7 @@ export const CareerSection = ({
           </div>
 
           <div css={skillListStyle}>
-            {(section.technologies || []).map((skill, id) => (
+            {(localSection.technologies || []).map((skill, id) => (
               <Chip
                 key={`k-${id}`}
                 label={`${skill}`}
@@ -147,7 +171,7 @@ export const CareerSection = ({
             >
               {section.company || ""}
             </Typography>
-            <Typography css={dateStyle}>{section.start_date}</Typography>
+            <Typography css={dateStyle}>{section.startDate}</Typography>
           </div>
           <Typography
             css={css`
