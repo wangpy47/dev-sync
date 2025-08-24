@@ -16,19 +16,17 @@ import { UpdateContactDto } from './dto/update-contact.dto';
 export class ContactController {
   constructor(private readonly contactService: ContactService) {}
 
-  @Post('contact-submit')
+  @Post()
   async submitInquiry(@Body() contact: CreateContactDto): Promise<string> {
     return this.contactService.sendInquiryEmail(contact);
   }
 
-  @Get('list')
-  async getContactList() {
+  @Get()
+  async getContacts(@Query('email') email?: string) {
+    if (email) {
+      return this.contactService.getContactListByEmail(email);
+    }
     return this.contactService.getContactList();
-  }
-
-  @Get('list/by-email')
-  async getContactListByEmail(@Query('email') email: string) {
-    return this.contactService.getContactListByEmail(email);
   }
 
   @Get(':id')

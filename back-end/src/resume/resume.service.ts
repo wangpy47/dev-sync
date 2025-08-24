@@ -16,6 +16,7 @@ import { CreateOutcomeDto } from './dto/create-project-outcome.dto';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { CreateProjectsWidthOutcomesDto } from './dto/create-projects-width-outcomes.dto';
 import { CreateSkillsDto } from './dto/create-skills.dto';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class ResumeService {
@@ -35,12 +36,13 @@ export class ResumeService {
     private readonly projectOutcomeRepository: Repository<ProjectOutcomeModel>,
     @InjectRepository(ProfileModel)
     private readonly profileRepository: Repository<ProfileModel>,
+    private readonly configService: ConfigService,
   ) {}
 
   // GITHUB 인증 헤더 생성 함수
   private getAuthHeaders() {
     return {
-      Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
+      Authorization: `Bearer ${this.configService.get<string>('GITHUB_TOKEN')}`,
       Accept: 'application/vnd.github.v3+json',
     };
   }
@@ -95,7 +97,7 @@ export class ResumeService {
         `https://api.github.com/users/${username}/repos`,
         {
           headers: {
-            Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
+            Authorization: `Bearer ${this.configService.get<string>('GITHUB_TOKEN')}`,
             Accept: 'application/vnd.github.v3+json',
           },
         },
@@ -117,7 +119,7 @@ export class ResumeService {
         `https://api.github.com/repos/${username}/${repoName}/contents/README.md`,
         {
           headers: {
-            Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
+            Authorization: `Bearer ${this.configService.get<string>('GITHUB_TOKEN')}`,
             Accept: 'application/vnd.github.v3+json',
           },
         },

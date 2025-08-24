@@ -6,7 +6,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { Not, Repository } from 'typeorm';
-import { User } from 'src/user/user.entity';
+import { User } from 'src/user/entity/user.entity';
 import { GetPostsByCategoryDto } from './dto/category/get-posts-by-category.dto';
 import { Post } from './entities/post.entity';
 import { Category } from './entities/category.entity';

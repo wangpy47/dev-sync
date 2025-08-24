@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import OpenAI from 'openai';
 import { ResumeService } from './resume.service';
 import { UserService } from 'src/user/user.service';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class ResumeGenerationService {
@@ -10,9 +11,10 @@ export class ResumeGenerationService {
   constructor(
     private readonly resumeService: ResumeService,
     private readonly userService: UserService,
+    private readonly configService: ConfigService,
   ) {
     this.openai = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY,
+      apiKey: this.configService.get<string>('OPENAI_API_KEY'),
     });
   }
 

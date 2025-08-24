@@ -10,12 +10,14 @@ import { ContactModel } from './entity/contact.entity';
 import { Repository } from 'typeorm';
 import { CreateContactDto } from './dto/create-contact.dto';
 import { UpdateContactDto } from './dto/update-contact.dto';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class ContactService {
   constructor(
     @InjectRepository(ContactModel)
     private readonly contactRepository: Repository<ContactModel>,
+    private readonly configService: ConfigService,
   ) {}
 
   async sendInquiryEmail(dto: CreateContactDto): Promise<string> {
@@ -30,15 +32,15 @@ export class ContactService {
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
-        user: process.env.ADMIN_EMAIL_MK,
-        pass: process.env.ADMIN_APP_PASS_MK,
+        user: this.configService.get<string>('ADMIN_EMAIL_MK'),
+        pass: this.configService.get<string>('ADMIN_APP_PASS_MK'),
       },
     });
 
     // 이메일 옵션
     const mailOptions = {
-      from: `"Contact Manager System" <${process.env.ADMIN_EMAIL_MK}>`,
-      to: process.env.ADMIN_EMAIL_MK,
+      from: `"Contact Manager System" <${this.configService.get<string>('ADMIN_EMAIL_MK')}>`,
+      to: this.configService.get<string>('ADMIN_EMAIL_MK'),
       subject: `New Inquiry from ${dto.name}: ${dto.title}`,
       text: `
         Name: ${dto.name}
@@ -62,7 +64,7 @@ export class ContactService {
   async createContact(dto: CreateContactDto) {
     const hashPwd = await bcrypt.hash(
       dto.password,
-      parseInt(process.env.HASH_ROUNDS),
+      parseInt(this.configService.get<string>('HASH_ROUNDS')),
     );
 
     const contact = this.contactRepository.create({

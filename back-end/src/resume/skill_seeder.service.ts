@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { SkillModel } from './entities/skill.entity';
 import { Repository } from 'typeorm';
 import axios from 'axios';
+import { ConfigService } from '@nestjs/config';
 
 interface DeviconItem {
   name: string;
@@ -23,15 +24,19 @@ interface SkillData {
 
 @Injectable()
 export class SkillSeederService implements OnModuleInit {
-  private readonly logger = new Logger(SkillSeederService.name);
-  private readonly DEVCON_API_URL = process.env.DEVCON_API_URL || 
-    'https://raw.githubusercontent.com/devicons/devicon/master/devicon.json';
-  private readonly BATCH_SIZE = 50;
-
+  
   constructor(
     @InjectRepository(SkillModel)
     private readonly skillRepository: Repository<SkillModel>,
+    private readonly configService: ConfigService,
   ) {}
+  
+  private readonly logger = new Logger(SkillSeederService.name);
+  private readonly DEVCON_API_URL = this.configService.get<string>('DEVCON_API_URL') || 
+    'https://raw.githubusercontent.com/devicons/devicon/master/devicon.json';
+  private readonly BATCH_SIZE = 50;
+
+  
 
   async onModuleInit() {
     this.logger.log('Initializing Skill Table with Devicon data...');
