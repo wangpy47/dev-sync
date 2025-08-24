@@ -1,5 +1,5 @@
 import { ClassSerializerInterceptor, Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -9,7 +9,7 @@ import { ResumeModule } from './resume/resume.module';
 import { ContactModule } from './contact/contact.module';
 import { PostsModule } from './posts/posts.module';
 import { UploadModule } from './upload/upload.module';
-import { User } from './user/user.entity';
+import { User } from './user/entity/user.entity';
 import { Post } from './posts/entities/post.entity';
 import { Category } from './posts/entities/category.entity';
 import { Like } from './posts/entities/like.entity';
@@ -23,24 +23,51 @@ import { ResumeModel } from './resume/entities/resume.entity';
 import { ProjectOutcomeModel } from './resume/entities/project-outcome.entity';
 import { ContactModel } from './contact/entity/contact.entity';
 import { APP_INTERCEPTOR } from '@nestjs/core';
-import { ENV_DB_DATABASE_KEY, ENV_DB_HOST_KEY, ENV_DB_PASSWORD_KEY, ENV_DB_PORT_KEY, ENV_DB_SYNC_KEY, ENV_DB_USERNAME_KEY } from './common/const/env-keys.const';
+import * as Joi from 'joi';
 import { ProfileModel } from './resume/entities/profile.entity';
-
-
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true }),
-    TypeOrmModule.forRoot({
-      type: 'mysql',
-      host: process.env[ENV_DB_HOST_KEY], 
-      port: parseInt(process.env[ENV_DB_PORT_KEY], 10) || 3306,
-      username: process.env[ENV_DB_USERNAME_KEY], 
-      password: process.env[ENV_DB_PASSWORD_KEY], 
-      database: process.env[ENV_DB_DATABASE_KEY], 
-      entities: [User, Post, Category, Like, Comment, BaseModel,IntroductionModel, ProjectModel, SkillModel, ResumeModel, ProjectOutcomeModel, ContactModel, ProfileModel],
-      autoLoadEntities: true,
-      synchronize: true, 
+    ConfigModule.forRoot({
+      isGlobal: true,
+      validationSchema: Joi.object({
+        ENV: Joi.string().valid('dev', 'prod').required(),
+        DB_TYPE: Joi.string().valid('mysql').required(),
+        DB_HOST: Joi.string().required(),
+        DB_PORT: Joi.number().required(),
+        DB_PASSWORD: Joi.string().required(),
+        DB_DATABASE: Joi.string().required(),
+        DB_SYNC: Joi.boolean().required(),
+      }),
+    }),
+    TypeOrmModule.forRootAsync({
+      useFactory: (configService: ConfigService) => ({
+        type: configService.get<string>('DB_TYPE') as 'mysql',
+        host: configService.get<string>('DB_HOST'),
+        port: configService.get<number>('DB_PORT'),
+        username: configService.get<string>('DB_USERNAME'),
+        password: configService.get<string>('DB_PASSWORD'),
+        database: configService.get<string>('DB_DATABASE'),
+
+        entities: [
+          User,
+          Post,
+          Category,
+          Like,
+          Comment,
+          BaseModel,
+          IntroductionModel,
+          ProjectModel,
+          SkillModel,
+          ResumeModel,
+          ProjectOutcomeModel,
+          ContactModel,
+          ProfileModel,
+        ],
+        autoLoadEntities: true,
+        synchronize: true,
+      }),
+      inject: [ConfigService],
     }),
     UserModule,
     AuthModule,
@@ -51,9 +78,12 @@ import { ProfileModel } from './resume/entities/profile.entity';
     CommonModule,
   ],
   controllers: [AppController],
-  providers: [AppService,{
+  providers: [
+    AppService,
+    {
       provide: APP_INTERCEPTOR,
       useClass: ClassSerializerInterceptor,
-    },],
+    },
+  ],
 })
 export class AppModule {}

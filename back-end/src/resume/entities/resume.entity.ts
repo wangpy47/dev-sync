@@ -1,5 +1,5 @@
 import { BaseModel } from 'src/common/entity/base.entity';
-import { User } from 'src/user/user.entity';
+import { User } from 'src/user/entity/user.entity';
 import {
   Column,
   Entity,

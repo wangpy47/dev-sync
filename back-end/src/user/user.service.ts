@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from './user.entity';
+import { User } from './entity/user.entity';
 import { Repository } from 'typeorm';
 import { UpdateUserDto } from './dto/update-user.dto';
 import * as fs from 'fs';
@@ -93,7 +93,7 @@ export class UserService {
   }
 
   // 사용자 삭제
-  deleteUser(email: any) {
-    return this.userRepository.delete({ email });
+  async deleteUser(email: any) {
+    return await this.userRepository.delete({ email });
   }
 }

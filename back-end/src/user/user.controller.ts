@@ -17,7 +17,7 @@ export class UserController {
   constructor(private userService: UserService) {}
 
 
-  @Get('/getUser')
+  @Get()
   async getUser(@Request() req) {
     if (req.isAuthenticated()) {
       const user = await this.userService.getUser(req.user.email);
@@ -27,7 +27,7 @@ export class UserController {
     }
   }
 
-  @Post('/updateProfile')
+  @Post('profile')
   @UseInterceptors(FileInterceptor('file', { storage: memoryStorage() }))
   async updateProfile(@Request() req, @UploadedFile() file: Express.Multer.File) {
     const email = req.user?.email; 
@@ -43,7 +43,7 @@ export class UserController {
   }
 
 
-  @Post('/update')
+  @Post()
   updateUser(@Request() req, @Body() user: UpdateUserDto) {
     if (req.isAuthenticated() && req.user.email === user.email) {
       return this.userService.updateUser(user);

@@ -169,7 +169,7 @@ export const UserPage = () => {
     formData.append("file", selectedFile); // 선택된 파일 추가
 
     try {
-      const response = await fetch("http://localhost:3000/user/updateProfile", {
+      const response = await fetch("http://localhost:3000/user/profile", {
         method: "POST",
         body: formData,
         credentials: "include", // 세션 쿠키 포함
@@ -193,7 +193,7 @@ export const UserPage = () => {
   const handleSave = async () => {
     const { user_id, profile_image, createdDt, ...rest } = userData;
     console.log(rest);
-    const response = await fetch("http://localhost:3000/user/update", {
+    const response = await fetch("http://localhost:3000/user", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
