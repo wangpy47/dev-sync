@@ -93,6 +93,7 @@ export const SkillsSection = ({
       dispatch(updateResume(updatedSection));
     }
   };
+  console.log(section);
 
   const handleDeleteSkill = (
     type: "familiars" | "strengths",

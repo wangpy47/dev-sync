@@ -83,7 +83,7 @@ export type ProjectTypeSection = {
   type: "project";
   name: string;
   description: string;
-  start_date: string;
+  startDate: string;
   endDate: string;
   skills: string[];
   outcomes: OutcomeTypeSection[];

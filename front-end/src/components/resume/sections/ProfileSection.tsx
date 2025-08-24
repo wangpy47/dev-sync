@@ -6,6 +6,8 @@ import type {
 import { SectionWrapper } from "./SectionWrapper";
 import { gridStyle, textFieldStyle } from "../../../styles/resumeLayerStyle";
 import { TextField, InputAdornment, Typography } from "@mui/material";
+import { useLocalSection } from "../../../hooks/useLocalSection";
+
 interface Props {
   section: ProfileTypeSection;
   setSections?: Dispatch<SetStateAction<ResumeData>>;
@@ -20,7 +22,39 @@ interface TextFieldProps {
   type?: string;
   placeholder?: string;
   startAdornmentText?: string;
+  onChange?: (value: string) => void;
 }
+const ProfileFieldInput = ({
+  label,
+  value,
+  type,
+  placeholder,
+  onChange,
+  startAdornmentText,
+}: TextFieldProps) => {
+  return (
+    <TextField
+      css={textFieldStyle}
+      label={label}
+      type={type}
+      variant="outlined"
+      value={value}
+      placeholder={placeholder}
+      onChange={(e) => onChange?.(e.target.value)}
+      slotProps={
+        startAdornmentText
+          ? {
+              input: {
+                startAdornment: (
+                  <InputAdornment position="start">github.com/</InputAdornment>
+                ),
+              },
+            }
+          : undefined
+      }
+    />
+  );
+};
 
 export const ProfileSection = ({
   section,
@@ -29,79 +63,76 @@ export const ProfileSection = ({
   onEdit,
   onSave,
 }: Props) => {
-  const ProfileFieldInput = ({
-    label,
-    value,
-    type,
-    placeholder,
-    startAdornmentText,
-  }: TextFieldProps) => {
-    return (
-      <TextField
-        css={textFieldStyle}
-        label={label}
-        type={type}
-        variant="outlined"
-        value={value}
-        placeholder={placeholder}
-        slotProps={
-          startAdornmentText
-            ? {
-                input: {
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      github.com/
-                    </InputAdornment>
-                  ),
-                },
-              }
-            : undefined
-        }
-      />
-    );
-  };
+  const { handleChange, SaveSection, localSection } = useLocalSection(
+    section,
+    onSave
+  );
 
   return (
     <SectionWrapper
       title="기본 정보"
       isEditing={isEditing}
       onEdit={onEdit}
-      onSave={onSave}
+      onSave={SaveSection}
     >
       {isEditing ? (
         <>
           <div css={gridStyle}>
-            <ProfileFieldInput label="이름" value={section.name || ""} />
+            <ProfileFieldInput
+              label="이름"
+              value={localSection.name || ""}
+              onChange={(v) => {
+                handleChange("name", v);
+              }}
+            />
             <ProfileFieldInput
               label="이메일"
               type="email"
-              value={section.email || ""}
+              value={localSection.email || ""}
+              onChange={(v) => {
+                handleChange("email", v);
+              }}
             />
             <ProfileFieldInput
               label="전화번호"
               type="tel"
-              value={section.phoneNumber || ""}
+              value={localSection.phoneNumber || ""}
+              onChange={(v) => {
+                handleChange("phoneNumber", v);
+              }}
               placeholder="전화번호를 입력하세요"
             />
             <ProfileFieldInput
-              value={section.githubUrl || ""}
+              value={localSection.githubUrl || ""}
+              onChange={(v) => {
+                handleChange("githubUrl", v);
+              }}
               startAdornmentText="github.com/"
             />
             <ProfileFieldInput
               label="blog"
-              value={section.blogUrl || ""}
+              value={localSection.blogUrl || ""}
+              onChange={(v) => {
+                handleChange("blogUrl", v);
+              }}
               placeholder="블로그 주소를 입력하세요"
             />
             <ProfileFieldInput
               label="학력"
-              value={section.education || ""}
+              value={localSection.education || ""}
+              onChange={(v) => {
+                handleChange("education", v);
+              }}
               placeholder="학력을 입력하세요"
             />
           </div>
           <ProfileFieldInput
             label="주소"
             type="address"
-            value={section.address || ""}
+            value={localSection.address || ""}
+            onChange={(v) => {
+              handleChange("address", v);
+            }}
           />
         </>
       ) : (

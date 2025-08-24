@@ -95,45 +95,16 @@ const rightPanelStyle = css`
     background: #a0a0a0;
   }
 `;
-type ResumeState = ResumeData | null;
 
 export const EditResumePage = () => {
   // const gitInfo = location.state;
   const sections = useSelector((state: any) => state.resumeInfo);
+  console.log(sections);
 
   const printRef = useRef<HTMLDivElement>(null);
   const [theme, setTheme] = useState<"modern" | "blueGray">("modern");
-  // console.log("-----gitInfo", gitInfo);
 
   const selectedStyle = theme === "modern" ? modernStyle : blueGrayStyle;
-
-  // console.log(gitInfo);
-
-  // const [sections, setSections] = useState(gitInfo);
-
-  // 섹션 데이터 업데이트 함수
-  // const updateSectionData = (type: string, newData: any) => {};
-
-  // 섹션 삭제 함수 (위/아래 이동)
-  // const removeSection = (index, direction) => {};
-
-  // 섹션 추가 함수 예시 (custom 타입)
-  // const addSection = () => {
-  //   setSections((prev) => {
-  //     const id = nanoid(10); // 예: "f13da"
-  //     return {
-  //       order: [...prev.order, id],
-  //       entities: {
-  //         ...prev.entities,
-  //         [id]: {
-  //           type: "custom",
-  //           title: "새 섹션",
-  //           content: "내용을 입력하세요.",
-  //         },
-  //       },
-  //     };
-  //   });
-  // };
 
   const handleDownloadPdf = () => {
     if (!printRef.current) return;

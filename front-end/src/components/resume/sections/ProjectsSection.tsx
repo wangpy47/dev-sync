@@ -30,9 +30,10 @@ export const ProjectsSection = ({
   onEdit,
   onSave,
 }: Props) => {
+  console.log(section)
   return (
     <SectionWrapper
-      title="자기소개"
+      title="프로젝트"
       isEditing={isEditing}
       onEdit={onEdit}
       onSave={onSave}
@@ -92,14 +93,14 @@ export const ProjectsSection = ({
                 >
                   <TextField
                     label="시작일"
-                    value={project.start_date}
+                    value={project.startDate}
                     fullWidth
                     size="small"
                     margin="dense"
                   />
                   <TextField
                     label="종료일"
-                    value={project.end_date}
+                    value={project.endDate}
                     fullWidth
                     size="small"
                     margin="dense"
@@ -177,7 +178,7 @@ export const ProjectsSection = ({
               </Typography>
               <Typography>설명: {project.description}</Typography>
               <Typography>
-                기간: {project.start_date} ~ {project.end_date}
+                기간: {project.startDate} ~ {project.endDate}
               </Typography>
               <Typography>사용 기술: {project.skills.join(", ")}</Typography>
 

@@ -44,9 +44,7 @@ export const ResumeIntroPage = () => {
     }
   };
 
-  useEffect(() => {
-    console.log(repoData.length, isLoading);
-  }, []);
+
 
   return (
     <>
