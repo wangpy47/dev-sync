@@ -25,7 +25,7 @@ export class ProjectModel {
   @Column()
   startDate: Date;
 
-  @Column()
+  @Column({ nullable: true })
   endDate: Date;
 
   @ManyToOne(() => ResumeModel, (resume) => resume.projects)

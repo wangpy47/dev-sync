@@ -21,4 +21,5 @@ export class SkillModel {
 
   @ManyToMany(() => ProjectModel, (project) => project.skills)
   projects: ProjectModel[];
+  
 }

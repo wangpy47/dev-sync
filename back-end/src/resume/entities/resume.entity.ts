@@ -13,6 +13,9 @@ import { IntroductionModel } from './introduction.entity';
 import { SkillModel } from './skill.entity';
 import { ProjectModel } from './project.entity';
 import { ProfileModel } from './profile.entity';
+import { CareerModel } from './career.entity';
+import { AchievementModel } from './achievement.entity';
+import { CustomModel } from './custom.entity';
 
 @Entity()
 export class ResumeModel extends BaseModel {
@@ -46,4 +49,25 @@ export class ResumeModel extends BaseModel {
 
   @OneToMany(() => ProjectModel, (project) => project.resume, { cascade: true, onDelete: 'CASCADE' })
   projects: ProjectModel[];
+
+  @OneToMany(() => CareerModel, (career) => career.resume, { 
+    cascade: true, 
+    onDelete: 'CASCADE',
+    nullable: true 
+  })
+  careers: CareerModel[];
+
+  @OneToMany(() => AchievementModel, (achievement) => achievement.resume, { 
+    cascade: true, 
+    onDelete: 'CASCADE',
+    nullable: true 
+  })
+  achievements: AchievementModel[];
+
+  @OneToMany(() => CustomModel, (custom) => custom.resume, { 
+    cascade: true, 
+    onDelete: 'CASCADE',
+    nullable: true 
+  })
+  customs: CustomModel[];
 }

@@ -20,6 +20,9 @@ import { CreateIntroductionDto } from './dto/create-introduction.dto';
 import { CreateProfileDto } from './dto/create-profile.dto';
 import { CreateProjectsWidthOutcomesDto } from './dto/create-projects-width-outcomes.dto';
 import { CreateSkillsDto } from './dto/create-skills.dto';
+import { CreateAchievementsDto } from './dto/create-achievements.dto';
+import { CreateCustomDto } from './dto/create-custom.dto';
+import { CreateCareersDto } from './dto/create-careers.dto';
 
 @Controller('resumes')
 export class ResumeController {
@@ -146,5 +149,32 @@ export class ResumeController {
   @UseGuards(AuthenticatedGuard)
   async searchSkills(@Query('query') query: string) {
     return this.resumeService.searchSkills(query);
+  }
+
+  @Post(':id/achievements')
+  @UseGuards(AuthenticatedGuard)
+  async createAchievements(
+    @Param('id') id: string,
+    @Body() createAchievementsDto: CreateAchievementsDto,
+  ) {
+    return await this.resumeService.saveBlock(id, createAchievementsDto);
+  }
+
+  @Post(':id/custom')
+  @UseGuards(AuthenticatedGuard)
+  async createCustom(
+    @Param('id') id: string,
+    @Body() createCustomDto: CreateCustomDto,
+  ) {
+    return await this.resumeService.saveBlock(id, createCustomDto);
+  }
+
+  @Post(':id/careers')
+  @UseGuards(AuthenticatedGuard)
+  async createCareers(
+    @Param('id') id: string,
+    @Body() createCareersDto: CreateCareersDto,
+  ) {
+    return await this.resumeService.saveBlock(id, createCareersDto);
   }
 }

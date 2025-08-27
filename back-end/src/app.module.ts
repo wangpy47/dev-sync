@@ -25,6 +25,9 @@ import { ContactModel } from './contact/entity/contact.entity';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import * as Joi from 'joi';
 import { ProfileModel } from './resume/entities/profile.entity';
+import { CareerModel } from './resume/entities/career.entity';
+import { AchievementModel } from './resume/entities/achievement.entity';
+import { CustomModel } from './resume/entities/custom.entity';
 
 @Module({
   imports: [
@@ -63,6 +66,9 @@ import { ProfileModel } from './resume/entities/profile.entity';
           ProjectOutcomeModel,
           ContactModel,
           ProfileModel,
+          CareerModel,
+          AchievementModel,
+          CustomModel,
         ],
         autoLoadEntities: true,
         synchronize: true,
