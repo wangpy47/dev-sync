@@ -1,8 +1,8 @@
 export enum ResumeBlockType {
     PROFILE = 'profile',
     INTRODUCTION = 'introduction', 
-    CAREER = 'career',
-    ACHIEVEMENT = 'achievement',
+    CAREERS = 'careers',
+    ACHIEVEMENTS = 'achievements',
     SKILLS = 'skills',
     PROJECTS = 'projects',
     CUSTOM = 'custom',

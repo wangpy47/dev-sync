@@ -12,6 +12,9 @@ import { ProjectOutcomeModel } from './entities/project-outcome.entity';
 import { SkillModel } from './entities/skill.entity';
 import { ProfileModel } from './entities/profile.entity';
 import { SkillSeederService } from './skill_seeder.service';
+import { AchievementModel } from './entities/achievement.entity';
+import { CareerModel } from './entities/career.entity';
+import { CustomModel } from './entities/custom.entity';
 
 @Module({
   imports: [
@@ -23,8 +26,11 @@ import { SkillSeederService } from './skill_seeder.service';
       ProjectOutcomeModel,
       SkillModel,
       ProfileModel,
+      CareerModel,
+      AchievementModel,
+      CustomModel,
     ]),
-  ], // 여기에 필요한 엔티티를 추가하세요
+  ],
   controllers: [ResumeController],
   providers: [
     SessionSerializer,

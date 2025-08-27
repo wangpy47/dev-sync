@@ -2,6 +2,7 @@ import {
   IsArray,
   IsDateString,
   IsNotEmpty,
+  IsOptional,
   IsString,
   ValidateNested,
 } from 'class-validator';
@@ -24,8 +25,9 @@ export class CreateProjectDto {
   @IsDateString()
   startDate: string;
 
+  @IsOptional()
   @IsDateString()
-  endDate: string;
+  endDate?: string;
 
   @IsArray()
   @ValidateNested({ each: true })

@@ -17,6 +17,12 @@ import { CreateProjectDto } from './dto/create-project.dto';
 import { CreateProjectsWidthOutcomesDto } from './dto/create-projects-width-outcomes.dto';
 import { CreateSkillsDto } from './dto/create-skills.dto';
 import { ConfigService } from '@nestjs/config';
+import { CareerModel } from './entities/career.entity';
+import { AchievementModel } from './entities/achievement.entity';
+import { CreateAchievementsDto } from './dto/create-achievements.dto';
+import { CreateCareersDto } from './dto/create-careers.dto';
+import { CustomModel } from './entities/custom.entity';
+import { CreateCustomDto } from './dto/create-custom.dto';
 
 @Injectable()
 export class ResumeService {
@@ -37,6 +43,12 @@ export class ResumeService {
     @InjectRepository(ProfileModel)
     private readonly profileRepository: Repository<ProfileModel>,
     private readonly configService: ConfigService,
+    @InjectRepository(CareerModel)
+    private readonly careerRepository: Repository<CareerModel>,
+    @InjectRepository(AchievementModel)
+    private readonly achievementRepository: Repository<AchievementModel>,
+    @InjectRepository(CustomModel)
+    private readonly customRepository: Repository<CustomModel>,
   ) {}
 
   // GITHUB 인증 헤더 생성 함수
@@ -249,6 +261,12 @@ export class ResumeService {
         return this.syncProjectsForResume(resumeId, entityData);
       case 'skills':
         return this.setSkillsForResume(resumeId, entityData);
+      case 'careers':
+        return this.upsertCareer(resumeId, entityData);
+      case 'achievements':
+        return this.upsertAchievement(resumeId, entityData);
+      case 'custom':
+        return this.upsertCustom(resumeId, entityData);
     }
   }
 
@@ -273,11 +291,22 @@ export class ResumeService {
     const resume = await this.resumeRepository.findOne({ where: { id } });
     if (!resume) throw new NotFoundException();
 
-    const [profile, introduction, skills, projects] = await Promise.all([
+    const [
+      profile,
+      introduction,
+      skills,
+      projects,
+      careers,
+      achievements,
+      customs,
+    ] = await Promise.all([
       this.getProfile(resume.id),
       this.getIntroduction(resume.id),
       this.getSkillsByResumeId(resume.id),
       this.getProjectsByResumeId(resume.id),
+      this.getCareersByResumeId(resume.id),
+      this.getAchievementsByResumeId(resume.id),
+      this.getCustomsByResumeId(resume.id),
     ]);
 
     const entities = [];
@@ -293,8 +322,22 @@ export class ResumeService {
     if (skills) {
       entities.push(skills);
     }
-    if (projects) {
+    if (projects && projects.items.length > 0) {
       entities.push(projects);
+    }
+    if (careers && careers.items.length > 0) entities.push(careers);
+    if (achievements && achievements.items.length > 0)
+      entities.push(achievements);
+
+    if (customs && customs.items.length > 0) {
+      customs.items.forEach((custom) => {
+        entities.push({
+          id: custom.id,
+          type: 'custom',
+          title: custom.title,
+          description: custom.description,
+        });
+      });
     }
 
     return {
@@ -682,15 +725,17 @@ export class ResumeService {
     { strongSkillIds, familiarSkillIds }: CreateSkillsDto,
   ) {
     const resume = await this.getResume(resumeId);
-  
+
     const [strongSkills, familiarSkills] = await Promise.all([
-      this.skillRepository.findBy({ id: In(strongSkillIds.map(s => s.id)) }),
-      this.skillRepository.findBy({ id: In(familiarSkillIds.map(s => s.id)) })
+      this.skillRepository.findBy({ id: In(strongSkillIds.map((s) => s.id)) }),
+      this.skillRepository.findBy({
+        id: In(familiarSkillIds.map((s) => s.id)),
+      }),
     ]);
-  
+
     resume.str_skills = strongSkills;
     resume.fam_skills = familiarSkills;
-  
+
     return await this.resumeRepository.save(resume);
   }
 
@@ -704,5 +749,118 @@ export class ResumeService {
       order: { name: 'ASC' },
       take: 10,
     });
+  }
+
+  async getCareersByResumeId(resumeId: string) {
+    const careers = await this.careerRepository.find({
+      where: { resume: { id: resumeId } },
+    });
+
+    return {
+      id: 'careers',
+      type: 'careers',
+      items: careers.map((career) => ({
+        id: career.id,
+        ...career,
+      })),
+    };
+  }
+
+  async upsertCareer(resumeId: string, careerData: CreateCareersDto) {
+    const resume = await this.getResume(resumeId);
+    const careers = careerData.items;
+
+    const results = [];
+    for (const data of careers) {
+      let career = await this.careerRepository.findOne({
+        where: { id: data.id, resume: { id: resume.id } },
+      });
+
+      if (!career) {
+        career = this.careerRepository.create({
+          ...data,
+          resume,
+        });
+      } else {
+        Object.assign(career, data);
+      }
+      results.push(await this.careerRepository.save(career));
+    }
+    return results;
+  }
+
+  async getAchievementsByResumeId(resumeId: string) {
+    const achievements = await this.achievementRepository.find({
+      where: { resume: { id: resumeId } },
+    });
+
+    return {
+      id: 'achievements',
+      type: 'achievements',
+      items: achievements.map((achievement) => ({
+        id: achievement.id,
+        ...achievement,
+      })),
+    };
+  }
+
+  async upsertAchievement(
+    resumeId: string,
+    achievementData: CreateAchievementsDto,
+  ) {
+    const resume = await this.getResume(resumeId);
+    const achievements = achievementData.items;
+
+    const results = [];
+    for (const data of achievements) {
+      let achievement = await this.achievementRepository.findOne({
+        where: { id: data.id, resume: { id: resume.id } },
+      });
+
+      if (!achievement) {
+        achievement = this.achievementRepository.create({
+          ...data,
+          resume,
+        });
+      } else {
+        Object.assign(achievement, data);
+      }
+      results.push(await this.achievementRepository.save(achievement));
+    }
+    return results;
+  }
+
+  async upsertCustom(resumeId: string, customData: CreateCustomDto) {
+    const resume = await this.getResume(resumeId);
+
+    let custom = await this.customRepository.findOne({
+      where: { id: customData.id, resume: { id: resume.id } },
+    });
+
+    if (!custom) {
+      custom = this.customRepository.create({
+        ...customData,
+        resume,
+      });
+    } else {
+      Object.assign(custom, customData);
+    }
+
+    return this.customRepository.save(custom);
+  }
+
+  async getCustomsByResumeId(resumeId: string) {
+    const customs = await this.customRepository.find({
+      where: { resume: { id: resumeId } },
+    });
+
+    return {
+      id: 'customs',
+      type: 'customs',
+      items: customs.map((custom) => ({
+        id: custom.id,
+        ...custom,
+      })),
+    };
   }
 }
