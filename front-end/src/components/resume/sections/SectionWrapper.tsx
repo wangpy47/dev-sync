@@ -1,6 +1,7 @@
 import { css } from "@emotion/react";
 import { Button, Typography } from "@mui/material";
 import { sectionBar } from "../../../styles/resumeLayerStyle";
+import React from "react";
 
 const contentStyle = css`
   border: 1.5px solid #dbdbdb;
@@ -18,17 +19,19 @@ export const SectionWrapper = ({
   title,
   onEdit,
   onSave,
-  onDelete,
   isEditing,
   children,
 }: {
-  title?: string;
+  title: React.ReactNode;
   isEditing: boolean;
   onEdit: () => void;
   onSave: () => void;
   onDelete?: () => void;
   children: React.ReactNode;
+
+
 }) => {
+
   return (
     <div css={contentStyle}>
       <Typography css={titleStyle} variant="h5">

@@ -80,7 +80,7 @@ const router = createBrowserRouter([
     ],
   },
   {
-    path: "/resume/editor",
+    path: "/resume/:id/editor",
     element: <EditResumePage />,
   },
 ]);

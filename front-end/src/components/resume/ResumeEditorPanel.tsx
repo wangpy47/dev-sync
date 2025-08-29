@@ -10,6 +10,7 @@ import { IntroductionSection } from "./sections/IntroductionSection";
 import { ProjectsSection } from "./sections/ProjectsSection";
 
 import { CreateSection } from "./CreateSection";
+import { CustomSection } from "./sections/CustomSection";
 
 const containerStyle = css`
   height: 100vh;
@@ -24,7 +25,7 @@ interface GitResumeProps {
 export const ResumeEditorPanel = ({
   sections,
 }: // setSections,
-GitResumeProps) => {
+  GitResumeProps) => {
   const [isEditing, setEditing] = useState<Record<string, boolean>>({});
 
   const onEdit = (id: string) => {
@@ -35,13 +36,9 @@ GitResumeProps) => {
     setEditing((prev) => ({ ...prev, [id]: false }));
   };
 
-  // const commonProps = {
-  //   setSections,
-  // };
 
   const renderSection = (section: ResumeSection) => {
     const common = {
-      // ...commonProps,
       isEditing: isEditing[section.id],
       onEdit: () => onEdit(section.id),
       onSave: () => onSave(section.id),
@@ -54,9 +51,9 @@ GitResumeProps) => {
         );
       case "skills":
         return <SkillsSection key={section.id} section={section} {...common} />;
-      case "career":
+      case "careers":
         return <CareerSection key={section.id} section={section} {...common} />;
-      case "achievement":
+      case "achievements":
         return (
           <AchievementSection key={section.id} section={section} {...common} />
         );
@@ -68,6 +65,10 @@ GitResumeProps) => {
         return (
           <IntroductionSection key={section.id} section={section} {...common} />
         );
+      case "custom":
+        return (
+          <CustomSection key={section.id} section={section} {...common} />
+        )
       default:
         return null;
     }

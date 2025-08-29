@@ -21,11 +21,6 @@ export const useLocalSection = <T extends ResumeSection>(
     []
   );
 
-  //   useEffect(() => {
-  //     setLocalSection(section);
-  //     console.log("유즈이펙트");
-  //   }, [section]);
-
   const SaveSection = () => {
     dispatch(updateResume(localSection));
     console.log("저장시", localSection);
