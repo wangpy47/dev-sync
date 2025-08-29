@@ -8,7 +8,7 @@ import {
   CardContent,
   css,
 } from "@mui/material";
-import type { ResumeData } from "../../types/resume.type";
+import type { AchievementItem, AchievementsTypeSection, CareerItem, CareersTypeSection, ResumeData } from "../../types/resume.type";
 import { addResume } from "../../redux/resumeSlice";
 import { useDispatch } from "react-redux";
 
@@ -36,7 +36,7 @@ const sectionTemplates = {
     id: "",
     type: "custom",
     title: "",
-    content: "",
+    description: "",
   },
 } as const;
 
@@ -54,17 +54,98 @@ export const CreateSection = ({ sections }: GitResumeProps) => {
 
   const handleClose = () => setAnchorEl(null);
 
-  const handleAddSection = (type: keyof typeof sectionTemplates) => {
-    const newSection = { ...sectionTemplates[type], id: crypto.randomUUID() };
-    dispatch(
-      addResume((prev) => ({
-        ...prev,
-        order: [...prev.order, newSection.id],
-        entities: [...prev.entities, newSection],
-      }))
-    );
+  const handleAddSection = (type: "career" | "achievement" | "custom") => {
+    if (type === "career" || type === "achievement") {
+      const sectionKey = type === "career" ? "careers" : "achievements";
+
+      // 새 item 생성
+      const newItem: CareerItem | AchievementItem =
+        type === "career"
+          ? {
+            id: crypto.randomUUID(),
+            type: "career",
+            company: "",
+            position: "",
+            startDate: "",
+            endDate: "",
+            description: "",
+          }
+          : {
+            id: crypto.randomUUID(),
+            type: "achievement",
+            title: "",
+            organization: "",
+            date: "",
+            description: "",
+          };
+
+      dispatch(
+        addResume((prev) => {
+          const existingSection = prev.entities.find(
+            (s) => s.type === sectionKey
+          ) as CareersTypeSection | AchievementsTypeSection | undefined;
+
+          if (existingSection) {
+            // 이미 섹션이 있으면 items에 추가
+            return {
+              ...prev,
+              entities: prev.entities.map((s) => {
+                if (s.id !== existingSection.id) return s;
+
+                if (s.type === "careers") {
+                  return { ...s, items: [...s.items, newItem as CareerItem] };
+                }
+                if (s.type === "achievements") {
+                  return {
+                    ...s,
+                    items: [...s.items, newItem as AchievementItem],
+                  };
+                }
+                return s;
+              }),
+            };
+          } else {
+            // 섹션이 없으면 새로 생성
+            const newSection =
+              type === "career"
+                ? {
+                  id: crypto.randomUUID(),
+                  type: "careers" as const,
+                  items: [newItem as CareerItem],
+                }
+                : {
+                  id: crypto.randomUUID(),
+                  type: "achievements" as const,
+                  items: [newItem as AchievementItem],
+                };
+
+            return {
+              ...prev,
+              order: [...prev.order, newSection.id],
+              entities: [...prev.entities, newSection],
+            };
+          }
+        })
+      );
+    } else if (type === "custom") {
+      // custom은 섹션 자체를 새로 추가
+      const newSection = {
+        ...sectionTemplates.custom,
+        id: crypto.randomUUID(),
+      };
+      dispatch(
+        addResume((prev) => ({
+          ...prev,
+          order: [...prev.order, newSection.id],
+          entities: [...prev.entities, newSection],
+        }))
+      );
+    }
+
     handleClose();
   };
+
+
 
   const open = Boolean(anchorEl);
 
